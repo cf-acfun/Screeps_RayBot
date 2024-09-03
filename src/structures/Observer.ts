@@ -6,8 +6,9 @@ export default class Observer extends Singleton {
     public run(roomName: string) {
         let room = Game.rooms[roomName];
         let observer: StructureObserver = Game.getObjectById(room.memory.observer.id);
+        if (!observer) return;
         let targets = room.memory.observer.targets;
-        if (targets.length) return;
+        if (!targets.length) return;
         for (let i = 0; i < targets.length; i++) {
             let target = targets[i]
             let name = `Depo_${roomName}_${target}`;
