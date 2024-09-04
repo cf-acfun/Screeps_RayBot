@@ -190,7 +190,7 @@ export const bodyConfigs: BodyConfigs = {
    */
   upgrader: getBodyConfig(
     { [WORK]: 1, [CARRY]: 1, [MOVE]: 1 },
-    { [WORK]: 2, [CARRY]: 2, [MOVE]: 2 },
+    { [WORK]: 2, [CARRY]: 2, [MOVE]: 4 },
     { [WORK]: 3, [CARRY]: 3, [MOVE]: 3 },
     { [WORK]: 6, [CARRY]: 8, [MOVE]: 6 },
     { [WORK]: 9, [CARRY]: 10, [MOVE]: 8 },
