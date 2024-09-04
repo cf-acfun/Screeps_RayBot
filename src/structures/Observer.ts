@@ -5,6 +5,7 @@ import { Role } from "@/common/Constant";
 export default class Observer extends Singleton {
     public run(roomName: string) {
         let room = Game.rooms[roomName];
+        if (room.controller.level < 8) return;
         let observer: StructureObserver = Game.getObjectById(room.memory.observer.id);
         if (!observer) return;
         let targets = room.memory.observer.targets;
