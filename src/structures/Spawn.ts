@@ -76,7 +76,7 @@ export default class Spawn extends Singleton {
             type: global.allRes["XLH2O"] > 1000 ? "LH2O" : "LH",
             num: Game.creeps[creep.name].getActiveBodyparts(WORK)
           }, { 
-            type: "XZHO2",
+            type: "ZHO2",
             num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
           }])
         }
@@ -85,7 +85,7 @@ export default class Spawn extends Singleton {
             type: global.allRes["XGH2O"] > 1000 ? "XGH2O" : "GH",
             num: Game.creeps[creep.name].getActiveBodyparts(WORK)
           }, {
-            type: "XZHO2",
+            type: "ZHO2",
             num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
           }])
         }
