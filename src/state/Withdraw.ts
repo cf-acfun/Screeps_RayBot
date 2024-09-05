@@ -591,7 +591,7 @@ export default class Withdraw extends Singleton {
                 if (creep.room.storage?.store.energy) {
                     App.common.getResourceFromTargetStructure(creep, creep.room.storage);
                     return;
-                } else App.fsm.changeState(creep, State.Harvest);
+                } else App.fsm.changeState(creep, State.Pick);
                 break;
             }
             case Role.HelpBuilder: {
