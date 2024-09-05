@@ -223,6 +223,10 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.DepositHarvester: {
+                if (creep.store.getUsedCapacity() == 0) {
+                    App.fsm.changeState(creep, State.MoveTo);
+                    return;
+                }
                 if (creep.room.name == roomFrom) App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
                 else creep.customMove(new RoomPosition(25, 25, roomFrom));
                 break;
