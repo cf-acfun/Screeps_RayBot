@@ -613,7 +613,7 @@ export default class Withdraw extends Singleton {
                         creep.memory.ruinState = true;
                     }
                     else {
-                        App.fsm.changeState(creep, State.Harvest);
+                        App.fsm.changeState(creep, State.Pick);
                         creep.memory.ruinState = false;
                     }
                 }
