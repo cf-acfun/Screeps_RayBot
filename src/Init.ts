@@ -26,8 +26,8 @@ export default class Init extends Singleton {
         if (Game.cpu.bucket == 10000) Game.cpu.generatePixel();
       }
     } else {
-      // 默认开启
-      if (Memory.generatePixel == void 0 || Memory.generatePixel) {
+      // 默认开启 赛季没有generatePixel()
+      if (Game.shard.name != "shardSeason" && (Memory.generatePixel == void 0 || Memory.generatePixel)) {
         if (Game.cpu.bucket == 10000) Game.cpu.generatePixel();
       }
     }

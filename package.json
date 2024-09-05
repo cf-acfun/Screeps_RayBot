@@ -21,6 +21,7 @@
     "local": "rollup -cw --environment DEST:local",
     "sb": "rollup -cw --environment DEST:sb",
     "acf": "rollup -cw --environment DEST:acf",
-    "singer": "rollup -cw --environment DEST:SponSinger"
+    "singer": "rollup -cw --environment DEST:SponSinger",
+    "season" : "rollup -cw --environment DEST:acfunSeason"
   }
 }
