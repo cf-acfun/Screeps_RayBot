@@ -5,7 +5,7 @@ export default class Terminal extends Singleton {
     run(roomName: string) {
 
         // 自动购买能量
-        if (Game.time % 10 == 0) {
+        if (Game.time % 10 == 0 && Game.shard.name == "shard3") {
             this._autoBuyEnergy(roomName);
         }
 

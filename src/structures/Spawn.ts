@@ -10,7 +10,7 @@ export default class Spawn extends Singleton {
     const targetLevel = Object.keys(bodyConfig).reverse().find(level => {
       // 先通过等级粗略判断，再加上 dryRun 精确验证
       // console.log(level)
-      const availableEnergyCheck = (Number(level) >= room.energyAvailable)
+      const availableEnergyCheck = (Number(level) <= room.energyAvailable)
       const dryCheck = (Game.spawns[spawnName].spawnCreep(bodyConfig[level], 'bodyTester', { dryRun: true }) == OK)
 
       return availableEnergyCheck && dryCheck

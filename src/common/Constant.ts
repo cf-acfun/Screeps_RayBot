@@ -280,9 +280,9 @@ export const bodyConfigs: BodyConfigs = {
     { [WORK]: 15, [CARRY]: 2, [MOVE]: 17 },
   ),
   outHarvester: getBodyConfig(
-    { [WORK]: 2, [CARRY]: 1, [MOVE]: 1 },
-    { [WORK]: 4, [CARRY]: 1, [MOVE]: 1 },
-    { [WORK]: 5, [CARRY]: 1, [MOVE]: 3 },
+    { [WORK]: 2, [CARRY]: 1, [MOVE]: 2 },
+    { [WORK]: 4, [CARRY]: 1, [MOVE]: 5 },
+    { [WORK]: 5, [CARRY]: 1, [MOVE]: 6 },
     { [WORK]: 5, [CARRY]: 4, [MOVE]: 10 },
     { [WORK]: 5, [CARRY]: 4, [MOVE]: 10 },
     { [WORK]: 6, [CARRY]: 4, [MOVE]: 10 },

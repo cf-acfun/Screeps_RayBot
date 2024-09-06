@@ -217,16 +217,10 @@ export default class MoveTo extends Singleton {
                 // TODO 目前只支持开采一个矿点，待优化开采双矿
                 let sourceFlag = Game.flags[creep.name];
                 if (sourceFlag) {
-
-                    // 如果有Site则优先建造
-                    let buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
-                    console.log(`当前房间[${creep.room.name}], 当前creep[${creep.name}], Role [${creep.memory.role}],buildTargets.length = [${buildTargets.length}]`);
-                    if (buildTargets.length) {
-                        console.log(`开始进行职责转换......`);
-                        creep.memory.role = Role.HelpBuilder;
+                    if (creep.store.getFreeCapacity() == 0) {
+                        App.fsm.changeState(creep, State.Back);
                         return;
                     }
-
                     if (creep.pos.roomName == sourceFlag.pos.roomName) {
                         let source = creep.room.lookForAt(LOOK_SOURCES, sourceFlag)[0]
                         if (source) {
@@ -254,12 +248,23 @@ export default class MoveTo extends Singleton {
                     // 判断有无需要修复的建筑，主要是container
                     let needRepair = creep.room.find(FIND_STRUCTURES, {
                         filter: (s: StructureContainer) =>
-                            (s.structureType === STRUCTURE_CONTAINER) && s.hits < s.hitsMax
+                            (s.structureType === STRUCTURE_CONTAINER) && s.hits < 100000
                     });
+
                     if (needRepair) {
                         if (creep.repair(needRepair[0]) === ERR_NOT_IN_RANGE) {
                             creep.moveTo(needRepair[0], { visualizePathStyle: { stroke: '#32CD32' } });
                             return;
+                        }
+                    } else if (creep.store.getFreeCapacity() > 0) {
+                        const containers = creep.room.find(FIND_STRUCTURES, {
+                            filter: (structure) => structure.structureType === STRUCTURE_CONTAINER && structure.store.getUsedCapacity() > 0
+                        });
+                        if (containers) {
+                            if (creep.withdraw(containers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                                creep.customMove(containers[0].pos);
+                                return;
+                            }
                         }
                     } else {
                         App.fsm.changeState(creep, State.Back);
