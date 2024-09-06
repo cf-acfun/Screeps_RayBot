@@ -208,30 +208,30 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.OutHarvester: {
+                // 没有视野就先过去再插旗子
+                let targetRoom = creep.name.split('_')[2];
+                if (creep.room.name != targetRoom) {
+                    creep.customMove(new RoomPosition(25, 25, targetRoom));
+                    return;
+                }
                 // TODO 目前只支持开采一个矿点，待优化开采双矿
                 let sourceFlag = Game.flags[creep.name];
                 if (sourceFlag) {
-                    if (creep.store.getFreeCapacity() == 0) {
-                        App.fsm.changeState(creep, State.Back);
+
+                    // 如果有Site则优先建造
+                    let buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
+                    console.log(`当前房间[${creep.room.name}], 当前creep[${creep.name}], Role [${creep.memory.role}],buildTargets.length = [${buildTargets.length}]`);
+                    if (buildTargets.length) {
+                        console.log(`开始进行职责转换......`);
+                        creep.memory.role = Role.HelpBuilder;
                         return;
                     }
+
                     if (creep.pos.roomName == sourceFlag.pos.roomName) {
                         let source = creep.room.lookForAt(LOOK_SOURCES, sourceFlag)[0]
                         if (source) {
                             if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                                 creep.customMove(source.pos);
-                            }
-                            // 记录单程抵达时间
-                            if (!creep.memory.time) {
-                                let pos1 = creep.pos;
-                                let pos2 = sourceFlag.pos;
-                                if ((Math.abs(pos1.x - pos2.x) <= 1) && (Math.abs(pos1.y - pos2.y) <= 1)) {
-                                    creep.memory.time = 1500 - creep.ticksToLive;
-                                }
-                            }
-                            if (creep.store.getFreeCapacity() == 0 ||
-                                creep.ticksToLive < creep.memory.time + 50) {
-                                App.fsm.changeState(creep, State.Back);
                             }
                         } else {
                             sourceFlag.remove();
@@ -239,6 +239,64 @@ export default class MoveTo extends Singleton {
                         }
                     } else {
                         creep.customMove(sourceFlag.pos);
+                    }
+                }
+                break;
+            }
+            case Role.RemoteCarryer: {
+                let targetRoom = creep.name.split('_')[2];
+                if (creep.room.name != targetRoom) {
+                    creep.customMove(new RoomPosition(25, 25, targetRoom));
+                    return;
+                }
+
+                if (creep.store.getUsedCapacity() > 0) {
+                    // 判断有无需要修复的建筑，主要是container
+                    let needRepair = creep.room.find(FIND_STRUCTURES, {
+                        filter: (s: StructureContainer) =>
+                            (s.structureType === STRUCTURE_CONTAINER) && s.hits < s.hitsMax
+                    });
+                    if (needRepair) {
+                        if (creep.repair(needRepair[0]) === ERR_NOT_IN_RANGE) {
+                            creep.moveTo(needRepair[0], { visualizePathStyle: { stroke: '#32CD32' } });
+                            return;
+                        }
+                    } else {
+                        App.fsm.changeState(creep, State.Back);
+                        return;
+                    }
+                }
+                if (creep.pos.roomName == targetRoom) {
+                    const containers = creep.room.find(FIND_STRUCTURES, {
+                        filter: (structure) => structure.structureType === STRUCTURE_CONTAINER && structure.store.getUsedCapacity() > 500
+                    });
+                    if (containers) {
+                        if (creep.withdraw(containers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                            creep.customMove(containers[0].pos);
+                            return;
+                        }
+                    }
+                }
+
+                break;
+            }
+            case Role.Reserver: {
+                // 没有视野就先过去
+                let targetRoom = creep.name.split('_')[1];
+                if (creep.room.name != targetRoom) {
+                    creep.customMove(new RoomPosition(25, 25, targetRoom));
+                    return;
+                }
+
+                // TODO 待优化开采双矿, 增加挖运分离
+                let sourceFlag = Game.flags[creep.name];
+                if (sourceFlag) {
+                    if (creep.pos.roomName == sourceFlag.pos.roomName) {
+                        if (creep.room.controller && !creep.room.controller.my) {
+                            if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                                creep.moveTo(creep.room.controller, { visualizePathStyle: { stroke: '#ffffff' } });
+                            }
+                        }
                     }
                 }
                 break;
@@ -258,6 +316,7 @@ export default class MoveTo extends Singleton {
                 else creep.customMove(new RoomPosition(25, 25, roomFrom));
                 break;
             }
+            case Role.RemoteCarryer:
             case Role.OutHarvester:
             case Role.DepositHarvester: {
                 if (creep.store.getUsedCapacity() == 0) {
