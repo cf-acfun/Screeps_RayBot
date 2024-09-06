@@ -417,6 +417,28 @@ export default class Init extends Singleton {
       else {
         if (global.cc[this.rooms[i]]) global.cc[this.rooms[i]].attacker = 0;
       }
+      // TODO 外矿 目前只在赛季用 待优化
+      if (Game.shard.name == "shardSeason") {
+        // 通过插旗子控制外矿 flag: `source_${roomName}_${targetRoom}`;
+        for (let j = 0; j < Game.rooms[i].memory.outMineRooms.length; j++) {
+          let targetRoom = Game.rooms[i].memory.outMineRooms[j];
+          let sourceFlag = Game.flags[`source_${this.rooms[i]}`];
+          let creep_one = `source_${this.rooms[i]}_${targetRoom}_1`;
+          let creep_two = `source_${this.rooms[i]}_${targetRoom}_2`;
+          if (sourceFlag) {
+            if (!Game.creeps[creep_one]) {
+              App.spawn.run(this.rooms[i], Role.OutHarvester, creep_one);
+            }
+            if (!Game.creeps[creep_two]) {
+              App.spawn.run(this.rooms[i], Role.OutHarvester, creep_two);
+            }
+          }
+
+        }
+
+      }
+
+
     }
 
     /**

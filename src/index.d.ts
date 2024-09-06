@@ -347,6 +347,7 @@ interface RoomMemory {
 	customRampartSites?: RoomPosition[],
 	energyOrder?: string,	// 能量购买订单
 	nuker: Id<StructureNuker>,
+	outMineRooms: string[], // 外矿房间列表
 }
 interface RoomTask {
 	[roomName: string]: {
@@ -447,6 +448,7 @@ type BodyAutoConfigConstant =
 	'helpBuilder' |
 	'helpUpgrader' |
 	'depositHarvester' |
+	'outHarvester' |
 	'defense_attacker' |
 	'defense_healer' |
 	'transfer' |

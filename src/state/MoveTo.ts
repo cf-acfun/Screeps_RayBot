@@ -207,6 +207,42 @@ export default class MoveTo extends Singleton {
                 }
                 break;
             }
+            case Role.OutHarvester: {
+                // TODO 目前只支持开采一个矿点，待优化开采双矿
+                let sourceFlag = Game.flags[creep.name];
+                if (sourceFlag) {
+                    if (creep.store.getFreeCapacity() == 0) {
+                        App.fsm.changeState(creep, State.Back);
+                        return;
+                    }
+                    if (creep.pos.roomName == sourceFlag.pos.roomName) {
+                        let source = creep.room.lookForAt(LOOK_SOURCES, sourceFlag)[0]
+                        if (source) {
+                            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                                creep.customMove(source.pos);
+                            }
+                            // 记录单程抵达时间
+                            if (!creep.memory.time) {
+                                let pos1 = creep.pos;
+                                let pos2 = sourceFlag.pos;
+                                if ((Math.abs(pos1.x - pos2.x) <= 1) && (Math.abs(pos1.y - pos2.y) <= 1)) {
+                                    creep.memory.time = 1500 - creep.ticksToLive;
+                                }
+                            }
+                            if (creep.store.getFreeCapacity() == 0 ||
+                                creep.ticksToLive < creep.memory.time + 50) {
+                                App.fsm.changeState(creep, State.Back);
+                            }
+                        } else {
+                            sourceFlag.remove();
+                            return;
+                        }
+                    } else {
+                        creep.customMove(sourceFlag.pos);
+                    }
+                }
+                break;
+            }
         }
     }
 
@@ -222,6 +258,7 @@ export default class MoveTo extends Singleton {
                 else creep.customMove(new RoomPosition(25, 25, roomFrom));
                 break;
             }
+            case Role.OutHarvester:
             case Role.DepositHarvester: {
                 if (creep.store.getUsedCapacity() == 0) {
                     App.fsm.changeState(creep, State.MoveTo);

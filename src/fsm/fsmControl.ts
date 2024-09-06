@@ -91,7 +91,9 @@ export default class FsmControl extends FsmSystem {
         break;
       case Role.DepositHarvester: creep.memory.state = State.MoveTo;
         break;
-
+      case Role.OutHarvester: creep.memory.state = State.MoveTo;
+        break;
+      
       case Role.RemoteHarvester: creep.memory.state = State.MoveTo;
         break;
       case Role.RemoteReserver: creep.memory.state = State.MoveTo;

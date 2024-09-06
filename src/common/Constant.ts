@@ -21,6 +21,7 @@ export const Role = {
   HelpBuilder: 'helpBuilder',
   HelpUpgrader: 'helpUpgrader',
   DepositHarvester: 'depositHarvester',
+  OutHarvester: 'outHarvester',
   PB_Healer: 'pb_healer',
   PB_Attacker: 'pb_attacker',
   PB_Carryer: 'pb_carryer',
@@ -277,6 +278,16 @@ export const bodyConfigs: BodyConfigs = {
     { [WORK]: 15, [CARRY]: 7, [MOVE]: 22 },
     { [WORK]: 15, [CARRY]: 7, [MOVE]: 22 },
     { [WORK]: 15, [CARRY]: 2, [MOVE]: 17 },
+  ),
+  outHarvester: getBodyConfig(
+    { [WORK]: 2, [CARRY]: 1, [MOVE]: 1 },
+    { [WORK]: 4, [CARRY]: 1, [MOVE]: 1 },
+    { [WORK]: 5, [CARRY]: 1, [MOVE]: 3 },
+    { [WORK]: 5, [CARRY]: 1, [MOVE]: 3 },
+    { [WORK]: 5, [CARRY]: 4, [MOVE]: 10 },
+    { [WORK]: 6, [CARRY]: 4, [MOVE]: 10 },
+    { [WORK]: 15, [CARRY]: 1, [MOVE]: 8 },
+    { [WORK]: 20, [CARRY]: 2, [MOVE]: 18 }
   ),
   remoteHarvester: getBodyConfig(
     { [WORK]: 7, [CARRY]: 1, [MOVE]: 4 },
