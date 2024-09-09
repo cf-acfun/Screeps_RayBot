@@ -142,7 +142,7 @@ export default class AutoPlanner extends Singleton {
             } else room.memory.customRampartSites = room.memory.customRampartSites.concat(ram_sites);
             flag.remove();
         }
-        if (room.terminal) {
+        if (room.terminal || Game.shard.name == "shardSeason") {
             if (room.memory.autoRampart === void 0 && !room.memory.customRampartSites.length) {
                 if (Memory.RoomControlData[roomName].structMap.map(e => e.split("/")).filter(e => e[2] == "extension").length == 60) {
                     room.memory.autoRampart = true;
@@ -164,7 +164,7 @@ export default class AutoPlanner extends Singleton {
                 room.memory.lastRepairTick = null;
             }
         }
-        if (room.memory.customRampartSites.length && room.storage?.store.energy > 100000 && room.memory.wallHits < 300000000) global.cc[roomName].repairer = 1;
+        if (room.memory.customRampartSites.length && room.storage?.store.energy > 100000 && room.memory.wallHits < 300000000 || Game.shard.name == "shardSeason") global.cc[roomName].repairer = 1;
         else global.cc[roomName].repairer = 0;
     }
 }
