@@ -60,7 +60,7 @@ export default class Spawn extends Singleton {
       if (spawn.spawning) {
         let spawningCreep = spawn.spawning?.name;
         let creep = Game.creeps[spawningCreep];
-        if (creep.memory.role == Role.Repairer) {
+        if (creep.memory.role == Role.Repairer && Game.shard.name != "shardSeason") {
           // TODO 增加三种不同等级数量判断
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["XLH2O"] > 1000 ? "LH2O" : "LH",
