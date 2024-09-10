@@ -277,7 +277,7 @@ export const bodyConfigs: BodyConfigs = {
     { [WORK]: 15, [CARRY]: 7, [MOVE]: 22 },
     { [WORK]: 15, [CARRY]: 7, [MOVE]: 22 },
     { [WORK]: 15, [CARRY]: 7, [MOVE]: 22 },
-    { [WORK]: 15, [CARRY]: 2, [MOVE]: 17 },
+    { [WORK]: 15, [CARRY]: 4, [MOVE]: 20 },
   ),
   outHarvester: getBodyConfig(
     { [WORK]: 1, [CARRY]: 1, [MOVE]: 2 },

@@ -322,7 +322,36 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.RemoteCarryer:
-            case Role.OutHarvester:
+            case Role.OutHarvester: {
+                if (creep.store.getUsedCapacity() == 0) {
+                    App.fsm.changeState(creep, State.MoveTo);
+                    return;
+                }
+                if (creep.room.name == roomFrom) {
+                    let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
+                    if (upgradePlusFlag) {
+                        let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
+                        let target: StructureContainer;
+                        for (let id of controllerContainers) {
+                            let container = Game.getObjectById(id);
+                            if (container.store.getFreeCapacity(RESOURCE_ENERGY) >= 500) {
+                                target = container;
+                                break;
+                            }
+                        }
+                        if (target) {
+                            App.common.transferToTargetStructure(creep, target);
+                        } else {
+                            App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
+                        }
+                    } else {
+                        App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
+                    }
+                } else {
+                    creep.customMove(new RoomPosition(25, 25, roomFrom));
+                }
+                break;
+            }
             case Role.DepositHarvester: {
                 if (creep.store.getUsedCapacity() == 0) {
                     App.fsm.changeState(creep, State.MoveTo);
