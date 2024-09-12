@@ -114,7 +114,7 @@ export default class Common extends Singleton {
         let controllerContainers: StructureContainer[] = [];
         controllerContainers = room.controller.pos.findInRange(FIND_STRUCTURES, 5, {
             filter: (stru) => {
-                return stru.structureType == 'container'
+                return stru.structureType == 'container' && stru.id != "66d9a73676687937a3bb5f00"
             }
         }) as StructureContainer[];
         if (controllerContainers.length > 0) {
