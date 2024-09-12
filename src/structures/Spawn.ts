@@ -120,9 +120,6 @@ export default class Spawn extends Singleton {
               this._setBoostType(creep, "XGH2O", WORK);
             } else if (global.allRes["GH2O"] > 1000 || global.allRes["GH"] > 1000) {
               this._setBoostType(creep, global.allRes["GH2O"] > 1000 ? "GH2O" : "GH", WORK);
-            } else {
-              console.log(`XGH2O资源不足,自动购入`);
-              global.autoDeal(creep.room.name, "XGH2O", 1940, 2000);
             }
             // 强化CARRY部件
             if (upgradePlusFlag) {
