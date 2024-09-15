@@ -452,4 +452,6 @@ type BodyAutoConfigConstant =
 	'defense_attacker' |
 	'defense_healer' |
 	'transfer' |
-	'transfer2Container'
+	'transfer2Container' |
+	'transferScore2Storage' |
+	'transferScore2Collector'

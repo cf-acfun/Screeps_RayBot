@@ -4,6 +4,7 @@ import { FsmSystem } from "./fsmSystem";
 import { State } from "./state";
 
 
+
 export default class FsmControl extends FsmSystem {
   public Harvest(creep: Creep) {
     App.harvest.run(creep);
@@ -62,6 +63,9 @@ export default class FsmControl extends FsmSystem {
   public TransferToControllerContainer(creep: Creep) {
     App.transfer.ToControllerContainer(creep);
   }
+  public TransferScore2Storage(creep: Creep) {
+    App.harvesteScore2Container.harvestScore(creep);
+  }
 
   public switchState(creep: Creep) {
     switch (creep.memory.role) {
@@ -119,6 +123,8 @@ export default class FsmControl extends FsmSystem {
       case Role.Transfer: creep.memory.state = State.MoveTo;
         break;
       case Role.Transfer2Container: creep.memory.state = State.Withdraw;
+        break;
+      case Role.TransferScore2Storage: creep.memory.state = State.Withdraw;
         break;
     }
   }

@@ -41,6 +41,10 @@ export default class App {
     return managers.Withdraw.getInstance();
   }
 
+  static get harvesteScore2Container() {
+    return managers.HarvesteScore2Container.getInstance();
+  }
+
   static get pick() {
     return managers.Pick.getInstance();
   }
