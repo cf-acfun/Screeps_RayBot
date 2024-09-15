@@ -214,13 +214,22 @@ export default class MoveTo extends Singleton {
                     creep.customMove(new RoomPosition(25, 25, targetRoom));
                     return;
                 }
+                if (creep.store.getFreeCapacity() == 0) {
+                    App.fsm.changeState(creep, State.Back);
+                    return;
+                }
+                // 如果房间中有分数优先收集分数
+                let containers = creep.room.find(FIND_SCORE_CONTAINERS);
+                if (creep.store.getFreeCapacity(RESOURCE_SCORE) > 0 && containers.length) {
+                    // 从最近的得分容器中收集分数
+                    if (creep.withdraw(containers[0] as Structure<StructureConstant>, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
+                        creep.moveTo(containers[0]);
+                        return;
+                    }
+                }
                 // TODO 目前只支持开采一个矿点，待优化开采双矿
                 let sourceFlag = Game.flags[creep.name];
                 if (sourceFlag) {
-                    if (creep.store.getFreeCapacity() == 0) {
-                        App.fsm.changeState(creep, State.Back);
-                        return;
-                    }
                     if (creep.pos.roomName == sourceFlag.pos.roomName) {
                         let source = creep.room.lookForAt(LOOK_SOURCES, sourceFlag)[0]
                         if (source) {

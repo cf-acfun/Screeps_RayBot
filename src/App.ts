@@ -33,16 +33,16 @@ export default class App {
     return managers.Harvest.getInstance();
   }
 
+  static get scoreController() {
+    return managers.ScoreController.getInstance();
+  }
+
   static get moveto() {
     return managers.MoveTo.getInstance();
   }
 
   static get withdraw() {
     return managers.Withdraw.getInstance();
-  }
-
-  static get harvesteScore2Container() {
-    return managers.HarvesteScore2Container.getInstance();
   }
 
   static get pick() {

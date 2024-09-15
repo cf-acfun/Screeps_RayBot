@@ -348,6 +348,7 @@ interface RoomMemory {
 	energyOrder?: string,	// 能量购买订单
 	nuker: Id<StructureNuker>,
 	outMineRooms: string[], // 外矿房间列表
+	submitScoreRoom: string, // 赛季分数提交房间
 }
 interface RoomTask {
 	[roomName: string]: {

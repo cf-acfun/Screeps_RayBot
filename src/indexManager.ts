@@ -26,7 +26,7 @@ export { default as Unoost } from '@/state/Unboost';
 export { default as PC } from '@/PC/PC';
 export { default as Solitary} from '@/fight/Solitary';
 export { default as Observer } from '@/structures/Observer';
-export { default as HarvesteScore2Container} from '@/state/harvesteScore2Container';
+export { default as ScoreController} from '@/state/ScoreController';
 
 // export { default as Carry } from './state/Carry';
 // export { default as Attack } from './state/Attack';

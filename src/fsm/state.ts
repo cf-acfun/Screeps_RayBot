@@ -19,7 +19,7 @@ export const State = {
   Boost: 'Boost',
   Unboost: 'Unboost',
   TransferToControllerContainer: 'TransferToControllerContainer',
-  TransferScoreToStorage: 'TransferScoreToStorage',
+  TransferScore2Storage: 'TransferScore2Storage',
   TransferScoreToCollector: 'TransferScoreToCollector',
 }
 
