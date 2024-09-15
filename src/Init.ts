@@ -248,14 +248,14 @@ export default class Init extends Singleton {
           }
           // 增加冲级模式，判断房间内有无upgradePlus旗帜
           if (upgradePlusFlag) {
-            global.cc[roomName].upgrader = 6;
+            global.cc[roomName].upgrader = 10;
             global.cc[roomName].transfer2Container = 2;
             global.cc[roomName].filler = 3;
           } else {
             global.cc[roomName].transfer2Container = 0;
           }
         } else if (upgradePlusFlag) {
-          global.cc[roomName].upgrader = 6;
+          global.cc[roomName].upgrader = 10;
           global.cc[roomName].transfer2Container = 2;
           global.cc[roomName].filler = 3;
         } else {

@@ -158,7 +158,7 @@ export default class Terminal extends Singleton {
         let room = Game.rooms[roomName];
         if (!room) return;
         if (!room.terminal) return;
-        if (room.controller.level < 6 && !room.terminal) return;
+        if (room.controller.level <= 5 || !room.terminal) return;
         // 获取在市场中活跃 (activated) 和非活跃 (deactivated) 的购买能量的订单存到Memory中
         const orders = Game.market.getAllOrders({ resourceType: 'energy', type: ORDER_BUY });
         // const averagePrice = orders.reduce((acc, order) => acc + order.price, 0) / orders.length;
