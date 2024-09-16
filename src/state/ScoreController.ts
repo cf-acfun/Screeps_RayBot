@@ -4,7 +4,6 @@ import Singleton from "@/Singleton";
 
 export default class ScoreController extends Singleton {
     public harvestScore(creep: Creep) {
-        console.log(`开始收集分数`);
 
         // 查找当前房间中的得分容器
         let containers = creep.room.find(FIND_SCORE_CONTAINERS);
@@ -44,6 +43,9 @@ export default class ScoreController extends Singleton {
             if (scoreCollector) {
                 if(creep.transfer(scoreCollector[0] as Structure<StructureConstant>, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
                     creep.moveTo(scoreCollector[0]);
+                } else if (creep.transfer(scoreCollector[0] as Structure<StructureConstant>, RESOURCE_SCORE) === OK) {
+                    // TODO 待优化
+                    creep.suicide();
                 }
             }
         }

@@ -428,7 +428,7 @@ export default class Init extends Singleton {
           let creep_two = `source_${this.rooms[i]}_${targetRoom}_2`;
           // let remoteCarryer_one = `remoteCarryer_${this.rooms[i]}_${targetRoom}_1`;
           // let remoteCarryer_two = `remoteCarryer_${this.rooms[i]}_${targetRoom}_2`;
-          // let creep_reserver = `reserver_${targetRoom}`;
+          let creep_reserver = `reserver_${targetRoom}`;
           if (!Game.creeps[creep_one]) {
             App.spawn.run(this.rooms[i], Role.OutHarvester, creep_one);
           }
@@ -441,9 +441,9 @@ export default class Init extends Singleton {
           // if (!Game.creeps[remoteCarryer_two]) {
           //   App.spawn.run(this.rooms[i], Role.RemoteCarryer, remoteCarryer_two);
           // }
-          // if (!Game.creeps[creep_reserver]) {
-          //   App.spawn.run(this.rooms[i], Role.Reserver, creep_reserver);
-          // }
+          if (!Game.creeps[creep_reserver]) {
+            App.spawn.run(this.rooms[i], Role.Reserver, creep_reserver);
+          }
 
         }
 
