@@ -70,7 +70,7 @@ export default class Spawn extends Singleton {
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
           }])
         }
-        if (creep.memory.role == Role.HelpBuilder) {
+        if (creep.memory.role == Role.HelpBuilder && Game.shard.name != "shardSeason") {
           // TODO 增加三种不同等级数量判断
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["XLH2O"] > 1000 ? "LH2O" : "LH",
@@ -80,7 +80,7 @@ export default class Spawn extends Singleton {
             num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
           }])
         }
-        if (creep.memory.role == Role.HelpUpgrader) {
+        if (creep.memory.role == Role.HelpUpgrader && Game.shard.name != "shardSeason") {
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["XGH2O"] > 1000 ? "XGH2O" : "GH",
             num: Game.creeps[creep.name].getActiveBodyparts(WORK)
@@ -89,7 +89,7 @@ export default class Spawn extends Singleton {
             num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
           }])
         }
-        if (creep.memory.role == Role.Attacker) {
+        if (creep.memory.role == Role.Attacker && Game.shard.name != "shardSeason") {
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["XUH2O"] > 500 ? "XUH2O" : "UH2O",
             num: Game.creeps[creep.name].getActiveBodyparts(ATTACK)
