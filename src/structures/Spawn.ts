@@ -57,7 +57,7 @@ export default class Spawn extends Singleton {
     for (let i = 0; i < room.memory.spawns.length; i++) {
       let name = room.memory.spawns[i];
       let spawn = Game.spawns[name];
-      if (spawn.spawning) {
+      if (spawn && spawn.spawning) {
         let spawningCreep = spawn.spawning?.name;
         let creep = Game.creeps[spawningCreep];
         if (creep.memory.role == Role.Repairer) {
