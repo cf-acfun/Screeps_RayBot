@@ -18,6 +18,7 @@ const bodys = {
 	'B-W': { [WORK]: 40, [MOVE]: 10 },
 	'RA': { [RANGED_ATTACK]: 10, [MOVE]: 10 },
 	'W': { [WORK]: 25, [MOVE]: 25 },
+	'W-8': { [WORK]: 8, [MOVE]: 8 },
 	'B-W-40': { [WORK]: 40, [MOVE]: 10 },
 	'A': { [ATTACK]: 10, [MOVE]: 10 },
 	'C': { [CLAIM]: 19, [MOVE]: 24 },

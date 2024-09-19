@@ -14,6 +14,7 @@ export default class Boost extends Singleton {
         if (creep.memory.isSetBoost) return;
         for (let i = 0; i < types.length; i++) {
             if (global.allRes[types[i].type] < types[i].num * 30 * Memory.myrooms.length) {
+                console.log(`[${JSON.stringify(types[i])}]资源不足,强化失败.最少需要[${types[i].num * 30 * Memory.myrooms.length}]`);
                 creep.memory.isSetBoost = true;
                 return;
             }
