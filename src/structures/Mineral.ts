@@ -38,7 +38,7 @@ export default class Mineral extends Singleton {
             let creepName = GenNonDuplicateID();
             App.spawn.run(mineral.room.name, Role.Harvester, creepName);
             mineralMem.harvester = creepName;
-            return
+            return;
         }
 
         let harvester = Game.creeps[mineralMem.harvester];

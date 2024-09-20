@@ -14,6 +14,7 @@ export default class Common extends Singleton {
         this.findObserver(roomName);
     }
     public getPosNear(pos: RoomPosition, sourceState: boolean = false) {
+        if (pos.roomName == "W45S59") return new RoomPosition(48, 25, pos.roomName);
         for (let x = pos.x - 1; x <= pos.x + 1; x++) {
             for (let y = pos.y - 1; y <= pos.y + 1; y++) {
                 if (x == 1 || y == 1 || x == 48 || y == 48) continue;
