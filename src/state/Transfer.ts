@@ -288,7 +288,7 @@ export default class Transfer extends Singleton {
      * @param creep 
      */
     public ToNuker(creep: Creep) {
-        if (creep.room.controller.level < 8) return;
+        if (creep.room.controller.level < 8 || !creep.room.terminal) return;
         // 获取核弹发射器对象
         let nuker = Game.getObjectById(creep.room.memory.nuker) as StructureNuker;
         if (!nuker) {

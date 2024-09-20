@@ -208,6 +208,7 @@ export default class Common extends Singleton {
 
     public findLabs(roomName: string) {
         let room = Game.rooms[roomName];
+        if (!room.terminal) return;
         if (!room.memory.labs) room.memory.labs = {};
         // delete room.memory.labs;
         // return;
