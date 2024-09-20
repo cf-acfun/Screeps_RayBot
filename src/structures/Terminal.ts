@@ -42,7 +42,7 @@ export default class Terminal extends Singleton {
                 global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000);
             }
             if (terminal.room.controller.level < 8) return;
-            if (terminal.room.storage.store.power < 10000) {
+            if (terminal.room.storage.store.power + terminal.store.power < 10000) {
                 global.autoDeal(terminal.room.name, 'power', 1200);
                 return;
             }
