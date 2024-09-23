@@ -208,6 +208,24 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.OutHarvester: {
+
+                let target: RoomPosition;
+                if (creep.memory.targetSource) {
+                    
+                    target = creep.room.memory.sources[creep.memory.targetSource].harvestPos;
+                    creep.customMove(target, 0);
+                }
+                if (target) {
+                    if (App.common.getDis(creep.pos, target) == 1) {
+                        let other = creep.room.lookForAt(LOOK_CREEPS, target);
+                        if (other.length) other[0].suicide();
+                    }
+                    if (App.common.isPosEqual(creep.pos, target)) {
+                        App.common.setTime(creep);
+                        App.fsm.changeState(creep, State.Harvest)
+                    }
+                }
+
                 // 没有视野就先过去再插旗子
                 let targetRoom = creep.name.split('_')[2];
                 if (creep.room.name != targetRoom) {

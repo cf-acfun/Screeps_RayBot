@@ -44,6 +44,11 @@ export default class Harvest extends Singleton {
         }
         break;
       }
+      case Role.RemoteHarvester: {
+        // 外矿
+        
+        break;
+      }
       case Role.HelpUpgrader:
       case Role.HelpBuilder: {
         if (creep.store.getFreeCapacity() == 0) {

@@ -119,6 +119,13 @@ export default class EnergySource extends Singleton {
                                 sourceMem.harvester = creepName;
                                 return;
                             }
+                            // 绑定外矿搬运者
+                            if (!sourceMem.carrier) {
+                                let creepName = GenNonDuplicateID();
+                                App.spawn.run(source.room.name, Role.RemoteCarryer, creepName);
+                                sourceMem.carrier = creepName;
+                                return;
+                            }
 
                         }
                     }
