@@ -117,7 +117,8 @@ type Role =
 	'defense_attacker' |
 	'defense_healer' |
 	'transfer' |
-	'transfer2Container'
+	'transfer2Container' |
+	'observer'
 
 interface RoomCreeps {
 	[name: string]: {
@@ -279,7 +280,8 @@ interface CreepMemory {
 	isCreate?: boolean,
 	upgradePos?: RoomPosition,
 	transferState?: boolean,
-	boost?: boolean
+	boost?: boolean,
+	outSourceRoom?: string
 }
 
 interface FlagMemory { }
@@ -357,6 +359,7 @@ interface RoomMemory {
 			}
 		}
 	}, 
+	outSourceRoomList?: string[], // 当前房间外矿列表
 	submitScoreRoom: string, // 赛季分数提交房间
 }
 interface RoomTask {
@@ -464,4 +467,5 @@ type BodyAutoConfigConstant =
 	'transfer' |
 	'transfer2Container' |
 	'transferScore2Storage' |
-	'transferScore2Collector'
+	'transferScore2Collector' |
+	'observer'

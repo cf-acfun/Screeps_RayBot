@@ -97,7 +97,7 @@ export default class EnergySource extends Singleton {
 
         // 判断当前房间是否有外矿，如果有外矿则进行外矿相关的处理
         if (room.memory.outSourceRooms.length) {
-            
+
             let room = Game.rooms[roomName];
             if (room.memory.outSourceRooms) {
                 let outSourceRoomName: string;
@@ -112,32 +112,50 @@ export default class EnergySource extends Singleton {
                             // 在harvestPos创建containerSite
                             let sites = outSourceRoom.lookForAt(LOOK_CONSTRUCTION_SITES, new RoomPosition(sourceMem.harvestPos.x, sourceMem.harvestPos.y, outSourceRoomName));
                             if (!sites.length) outSourceRoom.createConstructionSite(sourceMem.harvestPos.x, sourceMem.harvestPos.y, STRUCTURE_CONTAINER);
-                            // 绑定外矿爬
-                            if (room.memory.spawns?.length && !sourceMem.harvester) {
-                                let creepName = GenNonDuplicateID();
-                                App.spawn.run(source.room.name, Role.OutHarvester, creepName);
-                                sourceMem.harvester = creepName;
-                                return;
-                            }
-                            // 绑定外矿搬运者
-                            if (!sourceMem.carrier) {
-                                let creepName = GenNonDuplicateID();
-                                App.spawn.run(source.room.name, Role.RemoteCarryer, creepName);
-                                sourceMem.carrier = creepName;
-                                return;
-                            }
-
                         }
+
+
+                        // 绑定外矿爬
+                        if (room.memory.spawns?.length && !sourceMem.harvester) {
+                            let creepName = GenNonDuplicateID();
+                            App.spawn.run(room.name, Role.OutHarvester, creepName);
+                            sourceMem.harvester = creepName;
+                            return;
+                        }
+
+                        let harvester = Game.creeps[sourceMem.harvester];
+                        if (!harvester) {
+                            App.spawn.run(room.name, Role.OutHarvester, sourceMem.harvester);
+                            return;
+                        }
+
+                        if (!harvester.memory.targetSource) harvester.memory.targetSource = id as Id<Source>;
+                        // 绑定外矿爬负责房间
+                        if (!harvester.memory.outSourceRoom) harvester.memory.outSourceRoom = outSourceRoomName;
+                        // 绑定外矿爬负责的矿点
+                        if (!harvester.memory.targetSource) harvester.memory.targetSource = source.id;
+
+                        // 绑定外矿搬运者
+                        if (!sourceMem.carrier) {
+                            let creepName = GenNonDuplicateID();
+                            App.spawn.run(room.name, Role.RemoteCarryer, creepName);
+                            sourceMem.carrier = creepName;
+                            return;
+                        }
+
+                        let carrier = Game.creeps[sourceMem.carrier];
+                        if (!carrier) {
+                            App.spawn.run(room.name, Role.RemoteCarryer, sourceMem.carrier);
+                            return;
+                        }
+
+                        if (!carrier.memory.targetContainer && sourceMem.container) carrier.memory.targetContainer = sourceMem.container;
+                        if (!carrier.memory.outSourceRoom) carrier.memory.outSourceRoom = outSourceRoomName;
+
+                        // 绑定当前房间预定爬
+
+
                     }
-
-
-                    for (let i = 0; i < Object.keys(room.memory.outSourceRooms[outSourceRoomName]).length; i++) {
-                        let outSourceRoomMem = room.memory.outSourceRooms[outSourceRoomName][Object.keys(room.memory.outSourceRooms[outSourceRoomName])[i]];
-
-                        
-                    }
-                    
-
                 }
             }
         }

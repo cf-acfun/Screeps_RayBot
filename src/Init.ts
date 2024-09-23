@@ -18,7 +18,7 @@ export default class Init extends Singleton {
 
   public runInLoop() {
     // try {
-    TalkAll.run();
+    // TalkAll.run();
     if (Game.shard.name == "shard3" && Game.cpu.bucket < 100) return;
     if (Game.shard.name == "shard3") {
       // 默认关闭
@@ -400,7 +400,8 @@ export default class Init extends Singleton {
     for (let i = 0; i < this.rooms.length; i++) {
       let claimFlag = Game.flags[`${this.rooms[i]}_claim`];
       let atkClaimFlag = Game.flags[`${this.rooms[i]}_atkClaim`];
-      if (claimFlag || atkClaimFlag) global.cc[this.rooms[i]].claimer = 1;
+      let reserveFlag = Game.flags[`${this.rooms[i]}_reserve`];
+      if (claimFlag || atkClaimFlag || reserveFlag) global.cc[this.rooms[i]].claimer = 1;
       else {
         if (global.cc[this.rooms[i]]) global.cc[this.rooms[i]].claimer = 0;
       }

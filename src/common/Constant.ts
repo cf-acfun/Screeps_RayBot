@@ -33,6 +33,7 @@ export const Role = {
   Transfer2Container: 'transfer2Container',
   TransferScore2Storage: 'transferScore2Storage',
   TransferScore2Collector: 'transferScore2Collector',
+  Observer: 'observer',
 }
 
 export const GroupState = {
@@ -460,6 +461,16 @@ export const bodyConfigs: BodyConfigs = {
     { [CARRY]: 25, [MOVE]: 15 },
     { [CARRY]: 30, [MOVE]: 20 },
     { [CARRY]: 30, [MOVE]: 20 }
+  ),
+  observer: getBodyConfig(
+    { [MOVE]: 1 },
+    { [MOVE]: 1 },
+    { [MOVE]: 1 },
+    { [MOVE]: 1 },
+    { [MOVE]: 1 },
+    { [MOVE]: 1 },
+    { [MOVE]: 1 },
+    { [MOVE]: 1 },
   ),
 
 }

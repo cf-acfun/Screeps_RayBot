@@ -32,6 +32,7 @@ export default class MoveTo extends Singleton {
             case Role.Claimer: {
                 let target = Game.flags[`${roomFrom}_claim`];
                 let atkClaim = Game.flags[`${roomFrom}_atkClaim`];
+                let reserveFlag = Game.flags[`${roomFrom}_reserve`];
                 let transfer = Game.flags[`${roomFrom}_ts`];
                 if (transfer && !creep.memory.transferState) {
                     if (creep.room.name != transfer.pos.roomName) {
@@ -44,7 +45,7 @@ export default class MoveTo extends Singleton {
                 if (atkClaim) {
                     if (creep.room.name != atkClaim.pos.roomName) {
                         creep.customMove(atkClaim.pos);
-                        return
+                        return;
                     }
                     if (creep.attackController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                         creep.customMove(atkClaim.pos);
@@ -52,6 +53,19 @@ export default class MoveTo extends Singleton {
                     if (!creep.room.controller.reservation?.username) {
                         atkClaim.remove();
                         global.cc[creep.memory.roomFrom].claimer = 0;
+                    }
+                    return;
+                }
+                if (reserveFlag) {
+                    console.log(`time = [${Game.time}]开始进行预定 creep.room.name = [${creep.room.name}] reserveFlag.pos.roomName = [${reserveFlag.pos.roomName}]`);
+                    
+                    if (creep.room.name != reserveFlag.pos.roomName) {
+                        console.log(`move`);
+                        creep.customMove(reserveFlag.pos);
+                        return;
+                    }
+                    if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                        creep.customMove(reserveFlag.pos);
                     }
                     return;
                 }
@@ -209,108 +223,54 @@ export default class MoveTo extends Singleton {
             }
             case Role.OutHarvester: {
 
-                let target: RoomPosition;
-                if (creep.memory.targetSource) {
-                    
-                    target = creep.room.memory.sources[creep.memory.targetSource].harvestPos;
-                    creep.customMove(target, 0);
-                }
-                if (target) {
-                    if (App.common.getDis(creep.pos, target) == 1) {
-                        let other = creep.room.lookForAt(LOOK_CREEPS, target);
-                        if (other.length) other[0].suicide();
-                    }
-                    if (App.common.isPosEqual(creep.pos, target)) {
-                        App.common.setTime(creep);
-                        App.fsm.changeState(creep, State.Harvest)
-                    }
-                }
-
+                // 不在外矿房间则先移动到外矿房间
                 // 没有视野就先过去再插旗子
-                let targetRoom = creep.name.split('_')[2];
+                let targetRoom = creep.memory.outSourceRoom;
                 if (creep.room.name != targetRoom) {
                     creep.customMove(new RoomPosition(25, 25, targetRoom));
                     return;
                 }
                 // 从内存中读取矿点信息
-                
-
-                if (creep.store.getFreeCapacity() == 0) {
-                    App.fsm.changeState(creep, State.Back);
-                    return;
+                let target = Game.getObjectById(creep.memory.targetSource);
+                let sourceMem = Game.rooms[creep.memory.roomFrom].memory.outSourceRooms[creep.memory.outSourceRoom][target.id];
+                let structures = creep.room.lookForAt(LOOK_STRUCTURES, creep.pos).filter(e => e.structureType == STRUCTURE_CONTAINER);
+                if (creep.ticksToLive <= creep.memory.time + creep.body.length * 3) {
+                    if (sourceMem.harvester == creep.name) sourceMem.harvester = null;
                 }
-                // 如果房间中有分数优先收集分数
-                let containers = creep.room.find(FIND_SCORE_CONTAINERS);
-                if (creep.store.getFreeCapacity(RESOURCE_SCORE) > 0 && containers.length) {
-                    // 从最近的得分容器中收集分数
-                    if (creep.withdraw(containers[0] as Structure<StructureConstant>, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
-                        creep.moveTo(containers[0]);
-                        return;
-                    }
-                }
-                // TODO 目前只支持开采一个矿点，待优化开采双矿
-                let sourceFlag = Game.flags[creep.name];
-                if (sourceFlag) {
-                    if (creep.pos.roomName == sourceFlag.pos.roomName) {
-                        let source = creep.room.lookForAt(LOOK_SOURCES, sourceFlag)[0]
-                        if (source) {
-                            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                                creep.customMove(source.pos);
-                            }
-                        } else {
-                            sourceFlag.remove();
-                            return;
-                        }
-                    } else {
-                        creep.customMove(sourceFlag.pos);
-                    }
+                if (!Game.getObjectById(sourceMem.container)) {
+                    if (creep.store.energy >= 48) {
+                        if (!structures.length) {
+                            let sites = creep.room.lookForAt(LOOK_CONSTRUCTION_SITES, creep.pos);
+                            if (sites.length) creep.build(sites[0]);
+                            else creep.room.createConstructionSite(creep.pos.x, creep.pos.y, STRUCTURE_CONTAINER);
+                        } else sourceMem.container = structures[0].id as Id<StructureContainer>;
+                    } else creep.harvest(target);
+                } else {
+                    let container = Game.getObjectById(sourceMem.container);
+                    if (creep.store.energy >= 50 && container.hits / container.hitsMax < 1) creep.repair(container);
+                    else creep.harvest(target);
                 }
                 break;
             }
             case Role.RemoteCarryer: {
-                let targetRoom = creep.name.split('_')[2];
+                let targetRoom = creep.memory.outSourceRoom;
                 if (creep.room.name != targetRoom) {
                     creep.customMove(new RoomPosition(25, 25, targetRoom));
                     return;
                 }
 
-                if (creep.store.getUsedCapacity() > 0) {
-                    // 判断有无需要修复的建筑，主要是container
-                    let needRepair = creep.room.find(FIND_STRUCTURES, {
-                        filter: (s: StructureContainer) =>
-                            (s.structureType === STRUCTURE_CONTAINER) && s.hits < 100000
-                    });
 
-                    if (needRepair) {
-                        if (creep.repair(needRepair[0]) === ERR_NOT_IN_RANGE) {
-                            creep.moveTo(needRepair[0], { visualizePathStyle: { stroke: '#32CD32' } });
-                            return;
-                        }
-                    } else if (creep.store.getFreeCapacity() > 0) {
-                        const containers = creep.room.find(FIND_STRUCTURES, {
-                            filter: (structure) => structure.structureType === STRUCTURE_CONTAINER && structure.store.getUsedCapacity() > 0
-                        });
-                        if (containers) {
-                            if (creep.withdraw(containers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                                creep.customMove(containers[0].pos);
-                                return;
-                            }
-                        }
-                    } else {
-                        App.fsm.changeState(creep, State.Back);
-                        return;
-                    }
-                }
-                if (creep.pos.roomName == targetRoom) {
-                    const containers = creep.room.find(FIND_STRUCTURES, {
-                        filter: (structure) => structure.structureType === STRUCTURE_CONTAINER && structure.store.getUsedCapacity() > 500
-                    });
-                    if (containers) {
-                        if (creep.withdraw(containers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                            creep.customMove(containers[0].pos);
+                if (creep.store.getFreeCapacity() > 0) {
+                    const container = Game.getObjectById(creep.memory.targetContainer);
+                    if (container) {
+                        if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                            creep.customMove(container.pos);
                             return;
                         }
                     }
+                } else {
+                    App.fsm.changeState(creep, State.Back);
+                    return;
                 }
 
                 break;
