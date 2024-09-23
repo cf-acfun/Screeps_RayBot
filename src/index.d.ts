@@ -347,7 +347,16 @@ interface RoomMemory {
 	customRampartSites?: RoomPosition[],
 	energyOrder?: string,	// 能量购买订单
 	nuker: Id<StructureNuker>,
-	outMineRooms: string[], // 外矿房间列表
+	outSourceRooms?: {
+		[roomName: string]: {
+			[id: string]: {
+				harvester: string,
+				container: Id<StructureContainer>,
+				carrier: string,
+				harvestPos?: RoomPosition,
+			}
+		}
+	}, 
 	submitScoreRoom: string, // 赛季分数提交房间
 }
 interface RoomTask {

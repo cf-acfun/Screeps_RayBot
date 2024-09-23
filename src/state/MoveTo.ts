@@ -214,6 +214,9 @@ export default class MoveTo extends Singleton {
                     creep.customMove(new RoomPosition(25, 25, targetRoom));
                     return;
                 }
+                // 从内存中读取矿点信息
+                
+
                 if (creep.store.getFreeCapacity() == 0) {
                     App.fsm.changeState(creep, State.Back);
                     return;

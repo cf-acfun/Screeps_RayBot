@@ -94,5 +94,45 @@ export default class EnergySource extends Singleton {
                 }
             }
         }
+
+        // 判断当前房间是否有外矿，如果有外矿则进行外矿相关的处理
+        if (room.memory.outSourceRooms.length) {
+            
+            let room = Game.rooms[roomName];
+            if (room.memory.outSourceRooms) {
+                let outSourceRoomName: string;
+                for (outSourceRoomName in room.memory.outSourceRooms) {
+
+                    for (let id in room.memory.outSourceRooms[outSourceRoomName]) {
+                        let sourceMem = room.memory.outSourceRooms[outSourceRoomName][id];
+                        let source = Game.getObjectById(id as Id<Source>);
+                        let outSourceRoom = Game.rooms[outSourceRoomName];
+                        if (!sourceMem.harvestPos) sourceMem.harvestPos = App.common.getPosNear(source.pos);
+                        if (!Game.getObjectById(sourceMem.container)) {
+                            // 在harvestPos创建containerSite
+                            let sites = outSourceRoom.lookForAt(LOOK_CONSTRUCTION_SITES, new RoomPosition(sourceMem.harvestPos.x, sourceMem.harvestPos.y, outSourceRoomName));
+                            if (!sites.length) outSourceRoom.createConstructionSite(sourceMem.harvestPos.x, sourceMem.harvestPos.y, STRUCTURE_CONTAINER);
+                            // 绑定外矿爬
+                            if (room.memory.spawns?.length && !sourceMem.harvester) {
+                                let creepName = GenNonDuplicateID();
+                                App.spawn.run(source.room.name, Role.OutHarvester, creepName);
+                                sourceMem.harvester = creepName;
+                                return;
+                            }
+
+                        }
+                    }
+
+
+                    for (let i = 0; i < Object.keys(room.memory.outSourceRooms[outSourceRoomName]).length; i++) {
+                        let outSourceRoomMem = room.memory.outSourceRooms[outSourceRoomName][Object.keys(room.memory.outSourceRooms[outSourceRoomName])[i]];
+
+                        
+                    }
+                    
+
+                }
+            }
+        }
     }
 }

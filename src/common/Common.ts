@@ -392,6 +392,46 @@ export default class Common extends Singleton {
         }
     }
 
+    /**
+     * 获取外矿相关配置
+     * @param roomName 
+     */
+    public getOutSources(roomName: string) {
+        let room = Game.rooms[roomName];
+        // TODO 获取外矿信息待优化
+        if (!room.memory.outSourceRooms) room.memory.outSourceRooms = {};
+        // 遍历当前房间外矿并进行初始化
+        if (room.memory.outSourceRooms.length) {
+            console.log(`当前房间有[${room.memory.outSourceRooms.length}]个外矿,外矿房间为[${room.memory.outSourceRooms}]`);
+            let outSourceRoomName: string;
+            for (outSourceRoomName in room.memory.outSourceRooms) {
+                let outSourceRoom = Game.rooms[outSourceRoomName];
+                console.log(`当前外矿房间名称[${outSourceRoomName}]`);
+                // 判断有无视野: 主房等级小于8则派出侦查爬,等级为8则使用Observe
+                if (room.controller.level < 8 && !outSourceRoom) {
+                    // TODO 派出侦查爬 待实现
+                    console.log(`当前外矿房间没有视野`);
+
+                } else if (!outSourceRoom && room.controller.level == 8 && room.memory.observer) {
+                    // TODO 房间中有Observe时使用Observe提供视野
+                } else if (outSourceRoom) {
+                    // 有视野开始内存初始化
+                    if (!room.memory.outSourceRooms[outSourceRoomName]) {
+                        room.memory.outSourceRooms[outSourceRoomName] = {};
+                    }
+                    outSourceRoom.find(FIND_SOURCES).forEach(e => {
+                        room.memory.outSourceRooms[outSourceRoomName][e.id] = {
+                            harvester: null,
+				            container: null,
+				            carrier: null,
+				            harvestPos: null
+                        }
+                    });
+                }
+            }
+        }
+    }
+
     public getMineral(roomName: string) {
         let room = Game.rooms[roomName];
         if (!room.memory.mineral) {
