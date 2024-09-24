@@ -11,7 +11,11 @@ export default class MoveTo extends Singleton {
             case Role.Harvester: {
                 let target: RoomPosition;
                 if (creep.memory.targetMineral) {
-                    target = creep.room.memory.mineral.harvestPos;
+                    if (creep.room.name != creep.memory.roomFrom) {
+                        target = new RoomPosition(creep.memory.moveTarget.x, creep.memory.moveTarget.y, creep.memory.moveTarget.roomName);
+                    } else {
+                        target = creep.room.memory.mineral.harvestPos;
+                    }
                     creep.customMove(target, 0);
                 } else if (creep.memory.targetSource) {
                     target = creep.room.memory.sources[creep.memory.targetSource].harvestPos;
