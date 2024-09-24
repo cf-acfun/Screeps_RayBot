@@ -539,7 +539,7 @@ export default class Withdraw extends Singleton {
                         }
                     }
                     // TODO 冲级模式待优化，暂时个性化写一下
-                    if (terminal && terminal?.store.energy && terminal.room.name == 'W45S59') {
+                    if (terminal && terminal?.store.energy && terminal.room.name == 'W51S59') {
                         App.common.getResourceFromTargetStructure(creep, terminal);
                         if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.Upgrade);
                         return;
