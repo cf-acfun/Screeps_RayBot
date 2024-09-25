@@ -94,7 +94,7 @@ export default class Init extends Singleton {
     if (!Memory.whiteList) Memory.whiteList = [];
     for (let i = 0; i < rooms.length; i++) {
       App.common.getSources(rooms[i]);
-      App.common.getOutSources(rooms[i]);
+      // App.common.getOutSources(rooms[i]);
       App.common.getMineral(rooms[i]);
       App.common.getStructrues(rooms[i]);
       App.common.getcontrollerContainerId(rooms[i]);
