@@ -95,6 +95,30 @@ export default class EnergySource extends Singleton {
             }
         }
 
+
+        // 检测当前房间是否挂载了外矿
+        if (!room.memory.outSourceRoomList) room.memory.outSourceRoomList = {};
+        if (room.memory.outSourceRoomList) {
+            console.log(`当前房间[${room.name}]外矿列表为[${room.memory.outSourceRoomList}]`);
+            for (let roomName in room.memory.outSourceRoomList) {
+                let observer = room.memory.outSourceRoomList[roomName].observer;
+                if (!Game.rooms[roomName] && !observer) {
+                    console.log(`当前房间没有视野排出侦查爬`);
+                    let creepName = GenNonDuplicateID();
+                    App.spawn.run(room.name, Role.Observer, creepName);
+                    observer = creepName;
+                    return;
+                } else if (!Game.rooms[roomName] && observer) {
+                    Game.creeps[observer].memory.outSourceRoom = roomName;
+                    return;
+                } else if (Game.rooms[roomName] && !room.memory.outSourceRooms[roomName]){
+                    console.log(`当前房间有视野开始外矿内存初始化`);
+                    App.common.getOutSources(roomName);
+                    console.log(`[${room.name}]外矿[${roomName}]挂载成功`);
+                }
+            }
+        }
+
         // 判断当前房间是否有外矿，如果有外矿则进行外矿相关的处理
         if (room.memory.outSourceRooms.length) {
 

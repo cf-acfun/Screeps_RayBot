@@ -400,7 +400,6 @@ export default class Common extends Singleton {
         let room = Game.rooms[roomName];
         // TODO 获取外矿信息待优化
         if (!room.memory.outSourceRooms) room.memory.outSourceRooms = {};
-        if (!room.memory.outSourceRoomList) room.memory.outSourceRoomList = [];
         // 遍历当前房间外矿并进行初始化
         if (room.memory.outSourceRoomList.length) {
             console.log(`当前房间有[${room.memory.outSourceRoomList.length}]个外矿,外矿房间为[${room.memory.outSourceRoomList}]`);

@@ -300,6 +300,14 @@ export default class MoveTo extends Singleton {
                 }
                 break;
             }
+            case Role.Observer: {
+                let targetRoom = creep.memory.outSourceRoom;
+                if (creep.room.name != targetRoom) {
+                    creep.customMove(new RoomPosition(25, 25, targetRoom));
+                    return;
+                }
+                break;
+            }
         }
     }
 

@@ -132,6 +132,8 @@ export default class FsmControl extends FsmSystem {
         break;
       case Role.TransferScore2Collector: creep.memory.state = State.TransferScoreToCollector;
         break;
+      case Role.Observer: creep.memory.state = State.MoveTo;
+        break;
     }
   }
 

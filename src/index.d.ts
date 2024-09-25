@@ -359,7 +359,11 @@ interface RoomMemory {
 			}
 		}
 	}, 
-	outSourceRoomList?: string[], // 当前房间外矿列表
+	outSourceRoomList?: {
+		[roomName: string]: {
+			observer: string
+		}
+	}, // 当前房间外矿列表
 	submitScoreRoom: string, // 赛季分数提交房间
 }
 interface RoomTask {
