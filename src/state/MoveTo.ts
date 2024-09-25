@@ -288,7 +288,7 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.RemoteReserver: {
-                
+
                 let targetRoom = creep.memory.outSourceRoom;
                 if (creep.room.name != targetRoom) {
                     creep.customMove(new RoomPosition(25, 25, targetRoom));
@@ -296,6 +296,15 @@ export default class MoveTo extends Singleton {
                 }
 
                 if (creep.room.name == targetRoom) {
+
+                    // TODO 寻找Keeper,增加防御功能
+                    let keeper = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, {
+                        filter: (creep) => {
+                            return creep.owner.username == 'Source Keeper' || creep.owner.username == 'Invader'
+                        }
+                    });
+                    console.log(`当前房间[${creep.room.name}] 存在keeper[${keeper.name}]`);
+                    
                     if (creep.room.controller && !creep.room.controller.my) {
                         if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                             creep.moveTo(creep.room.controller, { visualizePathStyle: { stroke: '#ffffff' } });

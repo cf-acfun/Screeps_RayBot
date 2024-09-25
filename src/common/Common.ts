@@ -418,6 +418,7 @@ export default class Common extends Singleton {
                             harvester: null,
 				            container: null,
 				            carrier: null,
+                            carrier1: null,
 				            harvestPos: null,
                             reserver: null
                         }
