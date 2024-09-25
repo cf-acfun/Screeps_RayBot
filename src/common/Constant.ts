@@ -287,10 +287,10 @@ export const bodyConfigs: BodyConfigs = {
     { [WORK]: 2, [CARRY]: 2, [MOVE]: 5 },
     { [WORK]: 2, [CARRY]: 2, [MOVE]: 6 },
     { [WORK]: 4, [CARRY]: 2, [MOVE]: 6 },
-    { [WORK]: 8, [CARRY]: 2, [MOVE]: 10 },
-    { [WORK]: 8, [CARRY]: 2, [MOVE]: 10 },
-    { [WORK]: 8, [CARRY]: 2, [MOVE]: 10 },
-    { [WORK]: 8, [CARRY]: 2, [MOVE]: 10 }
+    { [WORK]: 5, [CARRY]: 2, [MOVE]: 7 },
+    { [WORK]: 5, [CARRY]: 2, [MOVE]: 7 },
+    { [WORK]: 5, [CARRY]: 2, [MOVE]: 7 },
+    { [WORK]: 5, [CARRY]: 2, [MOVE]: 7 }
   ),
   remoteHarvester: getBodyConfig(
     { [WORK]: 7, [CARRY]: 1, [MOVE]: 4 },
