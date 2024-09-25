@@ -407,14 +407,8 @@ export default class Common extends Singleton {
             for (outSourceRoomName in room.memory.outSourceRoomList) {
                 let outSourceRoom = Game.rooms[outSourceRoomName];
                 console.log(`当前外矿房间名称[${outSourceRoomName}] 外矿房间为[${outSourceRoomName}]`);
-                // 判断有无视野: 主房等级小于8则派出侦查爬,等级为8则使用Observe
-                if (room.controller.level < 8 && !outSourceRoom) {
-                    // TODO 派出侦查爬 待实现
-                    console.log(`当前外矿房间没有视野`);
-
-                } else if (!outSourceRoom && room.controller.level == 8 && room.memory.observer) {
-                    // TODO 房间中有Observe时使用Observe提供视野
-                } else if (outSourceRoom) {
+                // 判断有无视野
+                if (outSourceRoom) {
                     // 有视野开始内存初始化
                     if (!room.memory.outSourceRooms[outSourceRoomName]) {
                         room.memory.outSourceRooms[outSourceRoomName] = {};
