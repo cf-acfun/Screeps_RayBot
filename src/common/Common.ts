@@ -397,12 +397,12 @@ export default class Common extends Singleton {
      * @param roomName 
      */
     public getOutSources(roomName: string) {
+        // roomName 为主房间名称
         let room = Game.rooms[roomName];
-        // TODO 获取外矿信息待优化
         if (!room.memory.outSourceRooms) room.memory.outSourceRooms = {};
         // 遍历当前房间外矿并进行初始化
-        if (room.memory.outSourceRoomList.length) {
-            console.log(`当前房间有[${room.memory.outSourceRoomList.length}]个外矿,外矿房间为[${room.memory.outSourceRoomList}]`);
+        if (Object.keys(room.memory.outSourceRoomList).length != 0) {
+            console.log(`当前房间有[${Object.keys(room.memory.outSourceRoomList).length}]个外矿,外矿房间为[${Object.keys(room.memory.outSourceRoomList)}]`);
             let outSourceRoomName: string;
             for (outSourceRoomName in room.memory.outSourceRoomList) {
                 let outSourceRoom = Game.rooms[outSourceRoomName];
@@ -418,7 +418,8 @@ export default class Common extends Singleton {
                             harvester: null,
 				            container: null,
 				            carrier: null,
-				            harvestPos: null
+				            harvestPos: null,
+                            reserver: null
                         }
                     });
                 }

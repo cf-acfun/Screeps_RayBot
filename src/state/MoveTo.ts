@@ -62,7 +62,7 @@ export default class MoveTo extends Singleton {
                 }
                 if (reserveFlag) {
                     console.log(`time = [${Game.time}]开始进行预定 creep.room.name = [${creep.room.name}] reserveFlag.pos.roomName = [${reserveFlag.pos.roomName}]`);
-                    
+
                     if (creep.room.name != reserveFlag.pos.roomName) {
                         console.log(`move`);
                         creep.customMove(reserveFlag.pos);
@@ -248,11 +248,20 @@ export default class MoveTo extends Singleton {
                             if (sites.length) creep.build(sites[0]);
                             else creep.room.createConstructionSite(creep.pos.x, creep.pos.y, STRUCTURE_CONTAINER);
                         } else sourceMem.container = structures[0].id as Id<StructureContainer>;
-                    } else creep.harvest(target);
+                    } else {
+                        if (creep.harvest(target) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(target.pos);
+                        }
+                    }
                 } else {
                     let container = Game.getObjectById(sourceMem.container);
-                    if (creep.store.energy >= 50 && container.hits / container.hitsMax < 1) creep.repair(container);
-                    else creep.harvest(target);
+                    if (creep.store.energy >= 50 && container.hits / container.hitsMax < 1) {
+                        creep.repair(container);
+                    } else {
+                        if (creep.harvest(target) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(target.pos);
+                        }
+                    }
                 }
                 break;
             }
@@ -262,7 +271,6 @@ export default class MoveTo extends Singleton {
                     creep.customMove(new RoomPosition(25, 25, targetRoom));
                     return;
                 }
-
 
                 if (creep.store.getFreeCapacity() > 0) {
                     const container = Game.getObjectById(creep.memory.targetContainer);
@@ -279,22 +287,18 @@ export default class MoveTo extends Singleton {
 
                 break;
             }
-            case Role.Reserver: {
-                // 没有视野就先过去
-                let targetRoom = creep.name.split('_')[1];
+            case Role.RemoteReserver: {
+                
+                let targetRoom = creep.memory.outSourceRoom;
                 if (creep.room.name != targetRoom) {
                     creep.customMove(new RoomPosition(25, 25, targetRoom));
                     return;
                 }
 
-                // TODO 待优化开采双矿, 增加挖运分离
-                let sourceFlag = Game.flags[creep.name];
-                if (sourceFlag) {
-                    if (creep.pos.roomName == sourceFlag.pos.roomName) {
-                        if (creep.room.controller && !creep.room.controller.my) {
-                            if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                                creep.moveTo(creep.room.controller, { visualizePathStyle: { stroke: '#ffffff' } });
-                            }
+                if (creep.room.name == targetRoom) {
+                    if (creep.room.controller && !creep.room.controller.my) {
+                        if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(creep.room.controller, { visualizePathStyle: { stroke: '#ffffff' } });
                         }
                     }
                 }
@@ -305,6 +309,8 @@ export default class MoveTo extends Singleton {
                 if (creep.room.name != targetRoom) {
                     creep.customMove(new RoomPosition(25, 25, targetRoom));
                     return;
+                } else {
+                    creep.customMove(new RoomPosition(25, 25, targetRoom));
                 }
                 break;
             }

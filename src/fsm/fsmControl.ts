@@ -134,6 +134,8 @@ export default class FsmControl extends FsmSystem {
         break;
       case Role.Observer: creep.memory.state = State.MoveTo;
         break;
+      case Role.RemoteReserver: creep.memory.state = State.MoveTo;
+        break;
     }
   }
 

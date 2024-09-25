@@ -356,6 +356,7 @@ interface RoomMemory {
 				container: Id<StructureContainer>,
 				carrier: string,
 				harvestPos?: RoomPosition,
+				reserver: string,
 			}
 		}
 	}, 
