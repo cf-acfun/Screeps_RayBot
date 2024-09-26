@@ -273,13 +273,24 @@ export default class MoveTo extends Singleton {
                 }
 
                 if (creep.store.getFreeCapacity() > 0) {
-                    const container = Game.getObjectById(creep.memory.targetContainer);
-                    if (container) {
-                        if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                            creep.customMove(container.pos);
+                    let drop = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
+                        filter: (d) => d.amount >= 100 && d.resourceType == 'energy'
+                    })
+                    if (drop) {
+                        if (creep.pickup(drop) == ERR_NOT_IN_RANGE) {
+                            creep.customMove(drop.pos);
                             return;
                         }
+                    } else {
+                        const container = Game.getObjectById(creep.memory.targetContainer);
+                        if (container) {
+                            if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                                creep.customMove(container.pos);
+                                return;
+                            }
+                        }
                     }
+
                 } else {
                     App.fsm.changeState(creep, State.Back);
                     return;
@@ -306,7 +317,7 @@ export default class MoveTo extends Singleton {
                     // if (keeper) {
                     //     console.log(`当前房间[${creep.room.name}] 存在keeper[${keeper.name}]`);
                     // }
-                    
+
                     if (creep.room.controller && !creep.room.controller.my) {
                         if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                             creep.moveTo(creep.room.controller, { visualizePathStyle: { stroke: '#ffffff' } });

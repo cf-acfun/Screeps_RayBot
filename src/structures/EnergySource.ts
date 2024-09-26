@@ -179,21 +179,21 @@ export default class EnergySource extends Singleton {
                     if (!carrier.memory.outSourceRoom) carrier.memory.outSourceRoom = outSourceRoomName;
 
                     // TODO carrier数量待优化
-                    if (!sourceMem.carrier1) {
-                        let creepName = GenNonDuplicateID();
-                        App.spawn.run(room.name, Role.RemoteCarryer, creepName);
-                        sourceMem.carrier1 = creepName;
-                        return;
-                    }
+                    // if (!sourceMem.carrier1) {
+                    //     let creepName = GenNonDuplicateID();
+                    //     App.spawn.run(room.name, Role.RemoteCarryer, creepName);
+                    //     sourceMem.carrier1 = creepName;
+                    //     return;
+                    // }
 
-                    let carrier1 = Game.creeps[sourceMem.carrier1];
-                    if (!carrier1) {
-                        App.spawn.run(room.name, Role.RemoteCarryer, sourceMem.carrier1);
-                        return;
-                    }
+                    // let carrier1 = Game.creeps[sourceMem.carrier1];
+                    // if (!carrier1) {
+                    //     App.spawn.run(room.name, Role.RemoteCarryer, sourceMem.carrier1);
+                    //     return;
+                    // }
 
-                    if (!carrier1.memory.targetContainer && sourceMem.container) carrier1.memory.targetContainer = sourceMem.container;
-                    if (!carrier1.memory.outSourceRoom) carrier1.memory.outSourceRoom = outSourceRoomName;
+                    // if (!carrier1.memory.targetContainer && sourceMem.container) carrier1.memory.targetContainer = sourceMem.container;
+                    // if (!carrier1.memory.outSourceRoom) carrier1.memory.outSourceRoom = outSourceRoomName;
 
                     // 绑定当前房间预定爬
                     if (!sourceMem.reserver) {
