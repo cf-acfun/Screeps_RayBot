@@ -284,7 +284,7 @@ export default class MoveTo extends Singleton {
                         }
                     } else {
                         const container = Game.getObjectById(creep.memory.targetContainer);
-                        if (container) {
+                        if (container && container.store[RESOURCE_ENERGY] > 0) {
                             if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                                 creep.customMove(container.pos);
                                 return;
