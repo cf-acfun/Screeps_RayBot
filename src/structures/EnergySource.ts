@@ -160,6 +160,7 @@ export default class EnergySource extends Singleton {
                     if (!harvester.memory.outSourceRoom) harvester.memory.outSourceRoom = outSourceRoomName;
                     // 绑定外矿爬负责的矿点
                     if (!harvester.memory.targetSource) harvester.memory.targetSource = source.id;
+                    if (!harvester.memory.targetPos) harvester.memory.targetPos = sourceMem.harvestPos;
 
                     // 绑定外矿搬运者
                     if (!sourceMem.carrier) {

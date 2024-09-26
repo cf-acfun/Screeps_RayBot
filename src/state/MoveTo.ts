@@ -241,6 +241,7 @@ export default class MoveTo extends Singleton {
                 if (creep.ticksToLive <= creep.memory.time + creep.body.length * 3) {
                     if (sourceMem.harvester == creep.name) sourceMem.harvester = null;
                 }
+                if (!creep.memory.targetPos) creep.memory.targetPos = sourceMem.harvestPos;
                 if (!Game.getObjectById(sourceMem.container)) {
                     if (creep.store.energy >= 48) {
                         if (!structures.length) {
@@ -250,7 +251,7 @@ export default class MoveTo extends Singleton {
                         } else sourceMem.container = structures[0].id as Id<StructureContainer>;
                     } else {
                         if (creep.harvest(target) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(target.pos);
+                            creep.customMove(creep.memory.targetPos, 0);
                         }
                     }
                 } else {
@@ -259,7 +260,7 @@ export default class MoveTo extends Singleton {
                         creep.repair(container);
                     } else {
                         if (creep.harvest(target) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(target.pos);
+                            creep.customMove(creep.memory.targetPos, 0);
                         }
                     }
                 }
@@ -320,7 +321,7 @@ export default class MoveTo extends Singleton {
 
                     if (creep.room.controller && !creep.room.controller.my) {
                         if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(creep.room.controller, { visualizePathStyle: { stroke: '#ffffff' } });
+                            creep.customMove(creep.room.controller.pos);
                         }
                     }
                 }
