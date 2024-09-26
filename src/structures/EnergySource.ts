@@ -108,6 +108,10 @@ export default class EnergySource extends Singleton {
                     room.memory.outSourceRoomList[roomName].observer = creepName;
                     return;
                 } else if (!Game.rooms[roomName] && observer) {
+                    if (!Game.creeps[observer]) {
+                        App.spawn.run(room.name, Role.Observer, observer);
+                        return;
+                    }
                     Game.creeps[observer].memory.outSourceRoom = roomName;
                     return;
                 } else if (Game.rooms[roomName] && !room.memory.outSourceRooms[roomName]) {
