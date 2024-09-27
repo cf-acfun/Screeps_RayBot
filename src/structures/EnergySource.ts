@@ -133,7 +133,10 @@ export default class EnergySource extends Singleton {
                     let sourceMem = room.memory.outSourceRooms[outSourceRoomName][id];
                     let source = Game.getObjectById(id as Id<Source>);
                     let outSourceRoom = Game.rooms[outSourceRoomName];
-                    if (!sourceMem.harvestPos) sourceMem.harvestPos = App.common.getPosNear(source.pos);
+                    if (!sourceMem.harvestPos) {
+                        // TODO 查找是否有container，有container则将container的pos作为开采点
+                        sourceMem.harvestPos = App.common.getPosNear(source.pos);
+                    }
                     if (!Game.getObjectById(sourceMem.container)) {
                         // 在harvestPos创建containerSite
                         let sites = outSourceRoom.lookForAt(LOOK_CONSTRUCTION_SITES, new RoomPosition(sourceMem.harvestPos.x, sourceMem.harvestPos.y, outSourceRoomName));
