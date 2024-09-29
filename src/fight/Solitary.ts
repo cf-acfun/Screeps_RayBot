@@ -19,6 +19,7 @@ const bodys = {
 	'RA': { [RANGED_ATTACK]: 10, [MOVE]: 10 },
 	'W': { [WORK]: 18, [MOVE]: 10 },
 	'B-W-40': { [WORK]: 40, [MOVE]: 10 },
+	'W-5': { [WORK]: 5, [MOVE]: 5 },
 	'A': { [ATTACK]: 10, [MOVE]: 10 },
 	'C': { [CLAIM]: 19, [MOVE]: 24 },
 	'R': { [CLAIM]: 4, [MOVE]: 4 },

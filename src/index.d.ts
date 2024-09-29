@@ -357,13 +357,12 @@ interface RoomMemory {
 				carrier: string,
 				carrier1: string,
 				harvestPos?: RoomPosition,
-				reserver: string,
 			}
 		}
 	}, 
 	outSourceRoomList?: {
 		[roomName: string]: {
-			observer: string
+			reserver: string,
 		}
 	}, // 当前房间外矿列表
 	submitScoreRoom: string, // 赛季分数提交房间

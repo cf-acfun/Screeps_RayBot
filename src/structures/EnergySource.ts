@@ -100,21 +100,17 @@ export default class EnergySource extends Singleton {
         if (!room.memory.outSourceRoomList) room.memory.outSourceRoomList = {};
         if (Object.keys(room.memory.outSourceRoomList).length != 0) {
             for (let roomName in room.memory.outSourceRoomList) {
-                if (!room.memory.outSourceRoomList[roomName].observer) room.memory.outSourceRoomList[roomName] = { observer : null};
-                let observer = room.memory.outSourceRoomList[roomName].observer;
-                if (!Game.rooms[roomName] && !observer) {
+                if (!room.memory.outSourceRoomList[roomName].reserver) room.memory.outSourceRoomList[roomName] = { reserver : null};
+                let reserver = room.memory.outSourceRoomList[roomName].reserver;
+                if (!Game.creeps[reserver]) {
                     let creepName = GenNonDuplicateID();
-                    App.spawn.run(room.name, Role.Observer, creepName);
-                    room.memory.outSourceRoomList[roomName].observer = creepName;
+                    App.spawn.run(room.name, Role.RemoteReserver, creepName);
+                    room.memory.outSourceRoomList[roomName].reserver = creepName;
                     return;
-                } else if (!Game.rooms[roomName] && observer) {
-                    if (!Game.creeps[observer]) {
-                        App.spawn.run(room.name, Role.Observer, observer);
-                        return;
-                    }
-                    Game.creeps[observer].memory.outSourceRoom = roomName;
-                    return;
-                } else if (Game.rooms[roomName] && !room.memory.outSourceRooms[roomName]) {
+                } else if (Game.creeps[reserver]) {
+                    Game.creeps[reserver].memory.outSourceRoom = roomName;
+                }
+                if (Game.rooms[roomName] && !room.memory.outSourceRooms[roomName]) {
                     App.common.getOutSources(room.name);
                     console.log(`[${room.name}]外矿[${roomName}]挂载成功`);
                 }
@@ -134,8 +130,16 @@ export default class EnergySource extends Singleton {
                     let source = Game.getObjectById(id as Id<Source>);
                     let outSourceRoom = Game.rooms[outSourceRoomName];
                     if (!sourceMem.harvestPos) {
-                        // TODO 查找是否有container，有container则将container的pos作为开采点
-                        sourceMem.harvestPos = App.common.getPosNear(source.pos);
+                        // 查找source附近是否有container，有container则将container的pos作为开采点
+                        let containers = source.pos.findInRange(FIND_STRUCTURES, 3, {
+                            filter: (structure) => structure.structureType === STRUCTURE_CONTAINER
+                        });
+                        if (containers.length > 0) {
+                            console.log(`当前房间[${containers[0].pos.roomName}], container[${containers[0].id}]`);
+                            sourceMem.harvestPos = new RoomPosition(containers[0].pos.x, containers[0].pos.y, containers[0].pos.roomName);
+                        } else {
+                            sourceMem.harvestPos = App.common.getPosNear(source.pos);
+                        }
                     }
                     if (!Game.getObjectById(sourceMem.container)) {
                         // 在harvestPos创建containerSite
@@ -163,7 +167,18 @@ export default class EnergySource extends Singleton {
                     if (!harvester.memory.outSourceRoom) harvester.memory.outSourceRoom = outSourceRoomName;
                     // 绑定外矿爬负责的矿点
                     if (!harvester.memory.targetSource) harvester.memory.targetSource = source.id;
-                    if (!harvester.memory.targetPos) harvester.memory.targetPos = sourceMem.harvestPos;
+                    if (!harvester.memory.targetPos) {
+
+                        let containers = source.pos.findInRange(FIND_STRUCTURES, 3, {
+                            filter: (structure) => structure.structureType === STRUCTURE_CONTAINER
+                        });
+                        if (containers.length > 0) {
+                            console.log(`当前房间[${containers[0].pos.roomName}], container[${containers[0].id}]`);
+                            harvester.memory.targetPos = new RoomPosition(containers[0].pos.x, containers[0].pos.y, containers[0].pos.roomName);
+                        } else {
+                            harvester.memory.targetPos = sourceMem.harvestPos;
+                        }
+                    }
 
                     // 绑定外矿搬运者
                     if (!sourceMem.carrier) {
@@ -181,39 +196,6 @@ export default class EnergySource extends Singleton {
 
                     if (!carrier.memory.targetContainer && sourceMem.container) carrier.memory.targetContainer = sourceMem.container;
                     if (!carrier.memory.outSourceRoom) carrier.memory.outSourceRoom = outSourceRoomName;
-
-                    // TODO carrier数量待优化
-                    // if (!sourceMem.carrier1) {
-                    //     let creepName = GenNonDuplicateID();
-                    //     App.spawn.run(room.name, Role.RemoteCarryer, creepName);
-                    //     sourceMem.carrier1 = creepName;
-                    //     return;
-                    // }
-
-                    // let carrier1 = Game.creeps[sourceMem.carrier1];
-                    // if (!carrier1) {
-                    //     App.spawn.run(room.name, Role.RemoteCarryer, sourceMem.carrier1);
-                    //     return;
-                    // }
-
-                    // if (!carrier1.memory.targetContainer && sourceMem.container) carrier1.memory.targetContainer = sourceMem.container;
-                    // if (!carrier1.memory.outSourceRoom) carrier1.memory.outSourceRoom = outSourceRoomName;
-
-                    // 绑定当前房间预定爬
-                    if (!sourceMem.reserver) {
-                        let creepName = GenNonDuplicateID();
-                        App.spawn.run(room.name, Role.RemoteReserver, creepName);
-                        sourceMem.reserver = creepName;
-                        return;
-                    }
-
-                    let remoteReserver = Game.creeps[sourceMem.reserver];
-                    if (!remoteReserver) {
-                        App.spawn.run(room.name, Role.RemoteReserver, sourceMem.reserver);
-                        return;
-                    }
-                    if (!remoteReserver.memory.outSourceRoom) remoteReserver.memory.outSourceRoom = outSourceRoomName;
-                    
                 }
             }
         }

@@ -420,7 +420,6 @@ export default class Common extends Singleton {
 				            carrier: null,
                             carrier1: null,
 				            harvestPos: null,
-                            reserver: null
                         }
                     });
                 }

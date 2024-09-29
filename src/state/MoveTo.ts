@@ -231,7 +231,7 @@ export default class MoveTo extends Singleton {
                 // 没有视野就先过去再插旗子
                 let targetRoom = creep.memory.outSourceRoom;
                 if (creep.room.name != targetRoom) {
-                    creep.customMove(new RoomPosition(25, 25, targetRoom));
+                    creep.customMove(new RoomPosition(creep.memory.targetPos.x, creep.memory.targetPos.y, targetRoom));
                     return;
                 }
                 // 从内存中读取矿点信息
@@ -268,8 +268,13 @@ export default class MoveTo extends Singleton {
             }
             case Role.RemoteCarryer: {
                 let targetRoom = creep.memory.outSourceRoom;
+                const container = Game.getObjectById(creep.memory.targetContainer);
                 if (creep.room.name != targetRoom) {
-                    creep.customMove(new RoomPosition(25, 25, targetRoom));
+                    if (container) {
+                        creep.customMove(new RoomPosition(container.pos.x, container.pos.y, targetRoom));
+                    } else {
+                        creep.customMove(new RoomPosition(25, 25, targetRoom));
+                    }
                     return;
                 }
 
@@ -283,7 +288,6 @@ export default class MoveTo extends Singleton {
                             return;
                         }
                     } else {
-                        const container = Game.getObjectById(creep.memory.targetContainer);
                         if (container && container.store[RESOURCE_ENERGY] > 0) {
                             if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                                 creep.customMove(container.pos);
@@ -301,13 +305,18 @@ export default class MoveTo extends Singleton {
             }
             case Role.RemoteReserver: {
 
-                let targetRoom = creep.memory.outSourceRoom;
-                if (creep.room.name != targetRoom) {
-                    creep.customMove(new RoomPosition(25, 25, targetRoom));
+                let targetRoom = Game.rooms[creep.memory.outSourceRoom];
+                
+                if (creep.room.name != creep.memory.outSourceRoom) {
+                    if (targetRoom) {
+                        creep.customMove(new RoomPosition(targetRoom.controller.pos.x, targetRoom.controller.pos.y, targetRoom.name));
+                    } else {
+                        creep.customMove(new RoomPosition(25, 25, creep.memory.outSourceRoom));
+                    }
                     return;
                 }
 
-                if (creep.room.name == targetRoom) {
+                if (creep.room.name == targetRoom.name) {
 
                     // TODO 寻找Keeper,增加防御功能
                     // let keeper = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, {
