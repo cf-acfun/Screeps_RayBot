@@ -101,10 +101,24 @@ export default class EnergySource extends Singleton {
         if (Object.keys(room.memory.outSourceRoomList).length != 0) {
             for (let roomName in room.memory.outSourceRoomList) {
                 let sourceRoom = Game.rooms[roomName];
-                if (!room.memory.outSourceRoomList[roomName].reserver) room.memory.outSourceRoomList[roomName] = { reserver : null};
+                if (!room.memory.outSourceRoomList[roomName]) room.memory.outSourceRoomList[roomName] = { observer: null, reserver : null};
                 let reserver = room.memory.outSourceRoomList[roomName].reserver;
+                let observer = room.memory.outSourceRoomList[roomName].observer;
+                
+                if (!sourceRoom && !observer) {
+                    let creepName = GenNonDuplicateID();
+                    App.spawn.run(room.name, Role.Observer, creepName);
+                    room.memory.outSourceRoomList[roomName].observer = creepName;
+                } else if (!sourceRoom && observer) {
+                    if (!Game.creeps[observer]) {
+                        App.spawn.run(room.name, Role.Observer, observer);
+                    }
+                    if (Game.creeps[observer]) {
+                        Game.creeps[observer].memory.outSourceRoom = roomName;
+                    }
+                }
                 if (!Game.creeps[reserver]) {
-                    if (!sourceRoom) {
+                    if (sourceRoom) {
                         let creepName = GenNonDuplicateID();
                         App.spawn.run(room.name, Role.RemoteReserver, creepName);
                         room.memory.outSourceRoomList[roomName].reserver = creepName;
@@ -135,7 +149,6 @@ export default class EnergySource extends Singleton {
                             filter: (structure) => structure.structureType === STRUCTURE_CONTAINER
                         });
                         if (containers.length > 0) {
-                            console.log(`当前房间[${containers[0].pos.roomName}], container[${containers[0].id}]`);
                             sourceMem.harvestPos = new RoomPosition(containers[0].pos.x, containers[0].pos.y, containers[0].pos.roomName);
                         } else {
                             sourceMem.harvestPos = App.common.getPosNear(source.pos);

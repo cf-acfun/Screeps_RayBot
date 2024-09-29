@@ -228,6 +228,11 @@ export default class MoveTo extends Singleton {
             case Role.OutHarvester: {
 
                 // 不在外矿房间则先移动到外矿房间
+                let targetRoom = creep.memory.outSourceRoom;
+                if (creep.room.name != targetRoom) {
+                    creep.customMove(new RoomPosition(25, 25, targetRoom));
+                    return;
+                }
                 // 没有视野就先过去再插旗子
                 // 从内存中读取矿点信息
                 let target = Game.getObjectById(creep.memory.targetSource);
@@ -237,12 +242,6 @@ export default class MoveTo extends Singleton {
                     if (sourceMem.harvester == creep.name) sourceMem.harvester = null;
                 }
                 if (!creep.memory.targetPos) creep.memory.targetPos = sourceMem.harvestPos;
-
-                let targetRoom = creep.memory.outSourceRoom;
-                if (creep.room.name != targetRoom) {
-                    creep.customMove(new RoomPosition(creep.memory.targetPos.x, creep.memory.targetPos.y, targetRoom));
-                    return;
-                }
 
                 if (!Game.getObjectById(sourceMem.container)) {
                     if (creep.store.energy >= 48) {

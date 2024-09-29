@@ -364,6 +364,7 @@ interface RoomMemory {
 	}, 
 	outSourceRoomList?: {
 		[roomName: string]: {
+			observer: string,
 			reserver: string,
 		}
 	}, // 当前房间外矿列表
