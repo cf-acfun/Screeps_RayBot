@@ -118,7 +118,9 @@ type Role =
 	'defense_healer' |
 	'transfer' |
 	'transfer2Container' |
-	'observer'
+	'observer' |
+	'transferScore2Collector' |
+	'transferScore2Storage'
 
 interface RoomCreeps {
 	[name: string]: {

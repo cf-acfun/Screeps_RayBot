@@ -67,10 +67,6 @@ export default class FsmControl extends FsmSystem {
     App.scoreController.harvestScore(creep);
   }
 
-  public TransferScoreToCollector(creep: Creep) {
-    App.scoreController.transferScore(creep);
-  }
-
   public switchState(creep: Creep) {
     switch (creep.memory.role) {
       case Role.Harvester: creep.memory.state = State.MoveTo;
@@ -130,7 +126,7 @@ export default class FsmControl extends FsmSystem {
         break;
       case Role.TransferScore2Storage: creep.memory.state = State.TransferScore2Storage;
         break;
-      case Role.TransferScore2Collector: creep.memory.state = State.TransferScoreToCollector;
+      case Role.TransferScore2Collector: creep.memory.state = State.MoveTo;
         break;
       case Role.Observer: creep.memory.state = State.MoveTo;
         break;

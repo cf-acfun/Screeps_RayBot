@@ -443,24 +443,24 @@ export const bodyConfigs: BodyConfigs = {
     { [CARRY]: 30, [MOVE]: 20 }
   ),
   transferScore2Storage: getBodyConfig(
-    { [CARRY]: 2, [MOVE]: 1 },
-    { [CARRY]: 3, [MOVE]: 2 },
-    { [CARRY]: 4, [MOVE]: 2 },
-    { [CARRY]: 5, [MOVE]: 3 },
-    { [CARRY]: 20, [MOVE]: 10 },
-    { [CARRY]: 25, [MOVE]: 15 },
-    { [CARRY]: 30, [MOVE]: 20 },
-    { [CARRY]: 30, [MOVE]: 20 }
+    { [CARRY]: 2, [MOVE]: 2 },
+    { [CARRY]: 3, [MOVE]: 3 },
+    { [CARRY]: 4, [MOVE]: 4 },
+    { [CARRY]: 5, [MOVE]: 5 },
+    { [CARRY]: 10, [MOVE]: 10 },
+    { [CARRY]: 15, [MOVE]: 15 },
+    { [CARRY]: 20, [MOVE]: 20 },
+    { [CARRY]: 20, [MOVE]: 20 }
   ),
   transferScore2Collector: getBodyConfig(
-    { [CARRY]: 2, [MOVE]: 1 },
-    { [CARRY]: 3, [MOVE]: 2 },
-    { [CARRY]: 4, [MOVE]: 2 },
-    { [CARRY]: 5, [MOVE]: 3 },
-    { [CARRY]: 20, [MOVE]: 10 },
-    { [CARRY]: 25, [MOVE]: 15 },
-    { [CARRY]: 30, [MOVE]: 20 },
-    { [CARRY]: 30, [MOVE]: 20 }
+    { [CARRY]: 2, [MOVE]: 2 },
+    { [CARRY]: 3, [MOVE]: 3 },
+    { [CARRY]: 4, [MOVE]: 4 },
+    { [CARRY]: 5, [MOVE]: 5 },
+    { [CARRY]: 10, [MOVE]: 10 },
+    { [CARRY]: 10, [MOVE]: 10 },
+    { [CARRY]: 20, [MOVE]: 20 },
+    { [CARRY]: 20, [MOVE]: 20 }
   ),
   observer: getBodyConfig(
     { [MOVE]: 1 },

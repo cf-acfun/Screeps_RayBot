@@ -306,7 +306,7 @@ export default class MoveTo extends Singleton {
             case Role.RemoteReserver: {
 
                 let targetRoom = Game.rooms[creep.memory.outSourceRoom];
-                
+
                 if (creep.room.name != creep.memory.outSourceRoom) {
                     if (targetRoom) {
                         creep.customMove(new RoomPosition(targetRoom.controller.pos.x, targetRoom.controller.pos.y, targetRoom.name));
@@ -346,6 +346,30 @@ export default class MoveTo extends Singleton {
                 }
                 break;
             }
+            case Role.TransferScore2Collector: {
+                // 从房间中获取当前房间提交分数目标房间（手动配置，待优化为自动查找中央房间分数收集器）
+                if (!Game.rooms[creep.memory.roomFrom].memory.submitScoreRoom) Game.rooms[creep.memory.roomFrom].memory.submitScoreRoom = null;
+                let targetRoom = Game.rooms[creep.memory.roomFrom].memory.submitScoreRoom;
+
+                if (targetRoom) {
+                    if (creep.room.name != targetRoom) {
+                        creep.customMove(new RoomPosition(25, 25, targetRoom));
+                        return;
+                    }
+                    let scoreCollector = creep.room.find(FIND_SCORE_COLLECTORS);
+
+                    if (scoreCollector) {
+                        if (creep.transfer(scoreCollector[0] as Structure<StructureConstant>, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
+                            creep.moveTo(scoreCollector[0]);
+                        }
+                    }
+                    if (creep.store.getUsedCapacity(RESOURCE_SCORE) == 0) {
+                        creep.memory.state = State.Back;
+                        return;
+                    }
+                }
+                break;
+            }
         }
     }
 
@@ -361,8 +385,7 @@ export default class MoveTo extends Singleton {
                 else creep.customMove(new RoomPosition(25, 25, roomFrom));
                 break;
             }
-            case Role.RemoteCarryer:
-            case Role.OutHarvester: {
+            case Role.RemoteCarryer: {
                 if (creep.store.getUsedCapacity() == 0) {
                     App.fsm.changeState(creep, State.MoveTo);
                     return;
@@ -399,6 +422,22 @@ export default class MoveTo extends Singleton {
                 }
                 if (creep.room.name == roomFrom) App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
                 else creep.customMove(new RoomPosition(25, 25, roomFrom));
+                break;
+            }
+            case Role.TransferScore2Collector: {
+                if (creep.ticksToLive < 100 && creep.store[RESOURCE_SCORE] == 0) {
+                    creep.suicide();
+                }
+                if (creep.room.name == roomFrom) {
+                    if (creep.withdraw(creep.room.storage, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
+                        creep.moveTo(creep.room.storage);
+                        return;
+                    } else if (creep.withdraw(creep.room.storage, RESOURCE_SCORE) === OK) {
+                        creep.memory.state = State.MoveTo;
+                    }
+                } else {
+                    creep.customMove(new RoomPosition(25, 25, roomFrom));
+                }
                 break;
             }
         }

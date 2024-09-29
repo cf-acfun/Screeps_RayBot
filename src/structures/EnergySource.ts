@@ -100,13 +100,15 @@ export default class EnergySource extends Singleton {
         if (!room.memory.outSourceRoomList) room.memory.outSourceRoomList = {};
         if (Object.keys(room.memory.outSourceRoomList).length != 0) {
             for (let roomName in room.memory.outSourceRoomList) {
+                let sourceRoom = Game.rooms[roomName];
                 if (!room.memory.outSourceRoomList[roomName].reserver) room.memory.outSourceRoomList[roomName] = { reserver : null};
                 let reserver = room.memory.outSourceRoomList[roomName].reserver;
                 if (!Game.creeps[reserver]) {
-                    let creepName = GenNonDuplicateID();
-                    App.spawn.run(room.name, Role.RemoteReserver, creepName);
-                    room.memory.outSourceRoomList[roomName].reserver = creepName;
-                    return;
+                    if (!sourceRoom || sourceRoom.controller.reservation.ticksToEnd < 1000) {
+                        let creepName = GenNonDuplicateID();
+                        App.spawn.run(room.name, Role.RemoteReserver, creepName);
+                        room.memory.outSourceRoomList[roomName].reserver = creepName;
+                    }
                 } else if (Game.creeps[reserver]) {
                     Game.creeps[reserver].memory.outSourceRoom = roomName;
                 }
@@ -118,8 +120,6 @@ export default class EnergySource extends Singleton {
         }
 
         // 判断当前房间是否有外矿，如果有外矿则进行外矿相关的处理
-
-
         if (!room.memory.outSourceRooms) room.memory.outSourceRooms = {};
         if (Object.keys(room.memory.outSourceRooms).length != 0) {
             let outSourceRoomName: string;
