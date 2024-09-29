@@ -229,11 +229,6 @@ export default class MoveTo extends Singleton {
 
                 // 不在外矿房间则先移动到外矿房间
                 // 没有视野就先过去再插旗子
-                let targetRoom = creep.memory.outSourceRoom;
-                if (creep.room.name != targetRoom) {
-                    creep.customMove(new RoomPosition(creep.memory.targetPos.x, creep.memory.targetPos.y, targetRoom));
-                    return;
-                }
                 // 从内存中读取矿点信息
                 let target = Game.getObjectById(creep.memory.targetSource);
                 let sourceMem = Game.rooms[creep.memory.roomFrom].memory.outSourceRooms[creep.memory.outSourceRoom][target.id];
@@ -242,6 +237,13 @@ export default class MoveTo extends Singleton {
                     if (sourceMem.harvester == creep.name) sourceMem.harvester = null;
                 }
                 if (!creep.memory.targetPos) creep.memory.targetPos = sourceMem.harvestPos;
+
+                let targetRoom = creep.memory.outSourceRoom;
+                if (creep.room.name != targetRoom) {
+                    creep.customMove(new RoomPosition(creep.memory.targetPos.x, creep.memory.targetPos.y, targetRoom));
+                    return;
+                }
+
                 if (!Game.getObjectById(sourceMem.container)) {
                     if (creep.store.energy >= 48) {
                         if (!structures.length) {
@@ -347,6 +349,16 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.TransferScore2Collector: {
+
+                if (creep.store.getFreeCapacity() > 0 && creep.room.name == creep.memory.roomFrom) {
+                    if (creep.withdraw(creep.room.storage, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
+                        creep.moveTo(creep.room.storage);
+                        return;
+                    }
+                } else if (creep.store.getFreeCapacity() > 0 && creep.room.name != creep.memory.roomFrom) {
+                    creep.memory.state = State.Back;
+                    return;
+                }
                 // 从房间中获取当前房间提交分数目标房间（手动配置，待优化为自动查找中央房间分数收集器）
                 if (!Game.rooms[creep.memory.roomFrom].memory.submitScoreRoom) Game.rooms[creep.memory.roomFrom].memory.submitScoreRoom = null;
                 let targetRoom = Game.rooms[creep.memory.roomFrom].memory.submitScoreRoom;
@@ -425,9 +437,9 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.TransferScore2Collector: {
-                if (creep.ticksToLive < 100 && creep.store[RESOURCE_SCORE] == 0) {
-                    creep.suicide();
-                }
+                // if (creep.ticksToLive < 100 && creep.store[RESOURCE_SCORE] == 0) {
+                //     creep.suicide();
+                // }
                 if (creep.room.name == roomFrom) {
                     if (creep.withdraw(creep.room.storage, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(creep.room.storage);
