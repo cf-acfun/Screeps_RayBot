@@ -404,6 +404,10 @@ export default class Withdraw extends Singleton {
             }
             case Role.Carrier: {
                 // TODO 代码待优化
+                if (creep.room.name != creep.memory.roomFrom) {
+                    creep.customMove(new RoomPosition(25, 25, creep.memory.roomFrom));
+                    break;
+                }
                 let container = Game.getObjectById(creep.memory.targetContainer);
                 // let ruin = Game.getObjectById(creep.memory.ruinId);
                 if (creep.store.getFreeCapacity() == 0) {
