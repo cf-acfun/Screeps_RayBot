@@ -2,6 +2,7 @@ import App from "@/App";
 import { Role } from "@/common/Constant";
 import { State } from "@/fsm/state";
 import Singleton from "@/Singleton";
+import { GenNonDuplicateID } from "@/common/utils";
 
 
 export default class MoveTo extends Singleton {
@@ -233,7 +234,6 @@ export default class MoveTo extends Singleton {
                     creep.customMove(new RoomPosition(25, 25, targetRoom));
                     return;
                 }
-                // 没有视野就先过去再插旗子
                 // 从内存中读取矿点信息
                 let target = Game.getObjectById(creep.memory.targetSource);
                 let sourceMem = Game.rooms[creep.memory.roomFrom].memory.outSourceRooms[creep.memory.outSourceRoom][target.id];
@@ -242,7 +242,6 @@ export default class MoveTo extends Singleton {
                     if (sourceMem.harvester == creep.name) sourceMem.harvester = null;
                 }
                 if (!creep.memory.targetPos) creep.memory.targetPos = sourceMem.harvestPos;
-
                 if (!Game.getObjectById(sourceMem.container)) {
                     if (creep.store.energy >= 48) {
                         if (!structures.length) {
@@ -273,17 +272,36 @@ export default class MoveTo extends Singleton {
                 if (creep.room.name != targetRoom) {
                     if (container) {
                         creep.customMove(new RoomPosition(container.pos.x, container.pos.y, targetRoom));
+                        return;
                     } else {
                         creep.customMove(new RoomPosition(25, 25, targetRoom));
+                        return;
                     }
-                    return;
+                    
                 }
 
                 if (creep.store.getFreeCapacity() > 0) {
                     let drop = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
-                        filter: (d) => d.amount >= 100 && d.resourceType == 'energy'
+                        filter: (d) => d.amount >= 800 && d.resourceType == 'energy'
                     })
                     if (drop) {
+                        if (drop.amount > 2000) {
+                            let sourceMem = Game.rooms[creep.memory.roomFrom].memory.outSourceRooms[targetRoom][creep.memory.targetSource];
+                            // 绑定外矿搬运者
+                            if (!sourceMem.carrier1) {
+                                let creepName = GenNonDuplicateID();
+                                App.spawn.run(creep.memory.roomFrom, Role.RemoteCarryer, creepName);
+                                sourceMem.carrier1 = creepName;
+                            }
+
+                            let carrier1 = Game.creeps[sourceMem.carrier1];
+                            if (!carrier1) {
+                                App.spawn.run(creep.memory.roomFrom, Role.RemoteCarryer, sourceMem.carrier1);
+                            }
+                            if (carrier1 && !carrier1.memory.targetContainer && sourceMem.container) carrier1.memory.targetContainer = sourceMem.container;
+                            if (carrier1 && !carrier1.memory.outSourceRoom) carrier1.memory.outSourceRoom = targetRoom;
+                            if (carrier1 && !carrier1.memory.targetSource) carrier1.memory.targetSource = creep.memory.targetSource;
+                        }
                         if (creep.pickup(drop) == ERR_NOT_IN_RANGE) {
                             creep.customMove(drop.pos);
                             return;

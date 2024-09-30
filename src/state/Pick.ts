@@ -7,6 +7,10 @@ export default class Pick extends Singleton {
     public run(creep: Creep) {
         switch (creep.memory.role) {
             case Role.Carrier: {
+                if (creep.room.name != creep.memory.roomFrom) {
+                    creep.customMove(new RoomPosition( 25, 25, creep.memory.roomFrom));
+                    return;
+                }
                 if (creep.memory.targetContainer == creep.room.memory.mineral.container) {
                     App.fsm.changeState(creep, State.Withdraw);
                     return;

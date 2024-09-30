@@ -222,6 +222,7 @@ export default class Init extends Singleton {
         else global.cc[roomName].centerTransfer = RoleNum[room.controller.level][Role.CenterTransfer];
       }
       if (room.storage) global.cc[roomName].filler = RoleNum[room.controller.level][Role.Filler];
+      if (room.storage?.store[RESOURCE_SCORE] > 1000) global.cc[roomName].transferScore2Collector = 1;
       if (room.controller.level >= 4) {
         let storage = room.storage;
         let terminal = room.terminal;
