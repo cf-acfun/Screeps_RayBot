@@ -117,14 +117,19 @@ export default class EnergySource extends Singleton {
                         Game.creeps[observer].memory.outSourceRoom = roomName;
                     }
                 }
-                if (!Game.creeps[reserver]) {
+                if (!reserver) {
                     if (sourceRoom && sourceRoom.controller.reservation?.ticksToEnd < 1000) {
                         let creepName = GenNonDuplicateID();
                         App.spawn.run(room.name, Role.RemoteReserver, creepName);
                         room.memory.outSourceRoomList[roomName].reserver = creepName;
                     }
-                } else if (Game.creeps[reserver]) {
-                    Game.creeps[reserver].memory.outSourceRoom = roomName;
+                } else if (reserver) {
+                    if (!Game.creeps[reserver]) {
+                        App.spawn.run(room.name, Role.RemoteReserver, reserver);
+                    }
+                    if (Game.creeps[reserver]) {
+                        Game.creeps[reserver].memory.outSourceRoom = roomName;
+                    }
                 }
                 if (Game.rooms[roomName] && !room.memory.outSourceRooms[roomName]) {
                     App.common.getOutSources(room.name);
