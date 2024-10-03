@@ -66,7 +66,7 @@ export default class EnergySource extends Singleton {
                 }
 
                 // if (link && centerLink) continue;
-                
+
                 if (!sourceMem.carrier) {
                     let creepName = GenNonDuplicateID();
                     App.spawn.run(source.room.name, Role.Carrier, creepName);
@@ -101,10 +101,10 @@ export default class EnergySource extends Singleton {
         if (Object.keys(room.memory.outSourceRoomList).length != 0) {
             for (let roomName in room.memory.outSourceRoomList) {
                 let sourceRoom = Game.rooms[roomName];
-                if (!room.memory.outSourceRoomList[roomName]) room.memory.outSourceRoomList[roomName] = { observer: null, reserver : null};
+                if (!room.memory.outSourceRoomList[roomName]) room.memory.outSourceRoomList[roomName] = { observer: null, reserver: null };
                 let reserver = room.memory.outSourceRoomList[roomName].reserver;
                 let observer = room.memory.outSourceRoomList[roomName].observer;
-                
+
                 if (!sourceRoom && !observer) {
                     let creepName = GenNonDuplicateID();
                     App.spawn.run(room.name, Role.Observer, creepName);
@@ -118,10 +118,13 @@ export default class EnergySource extends Singleton {
                     }
                 }
                 if (!reserver) {
-                    if (sourceRoom && sourceRoom.controller.reservation?.ticksToEnd < 1000) {
-                        let creepName = GenNonDuplicateID();
-                        App.spawn.run(room.name, Role.RemoteReserver, creepName);
-                        room.memory.outSourceRoomList[roomName].reserver = creepName;
+                    if (sourceRoom) {
+                        let ticksToEnd = sourceRoom.controller.reservation?.ticksToEnd;
+                        if (ticksToEnd == undefined || ticksToEnd < 1000) {
+                            let creepName = GenNonDuplicateID();
+                            App.spawn.run(room.name, Role.RemoteReserver, creepName);
+                            room.memory.outSourceRoomList[roomName].reserver = creepName;
+                        }
                     }
                 } else if (reserver) {
                     if (!Game.creeps[reserver]) {

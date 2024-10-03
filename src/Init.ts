@@ -417,7 +417,7 @@ export default class Init extends Singleton {
         if (global.cc[this.rooms[i]]) global.cc[this.rooms[i]].helpUpgrader = 0;
       }
       let attackerFlag = Game.flags[`${this.rooms[i]}_attack`];
-      if (attackerFlag) global.cc[this.rooms[i]].attacker = 2;
+      if (attackerFlag) global.cc[this.rooms[i]].attacker = 1;
       else {
         if (global.cc[this.rooms[i]]) global.cc[this.rooms[i]].attacker = 0;
       }

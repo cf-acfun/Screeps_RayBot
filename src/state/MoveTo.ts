@@ -128,9 +128,20 @@ export default class MoveTo extends Singleton {
                 if (target) {
                     creep.customMove(target.pos);
                     if (creep.room.name == target?.room.name) {
-                        let structure = creep.room.lookForAt(LOOK_STRUCTURES, target);
-                        if (structure.length) creep.attack(structure[0]);
-                        else target.remove();
+                        //寻找Invader
+                        let invader = Game.rooms[creep.room.name].find(FIND_HOSTILE_CREEPS, {
+                            filter: (creep) => {
+                                return creep.owner.username == 'Invader' &&
+                                    (creep.getActiveBodyparts(ATTACK) > 0 || creep.getActiveBodyparts(RANGED_ATTACK) > 0)
+                            }
+                        })
+                        if (invader.length > 0) {
+                            if (creep.attack(invader[0]) == ERR_NOT_IN_RANGE) {
+                                creep.moveTo(invader[0]);
+                            }
+                        } else {
+                            target.remove();
+                        }
                     }
                 }
                 break;
@@ -277,7 +288,7 @@ export default class MoveTo extends Singleton {
                         creep.customMove(new RoomPosition(25, 25, targetRoom));
                         return;
                     }
-                    
+
                 }
 
                 if (creep.store.getFreeCapacity() > 0) {
