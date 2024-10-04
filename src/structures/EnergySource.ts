@@ -127,8 +127,11 @@ export default class EnergySource extends Singleton {
                         }
                     }
                 } else if (reserver) {
-                    if (!Game.creeps[reserver]) {
-                        App.spawn.run(room.name, Role.RemoteReserver, reserver);
+                    if (!Game.creeps[reserver] && sourceRoom) {
+                        let ticksToEnd = sourceRoom.controller.reservation?.ticksToEnd;
+                        if (ticksToEnd == undefined || ticksToEnd < 1000) {
+                            App.spawn.run(room.name, Role.RemoteReserver, reserver);
+                        }
                     }
                     if (Game.creeps[reserver]) {
                         Game.creeps[reserver].memory.outSourceRoom = roomName;
@@ -151,11 +154,11 @@ export default class EnergySource extends Singleton {
                     let sourceMem = room.memory.outSourceRooms[outSourceRoomName][id];
                     let source = Game.getObjectById(id as Id<Source>);
                     let outSourceRoom = Game.rooms[outSourceRoomName];
+                    let containers = source.pos.findInRange(FIND_STRUCTURES, 3, {
+                        filter: (structure) => structure.structureType === STRUCTURE_CONTAINER
+                    });
                     if (!sourceMem.harvestPos) {
                         // 查找source附近是否有container，有container则将container的pos作为开采点
-                        let containers = source.pos.findInRange(FIND_STRUCTURES, 3, {
-                            filter: (structure) => structure.structureType === STRUCTURE_CONTAINER
-                        });
                         if (containers.length > 0) {
                             sourceMem.harvestPos = new RoomPosition(containers[0].pos.x, containers[0].pos.y, containers[0].pos.roomName);
                         } else {
@@ -163,11 +166,14 @@ export default class EnergySource extends Singleton {
                         }
                     }
                     if (!Game.getObjectById(sourceMem.container)) {
-                        // 在harvestPos创建containerSite
-                        let sites = outSourceRoom.lookForAt(LOOK_CONSTRUCTION_SITES, new RoomPosition(sourceMem.harvestPos.x, sourceMem.harvestPos.y, outSourceRoomName));
-                        if (!sites.length) outSourceRoom.createConstructionSite(sourceMem.harvestPos.x, sourceMem.harvestPos.y, STRUCTURE_CONTAINER);
+                        if (containers.length > 0) {
+                            sourceMem.container = containers[0].id as Id<StructureContainer>;
+                        } else {
+                            // 在harvestPos创建containerSite
+                            let sites = outSourceRoom.lookForAt(LOOK_CONSTRUCTION_SITES, new RoomPosition(sourceMem.harvestPos.x, sourceMem.harvestPos.y, outSourceRoomName));
+                            if (!sites.length) outSourceRoom.createConstructionSite(sourceMem.harvestPos.x, sourceMem.harvestPos.y, STRUCTURE_CONTAINER);
+                        }
                     }
-
 
                     // 绑定外矿爬
                     if (room.memory.spawns?.length && !sourceMem.harvester) {
