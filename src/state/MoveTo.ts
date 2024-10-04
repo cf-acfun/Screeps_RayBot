@@ -290,8 +290,17 @@ export default class MoveTo extends Singleton {
                     }
 
                 }
-
+                // 查找当前房间中的得分容器
+                let containers = creep.room.find(FIND_SCORE_CONTAINERS);
                 if (creep.store.getFreeCapacity() > 0) {
+                    if (containers.length) {
+                        // 从最近的得分容器中收集分数
+                        if (creep.withdraw(containers[0] as Structure<StructureConstant>, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
+                            creep.moveTo(containers[0]);
+                            return;
+                        }
+                    }
+
                     let drop = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
                         filter: (d) => d.amount >= 800 && d.resourceType == 'energy'
                     })
@@ -432,7 +441,7 @@ export default class MoveTo extends Singleton {
                 }
                 if (creep.room.name == roomFrom) {
                     let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
-                    if (upgradePlusFlag) {
+                    if (upgradePlusFlag && creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
                         let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
                         let target: StructureContainer;
                         for (let id of controllerContainers) {
