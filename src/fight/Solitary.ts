@@ -257,16 +257,20 @@ export default class Solitary extends Singleton {
 	}
 
 	private _attack(creep: Creep) {
-		let f = Game.flags[`Invader_${creep.room.name}`];
-		if (f) {
-			// 打野
-			let s = creep.room.lookForAt(LOOK_STRUCTURES, f);
-			if (s.length) {
-				if (this._getDis(creep.pos, s[0].pos) > 1) creep.moveTo(s[0]);
-				else creep.attack(s[0]);
+
+		let invader = Game.rooms[creep.room.name].find(FIND_HOSTILE_CREEPS, {
+			filter: (creep) => {
+				return creep.owner.username == 'Invader' &&
+					(creep.getActiveBodyparts(ATTACK) > 0 || creep.getActiveBodyparts(RANGED_ATTACK) > 0)
 			}
-			return;
+		})
+		if (invader.length > 0) {
+			if (creep.attack(invader[0]) == ERR_NOT_IN_RANGE) {
+				creep.moveTo(invader[0]);
+				return;
+			}
 		}
+		// TODO 待优化
 		let enemy = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, {
 			filter: c => !Memory.whiteList.includes(c.owner.username)
 		});
