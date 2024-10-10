@@ -592,7 +592,35 @@ export default class Withdraw extends Singleton {
                     App.fsm.changeState(creep, State.Upgrade);
                     return;
                 }
-                if (creep.room.storage?.store.energy) {
+                let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
+                let target: StructureContainer;
+                let storeTarget: StructureContainer;
+                for (let id of controllerContainers) {
+                    let container = Game.getObjectById(id);
+                    if (container.store.getFreeCapacity() >= 500) {
+                        storeTarget = container;
+                    }
+                    if (container.store[RESOURCE_ENERGY] >= 500) {
+                        target = container;
+                        break;
+                    }
+                }
+                if (creep.ticksToLive <= 10) {
+                    if (creep.store.getUsedCapacity() == 0) {
+                        creep.suicide();
+                        return;
+                    } else if (creep.room.terminal) {
+                        App.common.transferToTargetStructure(creep, creep.room.terminal);
+                        return;
+                    } else {
+                        App.common.transferToTargetStructure(creep, storeTarget);
+                        return;
+                    }
+                }
+                if (target) {
+                    this._moveToAndRetrieveEnergy(creep, target);
+                    return;
+                } else if (creep.room.storage?.store.energy) {
                     App.common.getResourceFromTargetStructure(creep, creep.room.storage);
                     return;
                 } else App.fsm.changeState(creep, State.Pick);
