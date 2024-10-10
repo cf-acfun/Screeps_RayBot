@@ -20,7 +20,7 @@ const bodys = {
 	'W': { [WORK]: 18, [MOVE]: 10 },
 	'B-W-40': { [WORK]: 40, [MOVE]: 10 },
 	'W-5': { [WORK]: 5, [MOVE]: 5 },
-	'A': { [ATTACK]: 10, [MOVE]: 10 },
+	'A-Invader': { [ATTACK]: 5, [MOVE]: 5 },
 	'C': { [CLAIM]: 19, [MOVE]: 24 },
 	'R': { [CLAIM]: 4, [MOVE]: 4 },
 	"TEST": { [ATTACK]: 1, [MOVE]: 1 },
@@ -191,9 +191,11 @@ export default class Solitary extends Singleton {
 						if (s.nums > 0) {
 							Memory.S[id].nums = s.nums - 1;
 							Memory.S[id].state = FightState.idle;
-						} else {
-							delete Memory.S[id];
-						}
+						} 
+						// TODO 待优化
+						// else {
+						// 	delete Memory.S[id];
+						// }
 					}
 				}
 			}
