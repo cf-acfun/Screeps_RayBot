@@ -10,7 +10,7 @@ PowerCreep.prototype.customMove = customMove;
 export const loop = errorMapper(() => {
     App.autoPlanner.run();
     App.logistics.checkTask();
+    App.init.runS();
     App.init.runInLoop();
     App.init.autoSell();
-    App.init.runS();
 })
