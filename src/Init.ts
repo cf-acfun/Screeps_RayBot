@@ -386,7 +386,7 @@ export default class Init extends Singleton {
       App.lab.run(this.rooms[i]);
       App.common.getControllerLink(this.rooms[i]);
       App.common.getcontrollerContainerId(this.rooms[i]);
-      App.factory.run(this.rooms[i]);
+      // App.factory.run(this.rooms[i]);
       App.terminal.run(this.rooms[i]);
       App.spawn.update(this.rooms[i]);
       App.pc.run(this.rooms[i]);
