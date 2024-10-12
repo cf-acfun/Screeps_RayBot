@@ -501,64 +501,42 @@ export default class Withdraw extends Singleton {
                     App.fsm.changeState(creep, State.Build);
                     return;
                 }
-                let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
-                if (!upgradePlusFlag) {
-                    if (creep.room.memory.ruinEnergyState) {
-                        this.withdrawRuin(creep);
-                        return;
-                    }
-                    if (!creep.memory.constructionId) {
-                        let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
-                        if (controllerLink) {
-                            this._moveToAndRetrieveEnergy(creep, controllerLink);
-                            return;
-                        }
-                    }
-                }
-                // 如果是冲级模式则优先判断判断controllerLink有无能量，其次从controllerContainer等建筑中获取能量
-                if (upgradePlusFlag) {
-                    let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
-                    let target: StructureContainer;
-                    let storeTarget: StructureContainer;
-                    for (let id of controllerContainers) {
-                        let container = Game.getObjectById(id);
-                        if (container.store.getFreeCapacity() >= 500) {
-                            storeTarget = container;
-                        }
-                        if (container.store[RESOURCE_ENERGY] >= 500) {
-                            target = container;
-                            break;
-                        }
-                    }
-                    if (creep.ticksToLive <= 10) {
-                        if (creep.store.getUsedCapacity() == 0) {
-                            creep.suicide();
-                            return;
-                        } else if (creep.room.terminal) {
-                            App.common.transferToTargetStructure(creep, creep.room.terminal);
-                            return;
-                        } else {
-                            App.common.transferToTargetStructure(creep, storeTarget);
-                            return;
-                        }
-                    }
-                    // TODO 冲级模式待优化，暂时个性化写一下
-                    if (terminal && terminal?.store.energy && terminal.room.name == 'E22S11') {
-                        App.common.getResourceFromTargetStructure(creep, terminal);
-                        if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.Upgrade);
-                        return;
-                    }
-                    let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
-                    if (controllerLink && controllerLink.store[RESOURCE_ENERGY] >= 500) {
-                        this._moveToAndRetrieveEnergy(creep, controllerLink);
-                        return;
-                    }
-                    if (target) {
-                        this._moveToAndRetrieveEnergy(creep, target);
-                        return;
-                    }
-                }
 
+
+                let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
+                let target: StructureContainer;
+                let storeTarget: StructureContainer;
+                for (let id of controllerContainers) {
+                    let container = Game.getObjectById(id);
+                    if (container.store.getFreeCapacity() >= 500) {
+                        storeTarget = container;
+                    }
+                    if (container.store[RESOURCE_ENERGY] >= 500) {
+                        target = container;
+                        break;
+                    }
+                }
+                if (creep.ticksToLive <= 10) {
+                    if (creep.store.getUsedCapacity() == 0) {
+                        creep.suicide();
+                        return;
+                    } else if (creep.room.terminal) {
+                        App.common.transferToTargetStructure(creep, creep.room.terminal);
+                        return;
+                    } else {
+                        App.common.transferToTargetStructure(creep, storeTarget);
+                        return;
+                    }
+                }
+                if (target) {
+                    this._moveToAndRetrieveEnergy(creep, target);
+                    return;
+                }
+                let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
+                if (controllerLink && controllerLink.store[RESOURCE_ENERGY] >= 500) {
+                    this._moveToAndRetrieveEnergy(creep, controllerLink);
+                    return;
+                }
 
                 if (storage?.store.energy) {
                     App.common.getResourceFromTargetStructure(creep, storage);

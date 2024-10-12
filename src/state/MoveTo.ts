@@ -440,13 +440,12 @@ export default class MoveTo extends Singleton {
                     return;
                 }
                 if (creep.room.name == roomFrom) {
-                    let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
-                    if (upgradePlusFlag && creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
-                        let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
-                        let target: StructureContainer;
+                    let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
+                    let target: StructureContainer;
+                    if (controllerContainers.length) {
                         for (let id of controllerContainers) {
                             let container = Game.getObjectById(id);
-                            if (container.store.getFreeCapacity(RESOURCE_ENERGY) >= 500) {
+                            if (container && container.store.getFreeCapacity(RESOURCE_ENERGY) >= 500) {
                                 target = container;
                                 break;
                             }
