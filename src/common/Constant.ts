@@ -2,16 +2,17 @@ import { calcBodyPart } from "./utils";
 
 export const Role = {
   Harvester: 'harvester',
+  Filler: 'filler',
+  Upgrader: 'upgrader',
   Carrier: 'carrier',
   Builder: 'builder',
-  Upgrader: 'upgrader',
-  Filler: 'filler',
   Claimer: 'claimer',
   CenterTransfer: 'centerTransfer',
   RemoteTransfer: 'remoteTransfer',
   Attacker: 'attacker',
   Repairer: 'repairer',
   S: 'S',
+  TransferScore2Collector: 'transferScore2Collector',
   RemoteHarvester: 'remoteHarvester',
   RemoteReserver: 'remoteReserver',
   RemoteCarryer: 'remoteCarryer',
@@ -32,7 +33,6 @@ export const Role = {
   Transfer: 'transfer',
   Transfer2Container: 'transfer2Container',
   TransferScore2Storage: 'transferScore2Storage',
-  TransferScore2Collector: 'transferScore2Collector',
   Observer: 'observer',
 }
 
@@ -114,19 +114,19 @@ export const RoleNum: {
   5: {
     [Role.Builder]: 1,
     [Role.Upgrader]: 1,
-    [Role.Filler]: 1,
+    [Role.Filler]: 2,
     [Role.CenterTransfer]: 1,
   },
   6: {
     [Role.Builder]: 1,
     [Role.Upgrader]: 1,
-    [Role.Filler]: 1,
+    [Role.Filler]: 2,
     [Role.CenterTransfer]: 1,
   },
   7: {
     [Role.Builder]: 1,
     [Role.Upgrader]: 1,
-    [Role.Filler]: 1,
+    [Role.Filler]: 2,
     [Role.CenterTransfer]: 1,
   },
   8: {
@@ -204,13 +204,13 @@ export const bodyConfigs: BodyConfigs = {
   ),
 
   filler: getBodyConfig(
-    { [CARRY]: 2, [MOVE]: 1 },
-    { [CARRY]: 3, [MOVE]: 2 },
     { [CARRY]: 4, [MOVE]: 2 },
-    { [CARRY]: 5, [MOVE]: 3 },
     { [CARRY]: 6, [MOVE]: 3 },
     { [CARRY]: 10, [MOVE]: 5 },
-    { [CARRY]: 12, [MOVE]: 6 },
+    { [CARRY]: 16, [MOVE]: 8 },
+    { [CARRY]: 16, [MOVE]: 8 },
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 30, [MOVE]: 15 },
     { [CARRY]: 30, [MOVE]: 15 }
   ),
 
@@ -303,14 +303,14 @@ export const bodyConfigs: BodyConfigs = {
     { [WORK]: 7, [CARRY]: 1, [MOVE]: 4 },
   ),
   remoteCarryer: getBodyConfig(
-    { [CARRY]: 20, [MOVE]: 11 },
-    { [CARRY]: 20, [MOVE]: 11 },
-    { [CARRY]: 20, [MOVE]: 11 },
-    { [CARRY]: 10, [MOVE]: 12 },
-    { [CARRY]: 16, [MOVE]: 18 },
-    { [CARRY]: 16, [MOVE]: 18 },
-    { [CARRY]: 20, [MOVE]: 11 },
-    { [CARRY]: 20, [MOVE]: 11 },
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 10, [MOVE]: 10 },
+    { [CARRY]: 16, [MOVE]: 16 },
+    { [CARRY]: 16, [MOVE]: 16 },
+    { [CARRY]: 20, [MOVE]: 20 },
+    { [CARRY]: 20, [MOVE]: 20 },
   ),
   remoteAttacker: getBodyConfig(
     { [TOUGH]: 5, [MOVE]: 5, [ATTACK]: 3, [RANGED_ATTACK]: 2 },
@@ -433,14 +433,14 @@ export const bodyConfigs: BodyConfigs = {
     { [CARRY]: 25, [MOVE]: 25 },
   ),
   transfer2Container: getBodyConfig(
-    { [CARRY]: 2, [MOVE]: 1 },
-    { [CARRY]: 3, [MOVE]: 2 },
-    { [CARRY]: 4, [MOVE]: 2 },
-    { [CARRY]: 5, [MOVE]: 3 },
     { [CARRY]: 20, [MOVE]: 10 },
-    { [CARRY]: 25, [MOVE]: 15 },
-    { [CARRY]: 30, [MOVE]: 20 },
-    { [CARRY]: 30, [MOVE]: 20 }
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 13, [MOVE]: 13 },
+    { [CARRY]: 15, [MOVE]: 15 },
+    { [CARRY]: 23, [MOVE]: 23 },
+    { [CARRY]: 25, [MOVE]: 25 },
+    { [CARRY]: 25, [MOVE]: 25 }
   ),
   transferScore2Storage: getBodyConfig(
     { [CARRY]: 2, [MOVE]: 2 },
@@ -453,14 +453,14 @@ export const bodyConfigs: BodyConfigs = {
     { [CARRY]: 20, [MOVE]: 20 }
   ),
   transferScore2Collector: getBodyConfig(
-    { [CARRY]: 2, [MOVE]: 2 },
-    { [CARRY]: 3, [MOVE]: 3 },
-    { [CARRY]: 4, [MOVE]: 4 },
-    { [CARRY]: 5, [MOVE]: 5 },
-    { [CARRY]: 10, [MOVE]: 10 },
-    { [CARRY]: 20, [MOVE]: 20 },
-    { [CARRY]: 20, [MOVE]: 20 },
-    { [CARRY]: 20, [MOVE]: 20 }
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 13, [MOVE]: 13 },
+    { [CARRY]: 15, [MOVE]: 15 },
+    { [CARRY]: 23, [MOVE]: 23 },
+    { [CARRY]: 25, [MOVE]: 25 },
+    { [CARRY]: 25, [MOVE]: 25 }
   ),
   observer: getBodyConfig(
     { [MOVE]: 1 },

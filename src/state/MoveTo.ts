@@ -442,7 +442,7 @@ export default class MoveTo extends Singleton {
                 if (creep.room.name == roomFrom) {
                     let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
                     let target: StructureContainer;
-                    if (controllerContainers.length) {
+                    if (controllerContainers.length && creep.store[RESOURCE_ENERGY] > 0) {
                         for (let id of controllerContainers) {
                             let container = Game.getObjectById(id);
                             if (container && container.store.getFreeCapacity(RESOURCE_ENERGY) >= 500) {
@@ -453,7 +453,7 @@ export default class MoveTo extends Singleton {
                         if (target) {
                             App.common.transferToTargetStructure(creep, target);
                         } else {
-                            App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
+                            App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage, RESOURCE_ENERGY);
                         }
                     } else {
                         App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
@@ -473,9 +473,9 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.TransferScore2Collector: {
-                // if (creep.ticksToLive < 100 && creep.store[RESOURCE_SCORE] == 0) {
-                //     creep.suicide();
-                // }
+                if (creep.ticksToLive < 100 && creep.store[RESOURCE_SCORE] == 0) {
+                    creep.suicide();
+                }
                 if (creep.room.name == roomFrom) {
                     if (creep.withdraw(creep.room.storage, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(creep.room.storage);

@@ -52,8 +52,10 @@ export default class Pick extends Singleton {
                         }
                     } else creep.memory.dropId = null;
                 }
-                if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToSpawn);
-                break
+                if (creep.store.getFreeCapacity() == 0) {
+                    App.fsm.changeState(creep, State.TransferToSpawn);
+                }
+                break;
             }
             case Role.HelpUpgrader:
             case Role.HelpBuilder: {

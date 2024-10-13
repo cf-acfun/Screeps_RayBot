@@ -414,21 +414,7 @@ export default class Withdraw extends Singleton {
                     App.fsm.changeState(creep, State.TransferToSpawn);
                     return;
                 }
-                // if (ruin && ruin.store.energy) {
-                //     App.common.getResourceFromTargetStructure(creep, ruin);
-                //     return;
-                // } else {
-                //     let ruin = creep.pos.findClosestByPath(FIND_RUINS, {
-                //         filter: r => r.store.energy
-                //     });
-                //     if (ruin) {
-                //         creep.memory.ruinId = ruin.id;
-                //         creep.memory.ruinState = true;
-                //     } else {
-                //         App.fsm.changeState(creep, State.Pick);
-                //         creep.memory.ruinState = false;
-                //     }
-                // }
+
                 if (creep.memory.targetContainer == creep.room.memory.mineral.container) {
                     if (creep.ticksToLive < 50) {
                         if (creep.store.getUsedCapacity() > 0) App.fsm.changeState(creep, State.TransferToStorage);
@@ -455,8 +441,9 @@ export default class Withdraw extends Singleton {
                     }
                     if (container && container.store.energy >= creep.store.getCapacity()) {
                         if (creep.store.getFreeCapacity() > 0) App.common.getResourceFromTargetStructure(creep, container);
+                    } else {
+                        App.fsm.changeState(creep, State.Pick);
                     }
-                    else App.fsm.changeState(creep, State.Pick);
                 }
                 break;
             }
@@ -501,21 +488,22 @@ export default class Withdraw extends Singleton {
                     App.fsm.changeState(creep, State.Build);
                     return;
                 }
-
-
                 let controllerContainers: Id<StructureContainer>[] = creep.room.memory.controllerContainerId;
                 let target: StructureContainer;
                 let storeTarget: StructureContainer;
-                for (let id of controllerContainers) {
-                    let container = Game.getObjectById(id);
-                    if (container.store.getFreeCapacity() >= 500) {
-                        storeTarget = container;
-                    }
-                    if (container.store[RESOURCE_ENERGY] >= 500) {
-                        target = container;
-                        break;
+                if (controllerContainers) {
+                    for (let id of controllerContainers) {
+                        let container = Game.getObjectById(id);
+                        if (container.store.getFreeCapacity() >= 500) {
+                            storeTarget = container;
+                        }
+                        if (container.store[RESOURCE_ENERGY] >= 500) {
+                            target = container;
+                            break;
+                        }
                     }
                 }
+
                 if (creep.ticksToLive <= 10) {
                     if (creep.store.getUsedCapacity() == 0) {
                         creep.suicide();
