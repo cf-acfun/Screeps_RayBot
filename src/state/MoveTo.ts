@@ -261,6 +261,10 @@ export default class MoveTo extends Singleton {
                             else creep.room.createConstructionSite(creep.pos.x, creep.pos.y, STRUCTURE_CONTAINER);
                         } else sourceMem.container = structures[0].id as Id<StructureContainer>;
                     } else {
+                        // 先到达开采位置
+                        if (creep.pos !== creep.memory.targetPos) {
+                            creep.customMove(creep.memory.targetPos, 0);
+                        }
                         if (creep.harvest(target) == ERR_NOT_IN_RANGE) {
                             creep.customMove(creep.memory.targetPos, 0);
                         }
@@ -270,6 +274,9 @@ export default class MoveTo extends Singleton {
                     if (creep.store.energy >= 50 && container.hits / container.hitsMax < 1) {
                         creep.repair(container);
                     } else {
+                        if (creep.pos !== creep.memory.targetPos) {
+                            creep.customMove(creep.memory.targetPos, 0);
+                        }
                         if (creep.harvest(target) == ERR_NOT_IN_RANGE) {
                             creep.customMove(creep.memory.targetPos, 0);
                         }
