@@ -28,7 +28,7 @@ export default class Pick extends Singleton {
                         creep.moveTo(containers[0]);
                         return;
                     }
-                } else if (containers.length) {
+                } else if (creep.store.getUsedCapacity(RESOURCE_SCORE) > 0) {
                     if (creep.transfer(creep.room.storage, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(creep.room.storage);
                         return;

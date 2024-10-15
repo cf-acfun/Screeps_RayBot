@@ -406,7 +406,7 @@ export default class Withdraw extends Singleton {
                 // TODO 代码待优化
                 if (creep.room.name != creep.memory.roomFrom) {
                     creep.customMove(new RoomPosition(25, 25, creep.memory.roomFrom));
-                    break;
+                    return;
                 }
                 let container = Game.getObjectById(creep.memory.targetContainer);
                 // let ruin = Game.getObjectById(creep.memory.ruinId);
@@ -442,6 +442,7 @@ export default class Withdraw extends Singleton {
                     if (container && container.store.energy >= creep.store.getCapacity()) {
                         if (creep.store.getFreeCapacity() > 0) App.common.getResourceFromTargetStructure(creep, container);
                     } else {
+                        App.common.getResourceFromTargetStructure(creep, creep.room.storage);
                         App.fsm.changeState(creep, State.Pick);
                     }
                 }
