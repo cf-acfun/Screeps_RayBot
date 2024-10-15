@@ -395,9 +395,14 @@ export default class MoveTo extends Singleton {
             case Role.TransferScore2Collector: {
 
                 if (creep.store.getFreeCapacity() > 0 && creep.room.name == creep.memory.roomFrom) {
-                    if (creep.withdraw(creep.room.storage, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
+                    if (creep.room.storage.store.score >= 1250 && creep.withdraw(creep.room.storage, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(creep.room.storage);
                         return;
+                    } else if (creep.room.terminal && creep.room.terminal.store.score >= 1250) {
+                        if (creep.withdraw(creep.room.terminal, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
+                            creep.moveTo(creep.room.terminal);
+                            return;
+                        }
                     }
                 } else if (creep.store.getFreeCapacity() > 0 && creep.room.name != creep.memory.roomFrom) {
                     creep.memory.state = State.Back;

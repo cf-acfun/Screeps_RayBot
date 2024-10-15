@@ -139,6 +139,7 @@ export const RoleNum: {
 
 export const TerminalStoreNum = {
   'energy': 50000,
+  'score': 50000,
 }
 
 /**

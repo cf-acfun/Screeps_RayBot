@@ -222,7 +222,7 @@ export default class Init extends Singleton {
         else global.cc[roomName].centerTransfer = RoleNum[room.controller.level][Role.CenterTransfer];
       }
       if (room.storage) global.cc[roomName].filler = RoleNum[room.controller.level][Role.Filler];
-      if (room.controller.level >= 6 && room.storage?.store[RESOURCE_SCORE] > 6000 && room.memory.submitScoreRoom) {
+      if (room.controller.level >= 6 && room.storage?.store[RESOURCE_SCORE] + room.terminal?.store[RESOURCE_SCORE] > 6000 && room.memory.submitScoreRoom) {
         global.cc[roomName].transferScore2Collector = 1;
       }
       if (room.controller.level >= 4) {
