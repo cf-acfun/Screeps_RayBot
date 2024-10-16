@@ -283,7 +283,8 @@ interface CreepMemory {
 	upgradePos?: RoomPosition,
 	transferState?: boolean,
 	boost?: boolean,
-	outSourceRoom?: string
+	outSourceRoom?: string,
+	targetScoreRoom?: string
 }
 
 interface FlagMemory { }

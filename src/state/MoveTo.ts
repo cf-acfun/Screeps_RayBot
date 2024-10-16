@@ -410,8 +410,10 @@ export default class MoveTo extends Singleton {
                 }
                 // 从房间中获取当前房间提交分数目标房间（手动配置，待优化为自动查找中央房间分数收集器）
                 if (!Game.rooms[creep.memory.roomFrom].memory.submitScoreRoom) Game.rooms[creep.memory.roomFrom].memory.submitScoreRoom = null;
-                let targetRoom = Game.rooms[creep.memory.roomFrom].memory.submitScoreRoom;
-
+                if (!creep.memory.targetScoreRoom) {
+                    creep.memory.targetScoreRoom = Game.rooms[creep.memory.roomFrom].memory.submitScoreRoom;
+                }
+                let targetRoom = creep.memory.targetScoreRoom;
                 if (targetRoom) {
                     if (creep.room.name != targetRoom) {
                         creep.customMove(new RoomPosition(25, 25, targetRoom));
@@ -421,7 +423,7 @@ export default class MoveTo extends Singleton {
 
                     if (scoreCollector) {
                         if (creep.transfer(scoreCollector[0] as Structure<StructureConstant>, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
-                            creep.moveTo(scoreCollector[0]);
+                            creep.moveTo(scoreCollector[0], {ignoreCreeps: true});
                         }
                     }
                     if (creep.store.getUsedCapacity(RESOURCE_SCORE) == 0) {
@@ -489,14 +491,14 @@ export default class MoveTo extends Singleton {
                     creep.suicide();
                 }
                 if (creep.room.name == roomFrom) {
-                    if (creep.withdraw(creep.room.storage, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
-                        creep.moveTo(creep.room.storage);
+                    if (creep.withdraw(creep.room.terminal, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
+                        creep.moveTo(creep.room.terminal);
                         return;
-                    } else if (creep.withdraw(creep.room.storage, RESOURCE_SCORE) === OK) {
+                    } else if (creep.withdraw(creep.room.terminal, RESOURCE_SCORE) === OK) {
                         creep.memory.state = State.MoveTo;
                     }
                 } else {
-                    creep.customMove(new RoomPosition(25, 25, roomFrom));
+                    creep.moveTo(new RoomPosition(25, 25, roomFrom), {ignoreCreeps: true});
                 }
                 break;
             }
