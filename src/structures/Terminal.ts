@@ -38,13 +38,12 @@ export default class Terminal extends Singleton {
             }
         }
         if (Game.time % (terminal.room.memory.index + 20) == 0) {
-            if (terminal.room.name == "W51S59") return;
             if (global.allRes.XGH2O < 2000) {
                 global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000);
             }
             if (terminal.room.controller.level < 8) return;
             if (terminal.room.storage.store.power + terminal.store.power < 10000) {
-                global.autoDeal(terminal.room.name, 'power', 1200);
+                global.autoDeal(terminal.room.name, 'power', 900);
                 return;
             }
             if (terminal.room.storage.store.O + terminal.store.O < 6000) {
