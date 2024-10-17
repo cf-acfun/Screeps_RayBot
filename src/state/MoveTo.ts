@@ -124,6 +124,16 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.Attacker: {
+                let f = Game.flags[`Invader_${creep.room.name}`];
+		if (f) {
+			let s = creep.room.lookForAt(LOOK_STRUCTURES, f);
+			if (s.length) {
+				if (creep.attack(s[0]) === ERR_NOT_IN_RANGE) {
+                    creep.moveTo(s[0]);
+                }
+			}
+			return;
+		}
                 let target = Game.flags[`${roomFrom}_attack`];
                 if (target) {
                     creep.customMove(target.pos);
