@@ -125,15 +125,15 @@ export default class MoveTo extends Singleton {
             }
             case Role.Attacker: {
                 let f = Game.flags[`Invader_${creep.room.name}`];
-		if (f) {
-			let s = creep.room.lookForAt(LOOK_STRUCTURES, f);
-			if (s.length) {
-				if (creep.attack(s[0]) === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(s[0]);
+                if (f) {
+                    let s = creep.room.lookForAt(LOOK_STRUCTURES, f);
+                    if (s.length) {
+                        if (creep.attack(s[0]) === ERR_NOT_IN_RANGE) {
+                            creep.moveTo(s[0]);
+                        }
+                    }
+                    return;
                 }
-			}
-			return;
-		}
                 let target = Game.flags[`${roomFrom}_attack`];
                 if (target) {
                     creep.customMove(target.pos);
@@ -433,7 +433,7 @@ export default class MoveTo extends Singleton {
 
                     if (scoreCollector) {
                         if (creep.transfer(scoreCollector[0] as Structure<StructureConstant>, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
-                            creep.moveTo(scoreCollector[0], {ignoreCreeps: true});
+                            creep.moveTo(scoreCollector[0], { ignoreCreeps: true });
                         }
                     }
                     if (creep.store.getUsedCapacity(RESOURCE_SCORE) == 0) {
@@ -508,7 +508,7 @@ export default class MoveTo extends Singleton {
                         creep.memory.state = State.MoveTo;
                     }
                 } else {
-                    creep.moveTo(new RoomPosition(25, 25, roomFrom), {ignoreCreeps: true});
+                    creep.moveTo(new RoomPosition(25, 25, roomFrom), { ignoreCreeps: true });
                 }
                 break;
             }
