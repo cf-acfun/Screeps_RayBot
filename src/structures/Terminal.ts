@@ -14,7 +14,7 @@ export default class Terminal extends Singleton {
         if (!terminal) return;
         if (terminal.cooldown) return;
         if (terminal.store.energy >= 60000 &&
-            terminal.room.controller.level == 8) {
+            terminal.room.controller.level == 8  && Game.shard.name == "shard3") {
             let orders = Game.market.getAllOrders({ type: ORDER_BUY, resourceType: 'energy' })
                 .sort((a, b) => b.price - a.price);
             let order = orders[0];
@@ -25,18 +25,24 @@ export default class Terminal extends Singleton {
             }
         }
 
-        if (terminal.room.storage.store.energy > 500000 &&
+        if (terminal.room.storage.store.energy > 100000 &&
             terminal.store.energy >= 50000 && terminal.room.storage.store.getCapacity() <= 1000000) {
             for (let i = 0; i < Memory.myrooms.length; i++) {
                 let room = Game.rooms[Memory.myrooms[i]];
                 if (terminal.room.name == room.name && !room.terminal?.my) continue;
                 if (room.storage?.store.energy < 500000 && room.terminal?.store.energy < 50000 && room.storage?.store.getFreeCapacity() > 50000) {
-                    global.send(terminal.room.name, room.name, 'energy', 25000);
+                    global.send(terminal.room.name, room.name, 'energy', 40000);
                     return;
                 }
             }
         }
-        if (Game.time % (terminal.room.memory.index + 20) == 0) {
+
+        // TODO 待优化
+        if (terminal.store.score >= 20000 && terminal.room.name != 'W11S18' && terminal.store.energy > 3000) {
+            global.send(terminal.room.name, 'W11S18', RESOURCE_SCORE, 20000);
+        }
+
+        if (Game.time % (terminal.room.memory.index + 20) == 0 && Game.shard.name == "shard3") {
             if (global.allRes.XGH2O < 2000) {
                 global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000);
             }
