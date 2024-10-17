@@ -30,7 +30,7 @@ export default class Terminal extends Singleton {
             for (let i = 0; i < Memory.myrooms.length; i++) {
                 let room = Game.rooms[Memory.myrooms[i]];
                 if (terminal.room.name == room.name && !room.terminal?.my) continue;
-                if (room.storage?.store.energy < 500000 && room.terminal?.store.energy < 50000 && room.storage?.store.getFreeCapacity() > 50000) {
+                if (room.storage?.store.energy < 100000 && room.terminal?.store.energy < 10000 && room.storage?.store.getFreeCapacity() > 50000) {
                     global.send(terminal.room.name, room.name, 'energy', 40000);
                     return;
                 }
