@@ -21,7 +21,7 @@ const bodys = {
 	'B-W-40': { [WORK]: 40, [MOVE]: 10 },
 	'W-5': { [WORK]: 5, [MOVE]: 5 },
 	'A-Invader': { [ATTACK]: 10, [MOVE]: 10 },
-	'C': { [CLAIM]: 19, [MOVE]: 24 },
+	'C': { [CLAIM]: 8, [MOVE]: 8 },
 	'R': { [CLAIM]: 4, [MOVE]: 4 },
 	"TEST": { [ATTACK]: 1, [MOVE]: 1 },
 	"B-TEST": { [ATTACK]: 1, [MOVE]: 1 },

@@ -157,10 +157,13 @@ export default class EnergySource extends Singleton {
                     let containers = source.pos.findInRange(FIND_STRUCTURES, 3, {
                         filter: (structure) => structure.structureType === STRUCTURE_CONTAINER
                     });
+                    let sites = outSourceRoom.lookForAt(LOOK_CONSTRUCTION_SITES, new RoomPosition(sourceMem.harvestPos.x, sourceMem.harvestPos.y, outSourceRoomName));
                     if (!sourceMem.harvestPos) {
-                        // 查找source附近是否有container，有container则将container的pos作为开采点
+                        // 查找source附近是否有container或者sites，有则将其pos作为开采点
                         if (containers.length > 0) {
                             sourceMem.harvestPos = new RoomPosition(containers[0].pos.x, containers[0].pos.y, containers[0].pos.roomName);
+                        } else if (sites.length) {
+                            sourceMem.harvestPos = new RoomPosition(sites[0].pos.x, sites[0].pos.y, sites[0].pos.roomName);
                         } else {
                             sourceMem.harvestPos = App.common.getPosNear(source.pos);
                         }
@@ -172,6 +175,7 @@ export default class EnergySource extends Singleton {
                             // 在harvestPos创建containerSite
                             let sites = outSourceRoom.lookForAt(LOOK_CONSTRUCTION_SITES, new RoomPosition(sourceMem.harvestPos.x, sourceMem.harvestPos.y, outSourceRoomName));
                             if (!sites.length) outSourceRoom.createConstructionSite(sourceMem.harvestPos.x, sourceMem.harvestPos.y, STRUCTURE_CONTAINER);
+                            
                         }
                     }
 

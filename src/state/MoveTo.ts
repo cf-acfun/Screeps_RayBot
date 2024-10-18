@@ -344,7 +344,7 @@ export default class MoveTo extends Singleton {
                             return;
                         }
                     } else {
-                        if (container && container.store[RESOURCE_ENERGY] > 0) {
+                        if (container && container.store[RESOURCE_ENERGY] > 100) {
                             if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                                 creep.customMove(container.pos);
                                 return;
