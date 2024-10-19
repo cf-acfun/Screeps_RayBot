@@ -157,7 +157,7 @@ export default class EnergySource extends Singleton {
                     let containers = source.pos.findInRange(FIND_STRUCTURES, 3, {
                         filter: (structure) => structure.structureType === STRUCTURE_CONTAINER
                     });
-                    let sites = outSourceRoom.lookForAt(LOOK_CONSTRUCTION_SITES, new RoomPosition(sourceMem.harvestPos.x, sourceMem.harvestPos.y, outSourceRoomName));
+                    let sites = outSourceRoom.lookForAt(LOOK_CONSTRUCTION_SITES, new RoomPosition(sourceMem.harvestPos?.x, sourceMem.harvestPos?.y, outSourceRoomName));
                     if (!sourceMem.harvestPos) {
                         // 查找source附近是否有container或者sites，有则将其pos作为开采点
                         if (containers.length > 0) {
