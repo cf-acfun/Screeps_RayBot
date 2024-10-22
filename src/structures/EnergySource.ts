@@ -204,7 +204,6 @@ export default class EnergySource extends Singleton {
                             filter: (structure) => structure.structureType === STRUCTURE_CONTAINER
                         });
                         if (containers.length > 0) {
-                            console.log(`当前房间[${containers[0].pos.roomName}], container[${containers[0].id}]`);
                             harvester.memory.targetPos = new RoomPosition(containers[0].pos.x, containers[0].pos.y, containers[0].pos.roomName);
                         } else {
                             harvester.memory.targetPos = sourceMem.harvestPos;

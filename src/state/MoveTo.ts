@@ -255,6 +255,24 @@ export default class MoveTo extends Singleton {
                     creep.customMove(new RoomPosition(25, 25, targetRoom));
                     return;
                 }
+                //寻找Invader
+                let invader = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 6, {
+                    filter: (creep) => {
+                        return creep.owner.username == 'Invader' &&
+                            (creep.getActiveBodyparts(ATTACK) > 0 || creep.getActiveBodyparts(RANGED_ATTACK) > 0)
+                    }
+                });
+                if (invader.length) {
+                    // 进行逃离
+                    this.Flee(creep, invader[0].pos, 5);
+                    // 创建防御旗子
+                    let defenseFlag = `${creep.memory.roomFrom}_attack`;
+                    if (!Game.flags[defenseFlag]) {
+                        console.log(`当前房间[${creep.room.name}],存在Invader创建defenseFlag`);
+                        Game.rooms[creep.room.name].createFlag(creep.pos, defenseFlag);
+                    }
+                    return;
+                }
                 // 从内存中读取矿点信息
                 let target = Game.getObjectById(creep.memory.targetSource);
                 let sourceMem = Game.rooms[creep.memory.roomFrom].memory.outSourceRooms[creep.memory.outSourceRoom][target.id];
@@ -306,6 +324,18 @@ export default class MoveTo extends Singleton {
                         return;
                     }
 
+                }
+                //寻找Invader
+                let invader = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 6, {
+                    filter: (creep) => {
+                        return creep.owner.username == 'Invader' &&
+                            (creep.getActiveBodyparts(ATTACK) > 0 || creep.getActiveBodyparts(RANGED_ATTACK) > 0)
+                    }
+                });
+                if (invader.length) {
+                    // 进行逃离
+                    this.Flee(creep, invader[0].pos, 5);
+                    return;
                 }
                 // 查找当前房间中的得分容器
                 let containers = creep.room.find(FIND_SCORE_CONTAINERS);
@@ -513,5 +543,47 @@ export default class MoveTo extends Singleton {
                 break;
             }
         }
+    }
+
+
+    // 逃离寻路
+    public Flee(creep: Creep, target: RoomPosition, range: number, ExcludePosition?: RoomPosition[]): void {
+        if (!creep.pos.inRangeTo(target, range)) return //若已逃离目标范围则直接返回
+        let path = PathFinder.search(creep.pos, { pos: target, range: range }, {
+            plainCost: 1,
+            swampCost: 20,
+            maxOps: 600,
+            flee: true,
+            roomCallback: roomName => {
+
+                // 在爬虫记忆绕过房间列表的房间 false
+                const room = Game.rooms[roomName]
+                // 没有视野的房间只观察地形
+                if (!room) return
+                // 有视野的房间
+                let costs = new PathFinder.CostMatrix
+                // 将道路的cost设置为1，无法行走的建筑设置为255
+                room.find(FIND_STRUCTURES).forEach(struct => {
+                    if (struct.structureType === STRUCTURE_ROAD) {
+                        costs.set(struct.pos.x, struct.pos.y, 1)
+                    }
+                    else if (struct.structureType !== STRUCTURE_CONTAINER &&
+                        (struct.structureType !== STRUCTURE_RAMPART || !struct.my))
+                        costs.set(struct.pos.x, struct.pos.y, 0xff)
+                })
+                room.find(FIND_MY_CONSTRUCTION_SITES).forEach(cons => {
+                    if (cons.structureType != 'road' && cons.structureType != 'rampart' && cons.structureType != 'container')
+                        costs.set(cons.pos.x, cons.pos.y, 255)
+                })
+                /* 防止撞到其他虫子造成堵虫 */
+                room.find(FIND_HOSTILE_CREEPS).forEach(creep => {
+                    costs.set(creep.pos.x, creep.pos.y, 255)
+                })
+                return costs
+            }
+        })
+        var direction = creep.pos.getDirectionTo(path.path[0])
+        if (!direction) return
+        creep.move(direction)
     }
 }
