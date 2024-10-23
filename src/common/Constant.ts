@@ -252,11 +252,11 @@ export const bodyConfigs: BodyConfigs = {
     { [ATTACK]: 25, [MOVE]: 25 },
     { [ATTACK]: 25, [MOVE]: 25 },
     { [ATTACK]: 25, [MOVE]: 25 },
-    { [TOUGH]: 2, [ATTACK]: 10, [MOVE]: 12 },
-    { [TOUGH]: 2, [ATTACK]: 10, [MOVE]: 12 },
-    { [TOUGH]: 2, [ATTACK]: 10, [MOVE]: 12 },
-    { [TOUGH]: 2, [ATTACK]: 10, [MOVE]: 12 },
-    { [TOUGH]: 2, [ATTACK]: 10, [MOVE]: 12 },
+    { [TOUGH]: 2, [ATTACK]: 12, [MOVE]: 14 },
+    { [TOUGH]: 2, [ATTACK]: 12, [MOVE]: 14 },
+    { [TOUGH]: 2, [ATTACK]: 12, [MOVE]: 14 },
+    { [TOUGH]: 2, [ATTACK]: 12, [MOVE]: 14 },
+    { [TOUGH]: 2, [ATTACK]: 12, [MOVE]: 14 },
   ),
 
   /**
