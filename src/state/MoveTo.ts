@@ -256,6 +256,7 @@ export default class MoveTo extends Singleton {
                     return;
                 }
                 //寻找Invader
+                let defenseFlag = `${creep.memory.roomFrom}_attack`;
                 let invader = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 6, {
                     filter: (creep) => {
                         return creep.owner.username == 'Invader' &&
@@ -266,12 +267,34 @@ export default class MoveTo extends Singleton {
                     // 进行逃离
                     this.Flee(creep, invader[0].pos, 5);
                     // 创建防御旗子
-                    let defenseFlag = `${creep.memory.roomFrom}_attack`;
                     if (!Game.flags[defenseFlag]) {
                         console.log(`当前房间[${creep.room.name}],存在Invader创建defenseFlag`);
                         Game.rooms[creep.room.name].createFlag(creep.pos, defenseFlag);
                     }
                     return;
+                }
+                // 判断是否有InvaderCore
+                let attackFlag = `Invader_${creep.room.name}`;
+                let InvaderCore = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES, {
+                    filter: (stru) => {
+                        return stru.structureType == STRUCTURE_INVADER_CORE && stru.level
+                    }
+                })
+                if (InvaderCore) {
+                    if (!Game.flags[attackFlag]) {
+                        Game.rooms[creep.room.name].createFlag(InvaderCore.pos, attackFlag);
+                    }
+                    if (!Game.flags[defenseFlag]) {
+                        console.log(`当前房间[${creep.room.name}],存在Invader创建defenseFlag`);
+                        Game.rooms[creep.room.name].createFlag(creep.pos, defenseFlag);
+                    }
+                    return;
+                }
+                if (!InvaderCore && Game.flags[attackFlag]) {
+                    Game.flags[attackFlag].remove();
+                }
+                if (!invader && Game.flags[defenseFlag]) {
+                    Game.flags[defenseFlag].remove();
                 }
                 // 从内存中读取矿点信息
                 let target = Game.getObjectById(creep.memory.targetSource);
