@@ -33,9 +33,9 @@ export default class Init extends Singleton {
     }
     if (Game.time % 100 == 0) global.allRes = Glb.getAllRes();
     this._clearCreep();
+    this._runByFlags();
     this._checkCreepsNumInRooms();
     this._runStructures();
-    this._runByFlags();
     for (let i = 0; i < this.rooms.length; i++) {
       App.autoPlanner.checkSites(this.rooms[i]);
       App.autoPlanner.checkRampart(this.rooms[i]);
