@@ -256,6 +256,7 @@ export default class MoveTo extends Singleton {
                     return;
                 }
                 //寻找Invader
+                // TODO 待优化，只能处理一个房间，不能同步处理多个房间
                 let defenseFlag = `${creep.memory.roomFrom}_attack`;
                 let invader = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 6, {
                     filter: (creep) => {
