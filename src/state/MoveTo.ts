@@ -53,7 +53,7 @@ export default class MoveTo extends Singleton {
                         return;
                     }
                     if (creep.attackController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                        creep.customMove(atkClaim.pos);
+                        creep.customMove(creep.room.controller.pos);
                     }
                     if (!creep.room.controller.reservation?.username) {
                         atkClaim.remove();
@@ -277,7 +277,7 @@ export default class MoveTo extends Singleton {
                 let attackFlag = `Invader_${creep.room.name}`;
                 let InvaderCore = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES, {
                     filter: (stru) => {
-                        return stru.structureType == STRUCTURE_INVADER_CORE && stru.level
+                        return stru.structureType == STRUCTURE_INVADER_CORE
                     }
                 })
                 if (InvaderCore) {
@@ -288,14 +288,18 @@ export default class MoveTo extends Singleton {
                         console.log(`当前房间[${creep.room.name}],存在Invader创建defenseFlag`);
                         Game.rooms[creep.room.name].createFlag(creep.pos, defenseFlag);
                     }
+                    let attackControllerFlag = `${creep.memory.roomFrom}_atkClaim`;
+                    if (!attackControllerFlag) {
+                        Game.rooms[creep.room.name].createFlag(creep.pos, attackControllerFlag);
+                    }
                     return;
                 }
                 if (!InvaderCore && Game.flags[attackFlag]) {
                     Game.flags[attackFlag].remove();
                 }
-                if (!invader && Game.flags[defenseFlag]) {
-                    Game.flags[defenseFlag].remove();
-                }
+                // if (!InvaderCore && Game.flags[defenseFlag]) {
+                //     Game.flags[defenseFlag].remove();
+                // }
                 // 从内存中读取矿点信息
                 let target = Game.getObjectById(creep.memory.targetSource);
                 let sourceMem = Game.rooms[creep.memory.roomFrom].memory.outSourceRooms[creep.memory.outSourceRoom][target.id];

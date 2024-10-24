@@ -214,14 +214,14 @@ export const bodyConfigs: BodyConfigs = {
     { [CARRY]: 30, [MOVE]: 15 },
     { [CARRY]: 30, [MOVE]: 15 }
   ),
-
+  // TODO 待增加atkClaimer职责
   claimer: getBodyConfig(
     { [CLAIM]: 1, [MOVE]: 2 },
     { [CLAIM]: 1, [MOVE]: 2 },
     { [CLAIM]: 1, [MOVE]: 2 },
     { [CLAIM]: 1, [MOVE]: 2 },
     { [CLAIM]: 1, [MOVE]: 6 },
-    { [CLAIM]: 1, [MOVE]: 6 },
+    { [CLAIM]: 3, [MOVE]: 6 },
     { [CLAIM]: 1, [MOVE]: 6 },
     { [CLAIM]: 1, [MOVE]: 6 },
   ),
