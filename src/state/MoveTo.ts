@@ -270,7 +270,7 @@ export default class MoveTo extends Singleton {
                     // 创建防御旗子
                     if (!Game.flags[defenseFlag]) {
                         console.log(`当前房间[${creep.room.name}],存在Invader创建defenseFlag`);
-                        Game.rooms[creep.room.name].createFlag(creep.pos, defenseFlag);
+                        Game.rooms[creep.room.name].createFlag(invader[0].pos, defenseFlag);
                     }
                     return;
                 }
@@ -286,12 +286,11 @@ export default class MoveTo extends Singleton {
                         Game.rooms[creep.room.name].createFlag(InvaderCore.pos, attackFlag);
                     }
                     if (!Game.flags[defenseFlag]) {
-                        console.log(`当前房间[${creep.room.name}],存在Invader创建defenseFlag`);
-                        Game.rooms[creep.room.name].createFlag(creep.pos, defenseFlag);
+                        Game.rooms[creep.room.name].createFlag(InvaderCore.pos, defenseFlag);
                     }
                     let attackControllerFlag = `${creep.memory.roomFrom}_atkClaim`;
                     if (!attackControllerFlag) {
-                        Game.rooms[creep.room.name].createFlag(creep.pos, attackControllerFlag);
+                        Game.rooms[creep.room.name].createFlag(creep.room.controller.pos, attackControllerFlag);
                     }
                     return;
                 }
