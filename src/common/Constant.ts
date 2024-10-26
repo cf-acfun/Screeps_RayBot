@@ -419,14 +419,14 @@ export const bodyConfigs: BodyConfigs = {
     { [CARRY]: 25, [MOVE]: 25 },
   ),
   transfer2Container: getBodyConfig(
-    { [CARRY]: 2, [MOVE]: 1 },
-    { [CARRY]: 3, [MOVE]: 2 },
-    { [CARRY]: 4, [MOVE]: 2 },
-    { [CARRY]: 5, [MOVE]: 3 },
     { [CARRY]: 20, [MOVE]: 10 },
-    { [CARRY]: 25, [MOVE]: 15 },
-    { [CARRY]: 30, [MOVE]: 20 },
-    { [CARRY]: 30, [MOVE]: 20 }
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 16, [MOVE]: 8 },
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 30, [MOVE]: 15 },
+    { [CARRY]: 30, [MOVE]: 15 },
+    { [CARRY]: 30, [MOVE]: 15 }
   )
 
 }
