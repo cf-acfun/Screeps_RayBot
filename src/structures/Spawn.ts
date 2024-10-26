@@ -78,6 +78,9 @@ export default class Spawn extends Singleton {
           }, {
             type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
+          }, { 
+            type: global.allRes["ZHO2"] > 1000 ? "ZHO2" : "ZH",
+            num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
           }])
         }
         if (creep.memory.role == Role.HelpUpgrader) {
@@ -87,6 +90,9 @@ export default class Spawn extends Singleton {
           }, {
             type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
+          }, { 
+            type: global.allRes["ZHO2"] > 1000 ? "ZHO2" : "ZH",
+            num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
           }])
         }
         if (creep.memory.role == Role.Attacker) {
