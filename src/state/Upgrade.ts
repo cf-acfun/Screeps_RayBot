@@ -6,8 +6,13 @@ import Singleton from "@/Singleton";
 export default class Upgrade extends Singleton {
     public run(creep: Creep) {
         switch (creep.memory.role) {
+            case Role.HelpUpgrader:
             case Role.Builder:
             case Role.Upgrader: {
+                let target = Game.flags[`${creep.memory.roomFrom}_helpUpgrade`];
+                if (target) {
+                    if (creep.room.controller.level == 8) target.remove();
+                }
                 // 判断冲级模式下creep存活时间是否小于等于10,如果满足则将能量放入合适的容器中并
                 let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
                 if (upgradePlusFlag) {
@@ -50,12 +55,6 @@ export default class Upgrade extends Singleton {
                     App.fsm.changeState(creep, State.Withdraw);
                 }
                 break;
-            }
-            case Role.HelpUpgrader: {
-                let target = Game.flags[`${creep.memory.roomFrom}_helpUpgrade`];
-                if (target) {
-                    if (creep.room.controller.level == 8) target.remove();
-                }
             }
             case Role.HelpBuilder: {
                 let pos = creep.memory.upgradePos;
