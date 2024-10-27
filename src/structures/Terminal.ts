@@ -20,7 +20,7 @@ export default class Terminal extends Singleton {
             let orders = Game.market.getAllOrders({ type: ORDER_BUY, resourceType: 'energy' })
                 .sort((a, b) => b.price - a.price);
             let order = orders[0];
-            if (order && order.price >= 10) {
+            if (order && order.price >= 7) {
                 let num = order.amount > 25000 ? 25000 : order.amount;
                 Game.market.deal(order.id, num, terminal.room.name);
                 return;
