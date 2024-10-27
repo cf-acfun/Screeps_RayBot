@@ -137,7 +137,7 @@ export default class MoveTo extends Singleton {
                 let target = Game.flags[`${roomFrom}_attack`];
                 if (target) {
                     creep.customMove(target.pos);
-                    if (creep.room.name == target?.room.name) {
+                    if (creep.room.name == target.pos.roomName) {
                         //寻找Invader
                         let invader = Game.rooms[creep.room.name].find(FIND_HOSTILE_CREEPS, {
                             filter: (creep) => {
