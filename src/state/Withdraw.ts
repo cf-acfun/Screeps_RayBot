@@ -279,7 +279,7 @@ export default class Withdraw extends Singleton {
                 }
                 creep.memory.test = 7;
                 // centerLink
-                if (centerLink && centerLink.store.energy) {
+                if (centerLink && centerLink.store.energy && storage) {
                     if (creep.store.getFreeCapacity() == 0) {
                         // App.fsm.changeState(creep, State.TransferToStorage);
                         if (storage.store.getFreeCapacity() < creep.store.getUsedCapacity()) {
@@ -643,7 +643,7 @@ export default class Withdraw extends Singleton {
                         creep.memory.ruinState = true;
                     }
                     else {
-                        App.fsm.changeState(creep, State.Pick);
+                        App.fsm.changeState(creep, State.Harvest);
                         creep.memory.ruinState = false;
                     }
                 }
