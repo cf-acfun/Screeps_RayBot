@@ -4,15 +4,16 @@ import { colorful } from '@/common/utils';
 export default class Terminal extends Singleton {
     run(roomName: string) {
 
+        let room = Game.rooms[roomName];
+        let terminal = room.terminal;
+        if (!terminal || room.controller.level < 6) return;
+        if (terminal.cooldown) return;
+
         // 自动购买能量
         if (Game.time % 10 == 0) {
             this._autoBuyEnergy(roomName);
         }
 
-        let room = Game.rooms[roomName];
-        let terminal = room.terminal;
-        if (!terminal) return;
-        if (terminal.cooldown) return;
         if (terminal.store.energy >= 60000 &&
             terminal.room.storage?.store.getFreeCapacity() < 10000 &&
             terminal.room.controller.level == 8) {
@@ -26,8 +27,8 @@ export default class Terminal extends Singleton {
             }
         }
 
-        if (terminal.room.storage.store.energy > 500000 &&
-            terminal.store.energy >= 50000 && terminal.room.storage.store.getCapacity() <= 1000000) {
+        if (terminal?.room.storage.store.energy > 500000 &&
+            terminal?.store.energy >= 50000 && terminal?.room.storage.store.getCapacity() <= 1000000) {
             for (let i = 0; i < Memory.myrooms.length; i++) {
                 let room = Game.rooms[Memory.myrooms[i]];
                 if (terminal.room.name == room.name && !room.terminal?.my) continue;
@@ -97,10 +98,10 @@ export default class Terminal extends Singleton {
             for (let i in global.demand) {
                 let task = global.demand[i];
                 if (task.taskRoom && task.taskRoom != roomName) continue;
-                if (terminal.room.name == task.roomName) continue;
+                if (terminal?.room.name == task.roomName) continue;
                 if (global.demand[`${roomName}-${task.res}`]) continue;
                 if (task.type == 'lab' || task.type == 'power') {
-                    if ((terminal.store[task.res] + terminal.room.storage?.store[task.res] ?? 0) >= task.num * 2) {
+                    if ((terminal?.store[task.res] + terminal?.room.storage?.store[task.res] || 0) >= task.num * 2) {
                         if (terminal.store[task.res] >= task.num) {
                             task.taskRoom = roomName;
                             global.send(terminal.room.name, task.roomName, task.res, task.num);
@@ -109,7 +110,7 @@ export default class Terminal extends Singleton {
                     }
                 }
                 if (task.type == 'factory') {
-                    if ((terminal.store[task.res] + terminal.room.storage?.store[task.res] ?? 0) > task.num) {
+                    if ((terminal?.store[task.res] + terminal.room.storage?.store[task.res] || 0) > task.num) {
                         if (terminal.store[task.res] > task.num) {
                             task.taskRoom = roomName;
                             global.send(terminal.room.name, task.roomName, task.res, task.num);
