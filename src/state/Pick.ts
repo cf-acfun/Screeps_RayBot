@@ -11,27 +11,29 @@ export default class Pick extends Singleton {
                     creep.customMove(new RoomPosition(25, 25, creep.memory.roomFrom));
                     return;
                 }
-                // 查找当前房间中的得分容器
-                let containers = creep.room.find(FIND_SCORE_CONTAINERS);
+                if (creep.room.storage) {
+                    // 查找当前房间中的得分容器
+                    let containers = creep.room.find(FIND_SCORE_CONTAINERS);
 
-                // 如果creep的存储空间还有空余，则收集分数
-                if (creep.store.getFreeCapacity(RESOURCE_SCORE) > 0 && containers.length) {
-                    // 如果有能量则先将能量转运到storage中
-                    if (creep.room.storage && creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
-                        if (creep.transfer(creep.room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+                    // 如果creep的存储空间还有空余，则收集分数
+                    if (creep.store.getFreeCapacity(RESOURCE_SCORE) > 0 && containers.length) {
+                        // 如果有能量则先将能量转运到storage中
+                        if (creep.room.storage && creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+                            if (creep.transfer(creep.room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+                                creep.moveTo(creep.room.storage);
+                                return;
+                            }
+                        }
+                        // 从最近的得分容器中收集分数
+                        if (creep.withdraw(containers[0] as Structure<StructureConstant>, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
+                            creep.moveTo(containers[0]);
+                            return;
+                        }
+                    } else if (creep.store.getUsedCapacity(RESOURCE_SCORE) > 0) {
+                        if (creep.transfer(creep.room.storage, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
                             creep.moveTo(creep.room.storage);
                             return;
                         }
-                    }
-                    // 从最近的得分容器中收集分数
-                    if (creep.withdraw(containers[0] as Structure<StructureConstant>, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
-                        creep.moveTo(containers[0]);
-                        return;
-                    }
-                } else if (creep.store.getUsedCapacity(RESOURCE_SCORE) > 0) {
-                    if (creep.transfer(creep.room.storage, RESOURCE_SCORE) === ERR_NOT_IN_RANGE) {
-                        creep.moveTo(creep.room.storage);
-                        return;
                     }
                 }
                 if (creep.memory.targetContainer == creep.room.memory.mineral.container) {
