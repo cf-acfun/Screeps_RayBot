@@ -266,7 +266,7 @@ export default class Init extends Singleton {
           global.cc[roomName].builder = 0;
           global.cc[roomName].upgrader = 0;
           if (room.controller.ticksToDowngrade < 100000 || room.controller.level < 8) global.cc[roomName].upgrader = 1;
-          if (room.controller.level < 8 && room.storage.store.energy > 200000) global.cc[roomName].upgrader = 3;
+          if (room.controller.level < 8 && room.storage && room.storage.store.energy > 200000) global.cc[roomName].upgrader = 3;
         }
       } else {
         if (global.cc[roomName]) {
@@ -343,12 +343,13 @@ export default class Init extends Singleton {
     for (let name in Game.creeps) {
       let creep = Game.creeps[name];
       // console.log(`11当前房间[${creep.room.name}], creep[${creep.name}]`);
-      // try {
-      if (creep.hits < creep.hitsMax && creep.room.memory.towers?.length) global.towerTask[creep.room.name].injured.push(creep.id);
-      App.fsm.update(creep)
-      // } catch (error) {
-      //   console.log('Error:', creep.memory.roomFrom, '-', creep.memory.role, ':', error);
-      // }
+      try {
+        if (creep.hits < creep.hitsMax && creep.room.memory.towers?.length) global.towerTask[creep.room.name].injured.push(creep.id);
+        App.fsm.update(creep)
+      } catch (error) {
+        console.log(`当前creep[${creep.name}]所在房间[${creep.room.name}]出现异常`)
+        console.log('Error:', creep.memory.roomFrom, '-', creep.memory.role, ':', error);
+      }
     }
   }
 
