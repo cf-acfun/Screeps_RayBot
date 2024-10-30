@@ -347,8 +347,9 @@ export default class Init extends Singleton {
         if (creep.hits < creep.hitsMax && creep.room.memory.towers?.length) global.towerTask[creep.room.name].injured.push(creep.id);
         App.fsm.update(creep)
       } catch (error) {
-        console.log(`当前creep[${creep.name}]所在房间[${creep.room.name}]出现异常`)
+        console.log(`当前creep[${creep.name}]所在房间[${creep.room.name}]出现异常`);
         console.log('Error:', creep.memory.roomFrom, '-', creep.memory.role, ':', error);
+        Game.creeps[creep.name].suicide();
       }
     }
   }

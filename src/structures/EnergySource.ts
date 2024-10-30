@@ -173,9 +173,9 @@ export default class EnergySource extends Singleton {
                             sourceMem.container = containers[0].id as Id<StructureContainer>;
                         } else {
                             // 在harvestPos创建containerSite
-                            let sites = outSourceRoom.lookForAt(LOOK_CONSTRUCTION_SITES, new RoomPosition(sourceMem.harvestPos.x, sourceMem.harvestPos.y, outSourceRoomName));
-                            if (!sites.length) outSourceRoom.createConstructionSite(sourceMem.harvestPos.x, sourceMem.harvestPos.y, STRUCTURE_CONTAINER);
-                            
+                            // TODO 待优化
+                            let sites = outSourceRoom.lookForAt(LOOK_CONSTRUCTION_SITES, new RoomPosition(sourceMem.harvestPos?.x, sourceMem.harvestPos?.y, outSourceRoomName));
+                            if (!sites.length) outSourceRoom.createConstructionSite(sourceMem.harvestPos?.x, sourceMem.harvestPos?.y, STRUCTURE_CONTAINER);
                         }
                     }
 
