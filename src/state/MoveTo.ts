@@ -3,6 +3,7 @@ import { Role } from "@/common/Constant";
 import { State } from "@/fsm/state";
 import Singleton from "@/Singleton";
 import { GenNonDuplicateID } from "@/common/utils";
+import { log } from "console";
 
 
 export default class MoveTo extends Singleton {
@@ -297,7 +298,7 @@ export default class MoveTo extends Singleton {
                 if (!InvaderCore && Game.flags[attackFlag]) {
                     Game.flags[attackFlag].remove();
                 }
-                if (!InvaderCore && !invader && Game.flags[defenseFlag]) {
+                if (!InvaderCore && !invader.length && Game.flags[defenseFlag]) {
                     Game.flags[defenseFlag].remove();
                 }
                 // 从内存中读取矿点信息
