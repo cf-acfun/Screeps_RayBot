@@ -298,9 +298,6 @@ export default class MoveTo extends Singleton {
                 if (!InvaderCore && Game.flags[attackFlag]) {
                     Game.flags[attackFlag].remove();
                 }
-                if (!InvaderCore && !invader.length && Game.flags[defenseFlag]) {
-                    Game.flags[defenseFlag].remove();
-                }
                 // 从内存中读取矿点信息
                 let target = Game.getObjectById(creep.memory.targetSource);
                 let sourceMem = Game.rooms[creep.memory.roomFrom].memory.outSourceRooms[creep.memory.outSourceRoom][target.id];

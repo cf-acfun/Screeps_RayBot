@@ -342,6 +342,9 @@ export default class Init extends Singleton {
   private _runCreeps() {
     for (let name in Game.creeps) {
       let creep = Game.creeps[name];
+      if (creep.spawning) {
+        continue;
+      }
       // console.log(`11当前房间[${creep.room.name}], creep[${creep.name}]`);
       try {
         if (creep.hits < creep.hitsMax && creep.room.memory.towers?.length) global.towerTask[creep.room.name].injured.push(creep.id);
