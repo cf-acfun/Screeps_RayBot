@@ -13,7 +13,7 @@ export default class PC extends Singleton {
         operate_power: 'operate_power',
         clearStore: 'clearStore'
     }
-    
+
     public static addPCTask(roomName: string, taskName: string, opsNum: number = 0, targetId?: string) {
         let powerCreep = Game.powerCreeps[Memory.pcConfig[roomName]];
         if (powerCreep?.ticksToLive) {
@@ -62,6 +62,19 @@ export default class PC extends Singleton {
         if (!Memory.pcConfig[room]) return;
 
         let powerCreep = Game.powerCreeps[Memory.pcConfig[room]];
+
+        let invader = Game.rooms[room].find(FIND_HOSTILE_CREEPS, {
+            filter: (creep) => {
+                return creep.owner.username == 'Invader' &&
+                    (creep.getActiveBodyparts(ATTACK) > 0 || creep.getActiveBodyparts(RANGED_ATTACK) > 0)
+            }
+        });
+
+        if (invader.length) {
+            powerCreep.customMove(Game.rooms[room].storage.pos);
+            return;
+        }
+
         if (powerCreep?.ticksToLive) {
             if (powerCreep.pos.x == 0 || powerCreep.pos.x == 49 || powerCreep.pos.y == 0 || powerCreep.pos.y == 49) {
                 powerCreep.customMove(Game.rooms[room].storage.pos);
