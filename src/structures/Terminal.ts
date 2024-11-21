@@ -10,9 +10,9 @@ export default class Terminal extends Singleton {
         if (terminal.cooldown) return;
 
         // 自动购买能量
-        if (Game.time % 10 == 0) {
-            this._autoBuyEnergy(roomName);
-        }
+        // if (Game.time % 10 == 0) {
+        //     this._autoBuyEnergy(roomName);
+        // }
 
         if (terminal.store.energy >= 60000 &&
             terminal.room.storage?.store.getFreeCapacity() < 10000 &&
@@ -47,49 +47,49 @@ export default class Terminal extends Singleton {
         }
 
         if (Game.time % (terminal.room.memory.index + 20) == 0) {
-            if (global.allRes.XGH2O < 2000) {
-                global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000);
-            }
+            // if (global.allRes.XGH2O < 2000) {
+            //     global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000);
+            // }
             if (terminal.room.controller.level < 8) return;
             if (terminal.room.storage.store.O + terminal.store.O < 6000) {
                 global.autoDeal(terminal.room.name, 'O', 40, 6000);
                 return;
             }
-            if (terminal.room.storage.store.H + terminal.store.H < 6000) {
-                global.autoDeal(terminal.room.name, 'H', 160, 6000);
-                return;
-            }
+            // if (terminal.room.storage.store.H + terminal.store.H < 6000) {
+            //     global.autoDeal(terminal.room.name, 'H', 160, 6000);
+            //     return;
+            // }
             if (terminal.room.storage.store.Z + + terminal.store.Z < 6000) {
                 global.autoDeal(terminal.room.name, 'Z', 16, 6000);
                 return;
             }
-            if (terminal.room.storage.store.L + + terminal.store.L < 6000) {
-                global.autoDeal(terminal.room.name, 'L', 30, 6000);
-                return;
-            }
+            // if (terminal.room.storage.store.L + + terminal.store.L < 6000) {
+            //     global.autoDeal(terminal.room.name, 'L', 30, 6000);
+            //     return;
+            // }
             if (terminal.room.storage.store.U + + terminal.store.U < 6000) {
                 global.autoDeal(terminal.room.name, 'U', 40, 6000);
                 return;
             }
-            if (terminal.room.storage.store.K + terminal.store.K < 6000) {
-                global.autoDeal(terminal.room.name, 'K', 130, 6000);
-                return;
-            }
-            if (terminal.room.storage.store.X + terminal.store.X < 6000) {
-                global.autoDeal(terminal.room.name, 'X', 200, 6000);
-                return;
-            }
-            if (global.allRes.XGH2O < 20000) {
-                global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000)
-            }
-            if (global.allRes.KH2O < 100000) {
-                global.autoDeal(terminal.room.name, "KH2O", 700, 1000);
-                return;
-            }
-            if (global.allRes.LH < 100000) {
-                global.autoDeal(terminal.room.name, "LH", 350, 1000);
-                return;
-            }
+            // if (terminal.room.storage.store.K + terminal.store.K < 6000) {
+            //     global.autoDeal(terminal.room.name, 'K', 130, 6000);
+            //     return;
+            // }
+            // if (terminal.room.storage.store.X + terminal.store.X < 6000) {
+            //     global.autoDeal(terminal.room.name, 'X', 200, 6000);
+            //     return;
+            // }
+            // if (global.allRes.XGH2O < 20000) {
+            //     global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000)
+            // }
+            // if (global.allRes.KH2O < 100000) {
+            //     global.autoDeal(terminal.room.name, "KH2O", 700, 1000);
+            //     return;
+            // }
+            // if (global.allRes.LH < 100000) {
+            //     global.autoDeal(terminal.room.name, "LH", 350, 1000);
+            //     return;
+            // }
             if (terminal.room.controller.level < 8) return;
             let type: MineralConstant = room.memory.mineral.type;
             if (global.allRes[type] < 4000 * Memory.myrooms.length) {

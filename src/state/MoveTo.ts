@@ -34,9 +34,9 @@ export default class MoveTo extends Singleton {
                 let atkClaim = Game.flags[`${roomFrom}_atkClaim`];
                 let transfer = Game.flags[`${roomFrom}_ts`];
                 if (transfer && !creep.memory.transferState) {
-                    if (creep.room.name != transfer.pos.roomName) {
-                        creep.customMove(transfer.pos);
-                        return
+                    if (creep.pos != transfer.pos) {
+                        creep.moveTo(transfer.pos);
+                        return;
                     } else {
                         creep.memory.transferState = true;
                     }
@@ -57,17 +57,17 @@ export default class MoveTo extends Singleton {
                 }
                 if (target) {
                     if (creep.room.name != target.pos.roomName) {
-                        creep.customMove(target.pos);
+                        creep.moveTo(target.pos);
                         return
                     }
                     if (creep.room.controller.reservation && creep.room.controller.reservation.username != Memory.username) {
                         if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                            creep.customMove(creep.room.controller.pos);
+                            creep.moveTo(creep.room.controller.pos);
                             return;
                         }
                     }
                     if (creep.claimController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                        creep.customMove(creep.room.controller.pos);
+                        creep.moveTo(creep.room.controller.pos);
                     }
                     if (creep.room.name == target.pos.roomName && creep.room.controller.owner?.username == creep.owner.username) {
                         global.cc[creep.memory.roomFrom].claimer = 0;
