@@ -117,9 +117,10 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.RemoteTransfer: {
+                if (creep.ticksToLive < 200 && creep.store.getUsedCapacity() == 0) creep.suicide(); 
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
                 if (!task) return;
-                if (creep.store.getUsedCapacity() == 0) {
+                if (creep.store.getFreeCapacity() > 0) {
                     if (creep.room.name != task.targetRoom) creep.customMove(new RoomPosition(25, 25, task.targetRoom));
                     else {
                         let targets = creep.room.find(FIND_STRUCTURES, {
@@ -127,7 +128,8 @@ export default class MoveTo extends Singleton {
                         })
                         if (targets.length) {
                             if (task.operate == 'withdraw') {
-                                if (targets[0]['store'][task.targetRes] == 0) {
+                                let targetRes = task.targetRes || Object.keys(targets[0]['store'])[0];
+                                if (targets[0]['store'][targetRes] == 0) {
                                     delete Memory.roomTask[roomFrom][creep.memory.taskId];
                                     global.cc[roomFrom].remoteTransfer = 0;
                                 }
@@ -135,7 +137,7 @@ export default class MoveTo extends Singleton {
                                     App.fsm.changeState(creep, State.Back);
                                     return;
                                 }
-                                if (creep.withdraw(targets[0], task.targetRes) == ERR_NOT_IN_RANGE) {
+                                if (creep.withdraw(targets[0], targetRes as ResourceConstant) == ERR_NOT_IN_RANGE) {
                                     creep.customMove(targets[0].pos);
                                 }
                             }

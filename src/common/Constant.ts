@@ -240,7 +240,7 @@ export const bodyConfigs: BodyConfigs = {
     { [CARRY]: 15, [MOVE]: 15 },
     { [CARRY]: 15, [MOVE]: 15 },
     { [CARRY]: 20, [MOVE]: 20 },
-    { [CARRY]: 20, [MOVE]: 20 },
+    { [CARRY]: 25, [MOVE]: 25 },
   ),
 
   attacker: getBodyConfig(
