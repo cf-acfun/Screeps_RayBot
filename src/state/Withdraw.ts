@@ -425,7 +425,7 @@ export default class Withdraw extends Singleton {
                 //         creep.memory.ruinState = false;
                 //     }
                 // }
-                if (creep.memory.targetContainer == creep.room.memory.mineral.container) {
+                if (creep.memory.targetContainer == creep.room.memory.mineral?.container) {
                     if (creep.ticksToLive < 50) {
                         if (creep.store.getUsedCapacity() > 0) App.fsm.changeState(creep, State.TransferToStorage);
                         else creep.suicide();
