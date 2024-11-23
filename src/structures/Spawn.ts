@@ -101,6 +101,15 @@ export default class Spawn extends Singleton {
             num: Game.creeps[creep.name].getActiveBodyparts(ATTACK)
           }])
         }
+        if (creep.memory.role == Role.RemoteTransfer) {
+          Boost.SetBoostType(creep.name, [{
+            type: global.allRes["XKH2O"] > 1000 ? "XKH2O" : "KH2O",
+            num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
+          }, { 
+            type: global.allRes["XZHO2"] > 1000 ? "XZHO2" : "ZHO2",
+            num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
+          }])
+        }
         // boost DepositHarvester
         // if (creep.memory.role == Role.DepositHarvester) {
 
@@ -116,6 +125,10 @@ export default class Spawn extends Singleton {
          *    T1: KH +50 容量
          *    T2: KH2O 	+100 容量
          *    T3: XKH2O +150 容量
+         * MOVE:
+         *    T1: ZO +100% fatigue(疲劳值) 减低速度
+         *    T2: ZHO2 +200% fatigue(疲劳值) 减低速度
+         *    T3: XZHO2 	+300% fatigue(疲劳值) 减低速度
          */
         let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
         let upgraderBoostFlag = Game.flags[`${creep.memory.roomFrom}_upgraderBoost`];

@@ -199,7 +199,7 @@ export default class Withdraw extends Singleton {
                 creep.memory.test = 4;
 
                 // powerSpawn
-                if (powerSpawn && storage.store.energy > 300000 && powerSpawn.store.power == 0) {
+                if (powerSpawn && storage.store.energy > 100000 && powerSpawn.store.power == 0) {
                     if (creep.store.power >= 100) {
                         App.common.transferToTargetStructure(creep, powerSpawn, 'power', 100);
                         return;

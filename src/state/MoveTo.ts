@@ -117,7 +117,9 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.RemoteTransfer: {
-                if (creep.ticksToLive < 200 && creep.store.getUsedCapacity() == 0) creep.suicide(); 
+                if (creep.ticksToLive < 200 && creep.store.getUsedCapacity() == 0) {
+                    creep.memory.state = State.Back;
+                }
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
                 if (!task) return;
                 if (creep.store.getFreeCapacity() > 0) {
@@ -216,12 +218,19 @@ export default class MoveTo extends Singleton {
         let roomFrom = creep.memory.roomFrom;
         switch (creep.memory.role) {
             case Role.RemoteTransfer: {
-                if (creep.store.getUsedCapacity() == 0) {
+                if (creep.ticksToLive > 200 && creep.store.getUsedCapacity() == 0) {
                     App.fsm.changeState(creep, State.MoveTo);
                     return;
                 }
-                if (creep.room.name == roomFrom) App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
-                else creep.customMove(new RoomPosition(25, 25, roomFrom));
+                if (creep.room.name != roomFrom) {
+                    creep.customMove(new RoomPosition(25, 25, roomFrom));
+                } else if (creep.room.name == roomFrom) {
+                    if (creep.store.getUsedCapacity() > 0) {
+                        App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
+                    } else if (creep.ticksToLive < 200) {
+                        creep.memory.state = State.Unboost;
+                    }
+                }
                 break;
             }
             case Role.DepositHarvester: {

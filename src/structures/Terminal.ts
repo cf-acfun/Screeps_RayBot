@@ -10,9 +10,9 @@ export default class Terminal extends Singleton {
         if (terminal.cooldown) return;
 
         // 自动购买能量
-        // if (Game.time % 10 == 0) {
-        //     this._autoBuyEnergy(roomName);
-        // }
+        if (Game.time % 10 == 0) {
+            this._autoBuyEnergy(roomName);
+        }
 
         if (terminal.store.energy >= 60000 &&
             terminal.room.storage?.store.getFreeCapacity() < 10000 &&
@@ -202,13 +202,13 @@ export default class Terminal extends Singleton {
         // console.log(`当前房间[${room}], energyInTerminal:[${energyInTerminal}], energyInStorage[${energyInStorage}], totalEnergy[${totalEnergy}]`);
 
         // 如果能量低于阈值，则创建或更新购买订单
-        let energyThreshold = 400000; // 定义的能量阈值
-        if (highestPrice <= 10) {
-            energyThreshold = 600000;
-            if (room.storage.store.getCapacity() == 8000000) {
-                energyThreshold = 6000000;
-            }
-        }
+        let energyThreshold = 200000; // 定义的能量阈值
+        // if (highestPrice <= 10) {
+        //     energyThreshold = 600000;
+        //     if (room.storage.store.getCapacity() == 8000000) {
+        //         energyThreshold = 6000000;
+        //     }
+        // }
         if (totalEnergy < energyThreshold && energyThreshold - totalEnergy >= 10000) {
             const roomEnergyOrder = Game.market.getOrderById(room.memory.energyOrder);
             if (roomEnergyOrder) {
