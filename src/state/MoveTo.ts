@@ -225,8 +225,10 @@ export default class MoveTo extends Singleton {
                 if (creep.room.name != roomFrom) {
                     creep.customMove(new RoomPosition(25, 25, roomFrom));
                 } else if (creep.room.name == roomFrom) {
-                    if (creep.store.getUsedCapacity() > 0) {
+                    if (creep.store.getUsedCapacity() > 0 && creep.room.storage.store.getFreeCapacity() > 10000) {
                         App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
+                    } else if (creep.store.getUsedCapacity() > 0 && creep.room.terminal.store.getFreeCapacity() > 10000) {
+                        App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].terminal);
                     } else if (creep.ticksToLive < 200) {
                         creep.memory.state = State.Unboost;
                     }
