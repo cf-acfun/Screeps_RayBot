@@ -14,13 +14,13 @@ export default class Terminal extends Singleton {
             this._autoBuyEnergy(roomName);
         }
 
-        if (terminal.store.energy >= 60000 &&
-            terminal.room.storage?.store.getFreeCapacity() < 10000 &&
+        if (terminal.store.energy >= 40000 &&
+            terminal.room.storage?.store[RESOURCE_ENERGY] >= 1000000 &&
             terminal.room.controller.level == 8) {
             let orders = Game.market.getAllOrders({ type: ORDER_BUY, resourceType: 'energy' })
                 .sort((a, b) => b.price - a.price);
             let order = orders[0];
-            if (order && order.price >= 7) {
+            if (order && order.price >= 10) {
                 let num = order.amount > 25000 ? 25000 : order.amount;
                 Game.market.deal(order.id, num, terminal.room.name);
                 return;
@@ -39,46 +39,43 @@ export default class Terminal extends Singleton {
             }
         }
 
-        if (Game.time % (terminal.room.memory.index + 5000) == 0) {
-            if (terminal.room.storage.store.power + terminal.store.power < 10000) {
-                global.autoDeal(terminal.room.name, 'power', 1200);
-                return;
-            }
-        }
+        // if (Game.time % (terminal.room.memory.index + 5000) == 0) {
+        //     if (terminal.room.storage.store.power + terminal.store.power < 10000) {
+        //         global.autoDeal(terminal.room.name, 'power', 1200);
+        //         return;
+        //     }
+        // }
 
         if (Game.time % (terminal.room.memory.index + 20) == 0) {
             // if (global.allRes.XGH2O < 2000) {
             //     global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000);
             // }
             if (terminal.room.controller.level < 8) return;
-            if (terminal.room.storage.store.O + terminal.store.O < 6000) {
-                global.autoDeal(terminal.room.name, 'O', 40, 6000);
-                return;
+            if (Memory.username == 'ACFun') {
+                // 目前还没有X和U房间
+                if (terminal.room.storage.store.U + + terminal.store.U < 6000) {
+                    global.autoDeal(terminal.room.name, 'U', 40, 6000);
+                    return;
+                }
+                if (terminal.room.storage.store.X + terminal.store.X < 6000) {
+                    global.autoDeal(terminal.room.name, 'X', 200, 6000);
+                    return;
+                }
             }
-            // if (terminal.room.storage.store.H + terminal.store.H < 6000) {
-            //     global.autoDeal(terminal.room.name, 'H', 160, 6000);
-            //     return;
-            // }
-            if (terminal.room.storage.store.Z + + terminal.store.Z < 6000) {
-                global.autoDeal(terminal.room.name, 'Z', 16, 6000);
-                return;
+            if (Memory.username == 'Spon-Singer') {
+                if (terminal.room.storage.store.Z + + terminal.store.Z < 6000) {
+                    global.autoDeal(terminal.room.name, 'Z', 16, 6000);
+                    return;
+                }
+                if (terminal.room.storage.store.O + terminal.store.O < 6000) {
+                    global.autoDeal(terminal.room.name, 'O', 40, 6000);
+                    return;
+                }
+                if (terminal.room.storage.store.U + + terminal.store.U < 6000) {
+                    global.autoDeal(terminal.room.name, 'U', 40, 6000);
+                    return;
+                }
             }
-            // if (terminal.room.storage.store.L + + terminal.store.L < 6000) {
-            //     global.autoDeal(terminal.room.name, 'L', 30, 6000);
-            //     return;
-            // }
-            if (terminal.room.storage.store.U + + terminal.store.U < 6000) {
-                global.autoDeal(terminal.room.name, 'U', 40, 6000);
-                return;
-            }
-            // if (terminal.room.storage.store.K + terminal.store.K < 6000) {
-            //     global.autoDeal(terminal.room.name, 'K', 130, 6000);
-            //     return;
-            // }
-            // if (terminal.room.storage.store.X + terminal.store.X < 6000) {
-            //     global.autoDeal(terminal.room.name, 'X', 200, 6000);
-            //     return;
-            // }
             // if (global.allRes.XGH2O < 20000) {
             //     global.autoDeal(terminal.room.name, "XGH2O", 1940, 2000)
             // }
@@ -202,13 +199,13 @@ export default class Terminal extends Singleton {
         // console.log(`当前房间[${room}], energyInTerminal:[${energyInTerminal}], energyInStorage[${energyInStorage}], totalEnergy[${totalEnergy}]`);
 
         // 如果能量低于阈值，则创建或更新购买订单
-        let energyThreshold = 200000; // 定义的能量阈值
-        // if (highestPrice <= 10) {
-        //     energyThreshold = 600000;
-        //     if (room.storage.store.getCapacity() == 8000000) {
-        //         energyThreshold = 6000000;
-        //     }
-        // }
+        let energyThreshold = 100000; // 定义的能量阈值
+        if (highestPrice <= 6) {
+            energyThreshold = 600000;
+            if (room.storage.store.getCapacity() == 8000000) {
+                energyThreshold = 6000000;
+            }
+        }
         if (totalEnergy < energyThreshold && energyThreshold - totalEnergy >= 10000) {
             const roomEnergyOrder = Game.market.getOrderById(room.memory.energyOrder);
             if (roomEnergyOrder) {
