@@ -27,7 +27,7 @@ export default class Terminal extends Singleton {
             }
         }
 
-        if (terminal?.room.storage.store.energy > 500000 &&
+        if (terminal?.room.storage.store.energy > 1200000 &&
             terminal?.store.energy >= 50000 && terminal?.room.storage.store.getCapacity() <= 1000000) {
             for (let i = 0; i < Memory.myrooms.length; i++) {
                 let room = Game.rooms[Memory.myrooms[i]];
