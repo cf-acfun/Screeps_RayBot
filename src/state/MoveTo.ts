@@ -116,6 +116,44 @@ export default class MoveTo extends Singleton {
                 }
                 break;
             }
+            // case Role.PB_Attacker: {
+            //     // PowerBank = `PB_${roomName}_${targetRoom}`
+            //     // 获取目标房间
+            //     let targetRoom = creep.name.split("_")[2];
+            //     console.log(`目标房间为[${targetRoom}]`);
+            //     // 首先移动到目标房间
+            //     if (creep.room.name != targetRoom) {
+            //         creep.customMove(new RoomPosition(25, 25, targetRoom));
+            //     } else {
+            //         // 攻击powerBank
+
+            //     }
+
+            // }
+            case Role.PB_Carryer: {
+                // PowerBank = `PB_${roomName}_${targetRoom}`
+                // 获取目标房间
+                let targetRoom = creep.name.split("_")[2];
+                // console.log(`目标房间为[${targetRoom}]`);
+                // 首先移动到目标房间
+                if (creep.room.name != targetRoom) {
+                    creep.customMove(new RoomPosition(25, 25, targetRoom));
+                } else {
+                    let power = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
+                        filter: (d) => d.amount >= 100 && d.resourceType == "power"
+                    });
+                    console.log(`power[${power}]`);
+                    if (power) {
+                        if (creep.pickup(power) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(power.pos);
+                        }
+                    }
+                    if (creep.store.getUsedCapacity() > 0) {
+                        creep.memory.state = State.Back;
+                    }
+                }
+                break;
+            }
             case Role.RemoteTransfer: {
                 if (creep.ticksToLive < 200 && creep.store.getUsedCapacity() == 0) {
                     creep.memory.state = State.Back;
@@ -217,6 +255,7 @@ export default class MoveTo extends Singleton {
     public back(creep: Creep) {
         let roomFrom = creep.memory.roomFrom;
         switch (creep.memory.role) {
+            case Role.PB_Carryer:
             case Role.RemoteTransfer: {
                 if (creep.ticksToLive > 200 && creep.store.getUsedCapacity() == 0) {
                     App.fsm.changeState(creep, State.MoveTo);

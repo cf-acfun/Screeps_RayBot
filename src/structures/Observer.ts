@@ -35,6 +35,7 @@ export default class Observer extends Singleton {
                 });
                 if (!wall.length) {
                     let DN = `Depo_${roomName}_${targetRoom}`;
+                    // let PowerBank = `PB_${roomName}_${targetRoom}`;
                     if (!Game.flags[DN]) {
                         if (!Game.creeps[DN]) {
                             let deposits = Game.rooms[targetRoom].find(FIND_DEPOSITS, {
@@ -46,6 +47,24 @@ export default class Observer extends Singleton {
                             }
                         }
                     }
+                    // if (!Game.flags[PowerBank]) {
+                    //     // TODO 创建任务
+                    //     if (!Game.creeps[PowerBank]) {
+                    //         let pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
+                    //             filter: { structureType: STRUCTURE_POWER_BANK }
+                    //         })
+                    //         let power = Game.rooms[targetRoom].find(FIND_DROPPED_RESOURCES, {
+                    //             filter: (d) => d.amount >= 100 && d.resourceType == "power"
+                    //         });
+                    //         if (power) {
+                    //             App.spawn.run(roomName, Role.PB_Carryer, `${PowerBank}_1`);
+                    //             App.spawn.run(roomName, Role.PB_Carryer, `${PowerBank}_2`);
+                    //         }
+                    //         if (pb.length > 0) {
+                                
+                    //         }
+                    //     }
+                    // }
                 }
 
                 if (room.memory.observer.index == num - 1) room.memory.observer.index = 0;

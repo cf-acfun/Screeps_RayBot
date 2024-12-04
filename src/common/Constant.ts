@@ -349,14 +349,14 @@ export const bodyConfigs: BodyConfigs = {
     { [WORK]: 15, [CARRY]: 15, [MOVE]: 15 },
   ),
   pb_attacker: getBodyConfig(
-    { [ATTACK]: 20, [MOVE]: 20 },
-    { [ATTACK]: 20, [MOVE]: 20 },
-    { [ATTACK]: 20, [MOVE]: 20 },
-    { [ATTACK]: 20, [MOVE]: 20 },
-    { [ATTACK]: 20, [MOVE]: 20 },
-    { [ATTACK]: 20, [MOVE]: 20 },
-    { [ATTACK]: 20, [MOVE]: 20 },
-    { [ATTACK]: 20, [MOVE]: 20 }
+    { [MOVE]: 25, [ATTACK]: 25 },
+    { [MOVE]: 25, [ATTACK]: 25 },
+    { [MOVE]: 25, [ATTACK]: 25 },
+    { [MOVE]: 25, [ATTACK]: 25 },
+    { [MOVE]: 25, [ATTACK]: 25 },
+    { [MOVE]: 25, [ATTACK]: 25 },
+    { [MOVE]: 25, [ATTACK]: 25 },
+    { [MOVE]: 25, [ATTACK]: 25 }
   ),
   pb_healer: getBodyConfig(
     { [HEAL]: 25, [MOVE]: 25 },
@@ -369,14 +369,14 @@ export const bodyConfigs: BodyConfigs = {
     { [HEAL]: 25, [MOVE]: 25 }
   ),
   pb_carryer: getBodyConfig(
-    { [CARRY]: 33, [MOVE]: 17 },
-    { [CARRY]: 33, [MOVE]: 17 },
-    { [CARRY]: 33, [MOVE]: 17 },
-    { [CARRY]: 33, [MOVE]: 17 },
-    { [CARRY]: 33, [MOVE]: 17 },
-    { [CARRY]: 33, [MOVE]: 17 },
-    { [CARRY]: 33, [MOVE]: 17 },
-    { [CARRY]: 33, [MOVE]: 17 },
+    { [CARRY]: 25, [MOVE]: 25 },
+    { [CARRY]: 25, [MOVE]: 25 },
+    { [CARRY]: 25, [MOVE]: 25 },
+    { [CARRY]: 25, [MOVE]: 25 },
+    { [CARRY]: 25, [MOVE]: 25 },
+    { [CARRY]: 25, [MOVE]: 25 },
+    { [CARRY]: 25, [MOVE]: 25 },
+    { [CARRY]: 25, [MOVE]: 25 },
   ),
   repairer: getBodyConfig(
     { [WORK]: 1, [CARRY]: 1, [MOVE]: 1 },
