@@ -23,7 +23,7 @@ export default class Spawn extends Singleton {
     return bodys
   }
 
-  public run(roomName: string, role: string, creepName?: string, taksId?: number) {
+  public run(roomName: string, role: string, creepName?: string, taksId?: string) {
     let room = Game.rooms[roomName];
     if (!room.memory.spawns) return;
     for (let i = 0; i < room.memory.spawns.length; i++) {
@@ -45,6 +45,13 @@ export default class Spawn extends Singleton {
             taskId: taksId
           }
         });
+        // 如果存在TaskId,则将creep添加到creepBind中
+        if (taksId) {
+          if (!Memory.roomTask[roomName][taksId].CreepBind) {
+            Memory.roomTask[roomName][taksId].CreepBind = {};
+          }
+          Memory.roomTask[roomName][taksId].CreepBind[role].bind.push(newName);
+        }
         break;
       }
     }
@@ -78,7 +85,7 @@ export default class Spawn extends Singleton {
           }, {
             type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
-          }, { 
+          }, {
             type: global.allRes["ZHO2"] > 1000 ? "ZHO2" : "ZH",
             num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
           }])
@@ -90,7 +97,7 @@ export default class Spawn extends Singleton {
           }, {
             type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
-          }, { 
+          }, {
             type: global.allRes["ZHO2"] > 1000 ? "ZHO2" : "ZH",
             num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
           }])
@@ -105,15 +112,30 @@ export default class Spawn extends Singleton {
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["XKH2O"] > 1000 ? "XKH2O" : "KH2O",
             num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
-          }, { 
+          }, {
             type: global.allRes["XZHO2"] > 1000 ? "XZHO2" : "ZHO2",
             num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
           }])
         }
         // boost DepositHarvester
-        // if (creep.memory.role == Role.DepositHarvester) {
-
-        // }
+        if (creep.memory.role == Role.DepositHarvester) {
+          Boost.SetBoostType(creep.name, [{
+            type: global.allRes["UHO2"] > 1000 ? "UHO2" : "UO",
+            num: Game.creeps[creep.name].getActiveBodyparts(WORK)
+          }])
+        }
+        if (creep.memory.role == Role.PB_Attacker) {
+          Boost.SetBoostType(creep.name, [{
+            type: global.allRes["UH2O"] > 1000 ? "UH2O" : "UH",
+            num: Game.creeps[creep.name].getActiveBodyparts(ATTACK)
+          }])
+        }
+        if (creep.memory.role == Role.PB_Healer) {
+          Boost.SetBoostType(creep.name, [{
+            type: global.allRes["LHO2"] > 1000 ? "LHO2" : "LO",
+            num: Game.creeps[creep.name].getActiveBodyparts(HEAL)
+          }])
+        }
 
         /**
          * 升级boost

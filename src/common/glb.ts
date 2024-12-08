@@ -481,7 +481,7 @@ export default class Glb extends Singleton {
 		App.solitary.create(id, from, targetRoom, type, sustained, nums, targetStructure, interval);
 	};
 
-	private _createRoomTask(taksId: number, roomName: string, targetRoom: string, role: Role, operate: string, targetStructure: STRUCTURE_STORAGE | STRUCTURE_TERMINAL, num: number, res?: ResourceConstant) {
+	private _createRoomTask(taksId: string, roomName: string, targetRoom: string, role: Role, operate: Operate, targetStructure: STRUCTURE_STORAGE | STRUCTURE_TERMINAL, targetStructureId: Id<Structure>, num: number, CreepBind?: BindData, res?: ResourceConstant) {
 		if (!Memory.roomTask) Memory.roomTask = {};
 		if (!Memory.roomTask[roomName]) Memory.roomTask[roomName] = {};
 		Memory.roomTask[roomName][taksId] = {
@@ -491,10 +491,11 @@ export default class Glb extends Singleton {
 			targetRes: res,
 			operate: operate,
 			targetStructure: targetStructure,
-			num: num
+			num: num,
+			targetStructureId: targetStructureId,
+			CreepBind: CreepBind
 		}
 		global.cc[roomName][role] = num;
-
 	}
 
 	private _addWhiteList(username: string) {

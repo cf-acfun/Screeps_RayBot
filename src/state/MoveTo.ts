@@ -192,6 +192,61 @@ export default class MoveTo extends Singleton {
                 }
                 break;
             }
+            case Role.PB_Attacker: {
+                let task = Memory.roomTask[roomFrom][creep.memory.taskId];
+                if (!task) return;
+                // 先组队
+                if (!creep.memory.healer) {
+                    if (Game.time % 7 == 0) {
+                        if (task.CreepBind[Role.PB_Healer].bind.length > 0) {
+                            for (var c of task.CreepBind[Role.PB_Healer].bind) {
+                                if (Game.creeps[c] && Game.creeps[c].pos.roomName == creep.room.name && !Game.creeps[c].memory.attacker) {
+                                    var disCreep = Game.creeps[c];
+                                    disCreep.memory.attacker = creep.name;
+                                    creep.memory.healer = disCreep.name;
+                                }
+                            }
+                        }
+                    }
+                    return;
+                }
+                let powerBankFlag = `PB_${creep.memory.roomFrom}_${task.targetRoom}`;
+                // 移动到powerBank
+                if (creep.room.name != task.targetRoom) {
+                    creep.customMove(Game.flags[powerBankFlag].pos);
+                }
+                // 附近没有治疗creep就等
+                if (Game.creeps[creep.memory.healer] && !creep.pos.isNearTo(Game.creeps[creep.memory.healer]) && (!isInArray([0, 49], creep.pos.x) && !isInArray([0, 49], creep.pos.y))) return;
+                // 血量低于4000则等待治疗
+                if (creep.hits < 3500) {
+                    return;
+                }
+                // 攻击powerBank
+                let powerBank = Game.getObjectById(task.targetStructureId);
+                if (creep.attack(powerBank) == ERR_NOT_IN_RANGE) {
+                    creep.customMove(powerBank.pos);
+                }
+            }
+            case Role.PB_Healer: {
+                if (!creep.memory.attacker) return;
+                if (Game.creeps[creep.memory.attacker]) {
+                    if (creep.hits < creep.hitsMax) {
+                        creep.heal(creep);
+                    }
+                    if (creep.pos.isNearTo(Game.creeps[creep.memory.attacker])) {
+                        if (Game.creeps[creep.memory.attacker] && Game.creeps[creep.memory.attacker].hits < Game.creeps[creep.memory.attacker].hitsMax) {
+                            creep.heal(Game.creeps[creep.memory.attacker]);
+                            return;
+                        }
+                    } else {
+                        if (creep.pos.inRangeTo(Game.creeps[creep.memory.attacker], 3)) {
+                            creep.rangedHeal(Game.creeps[creep.memory.attacker])
+                        }
+                        creep.moveTo(Game.creeps[creep.memory.attacker].pos, { range: 1 })
+                    }
+                }
+                
+            }
             case Role.DepositHarvester: {
                 let df = Game.flags[creep.name];
                 if (df) {
@@ -286,3 +341,13 @@ export default class MoveTo extends Singleton {
         }
     }
 }
+
+/*  判定是否在列表里 */
+export function isInArray(arr: any[], value: any): boolean {
+    for (var i = 0; i < arr.length; i++) {
+      if (value === arr[i]) {
+        return true
+      }
+    }
+    return false
+  }

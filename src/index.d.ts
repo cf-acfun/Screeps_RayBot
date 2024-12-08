@@ -57,7 +57,7 @@ interface GlobalExtension {
 	allRes?: MyResource,
 
 	getAll(): void,
-	createRoomTask(taksId: number, roomName: string, targetRoom: string, role: Role, operate: string, targetStructure: STRUCTURE_STORAGE | STRUCTURE_TERMINAL, num: number, res?: ResourceConstant): void,
+	createRoomTask(taksId: string, roomName: string, targetRoom: string, role: Role, operate: string, targetStructure: STRUCTURE_STORAGE | STRUCTURE_TERMINAL | STRUCTURE_POWER_BANK, targetStructureId: Id<Structure>, num: number, CreepBind?: BindData, res?: ResourceConstant): void,
 	clearStorage(resourceTpye?: ResourceConstant, roomName?: string): void,
 	clearTerminal(resourceTpye?: ResourceConstant, roomName?: string): void,
 	getRooms(): string[],
@@ -251,7 +251,7 @@ interface CreepMemory {
 	targetSource?: Id<Source>,
 	targetMineral?: Id<Mineral>,
 	targetContainer?: Id<StructureContainer>,
-	taskId?: number,
+	taskId?: string,
 	transferTargetId?: Id<AnyStructure>,
 	dropId?: Id<Resource>,
 	ruinId?: Id<Ruin>,
@@ -348,19 +348,34 @@ interface RoomMemory {
 	energyOrder?: string,	// 能量购买订单
 	nuker: Id<StructureNuker>,
 }
+
+// 房间任务模板
 interface RoomTask {
 	[roomName: string]: {
-		[id: number]: {
+		[id: string]: {
 			role: Role,
 			roomName: string,
 			targetRoom: string,
 			targetRes?: ResourceConstant,
-			targetStructure: STRUCTURE_STORAGE | STRUCTURE_TERMINAL
-			operate: string,
-			num: number
+			targetStructure: STRUCTURE_STORAGE | STRUCTURE_TERMINAL | STRUCTURE_POWER_BANK
+			operate: Operate,
+			num: number,
+			targetStructureId?: Id<Structure>,
+			CreepBind?: BindData
 		}
 	}
 }
+
+/* 任务角色绑定数据 */
+interface BindData {
+    [role: string]: { num: number, bind: string[], interval?: number, MSB?: boolean, historynum?: number }
+} 
+
+type Operate = 
+	'harveste_power' |
+	'withdraw'
+
+
 type Bar = {
 	[type in MineralConstant]: CommodityConstant;
 };

@@ -32,6 +32,11 @@ export const Role = {
   Transfer2Container: 'transfer2Container',
 }
 
+export const Operate = {
+  Harveste_power: 'harveste_power',
+	Withdraw: 'withdraw'
+}
+
 export const GroupState = {
   idle: 'Idle',
   move: 'Move',

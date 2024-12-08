@@ -282,11 +282,11 @@ export default class Init extends Singleton {
         let roleLen = roomCreeps[role].length || 0;
         if (!global.cc[roomName]) continue;
         if (roleLen < global.cc[roomName][role]) {
-          if (role == Role.RemoteTransfer) {
+          if (role == Role.RemoteTransfer || role == Role.PB_Attacker || role == Role.PB_Healer) {
             if (Memory.roomTask[roomName]) {
               for (let i in Memory.roomTask[roomName]) {
                 let task = Memory.roomTask[roomName][i];
-                if (task.roomName == roomName) App.spawn.run(roomName, role, null, +i);
+                if (task.roomName == roomName) App.spawn.run(roomName, role, null, i);
               }
             }
           } else App.spawn.run(roomName, role);

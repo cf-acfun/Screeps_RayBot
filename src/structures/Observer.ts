@@ -1,6 +1,9 @@
 import App from "@/App";
 import Singleton from "@/Singleton";
 import { Role } from "@/common/Constant";
+import { Operate } from "@/common/Constant"
+import { State } from "@/fsm/state";
+import { GenNonDuplicateID } from "@/common/utils"
 
 export default class Observer extends Singleton {
     public run(roomName: string) {
@@ -35,7 +38,7 @@ export default class Observer extends Singleton {
                 });
                 if (!wall.length) {
                     let DN = `Depo_${roomName}_${targetRoom}`;
-                    // let PowerBank = `PB_${roomName}_${targetRoom}`;
+                    let PowerBank = `PB_${roomName}_${targetRoom}`;
                     if (!Game.flags[DN]) {
                         if (!Game.creeps[DN]) {
                             let deposits = Game.rooms[targetRoom].find(FIND_DEPOSITS, {
@@ -48,22 +51,37 @@ export default class Observer extends Singleton {
                         }
                     }
                     // if (!Game.flags[PowerBank]) {
-                    //     // TODO 创建任务
-                    //     if (!Game.creeps[PowerBank]) {
-                    //         let pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
-                    //             filter: { structureType: STRUCTURE_POWER_BANK }
-                    //         })
-                    //         let power = Game.rooms[targetRoom].find(FIND_DROPPED_RESOURCES, {
-                    //             filter: (d) => d.amount >= 100 && d.resourceType == "power"
-                    //         });
-                    //         if (power) {
-                    //             App.spawn.run(roomName, Role.PB_Carryer, `${PowerBank}_1`);
-                    //             App.spawn.run(roomName, Role.PB_Carryer, `${PowerBank}_2`);
+                    //     // TODO 发布房间任务 房间任务框架roomTask
+                    //     // let pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
+                    //     //     filter: { structureType: STRUCTURE_POWER_BANK }
+                    //     // });
+                    //     var pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
+                    //         filter: (stru) => {
+                    //             return stru.structureType == 'powerBank' && stru.ticksToDecay >= 3600 && stru.power > 3000
                     //         }
+                    //     }) as StructurePowerBank[];
+                    //     // 是否有他人creep
+                    //     let hostileCreeps = Game.rooms[targetRoom].find(FIND_HOSTILE_CREEPS);
+                    //     if (hostileCreeps.length > 0) {
+                    //         console.log(`当前房间存在他人creep[${hostileCreeps}]`);
+                    //     } else {
+                    //         // let power = Game.rooms[targetRoom].find(FIND_DROPPED_RESOURCES, {
+                    //         //     filter: (d) => d.amount >= 100 && d.resourceType == "power"
+                    //         // });
+                    //         // 插旗
                     //         if (pb.length > 0) {
-                                
+                    //             Game.rooms[targetRoom].createFlag(pb[0].pos, PowerBank);
+                    //             // 创建roomTask
+                    //             global.createRoomTask(`${Role.PB_Attacker}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Attacker as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 2);
+                    //             global.createRoomTask(`${Role.PB_Healer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Healer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 2);
                     //         }
                     //     }
+                    // }
+                    // if (Game.flags[PowerBank]) {
+                    //     // 已经发现powerBank 进行powerBank状态检查
+                    //     // 剩余多少hits
+                           // TODO 增加删除roomTask功能
+                    //     // 一共多少power，计算需要出多少carrier
                     // }
                 }
 
