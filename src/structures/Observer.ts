@@ -79,51 +79,51 @@ export default class Observer extends Singleton {
                     //         }
                     //     }
                     // }
-                    if (Game.flags[PowerBank]) {
-                        // 已经发现powerBank 进行powerBank状态检查
-                        // if (Game.time % 20 == 0) {
-                            var pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
-                                filter: (stru) => {
-                                    return stru.structureType == 'powerBank'
-                                }
-                            }) as StructurePowerBank[];
-                            if (pb.length > 0) {
-                                console.log(`当前pb剩余hits为[${pb[0].hits}]`);
-                                // 2M = 2000000
-                                if (pb[0].hits < 1000000) {
-                                    // TODO 计算什么时候发布任务
-                                    // 是否已经发布了任务
-                                    let task = Memory.roomTask[roomName];
-                                    let carryTask = null;
-                                    let carrierNum = 2;
-                                    for (let t in task) {
-                                        console.log(`当前t为[${t}]`);
-                                        let taskM = Memory.roomTask[roomName][t];
-                                        if (taskM.targetRoom == targetRoom && taskM.role != Role.PB_Carryer) {
-                                            continue;
-                                        }
-                                        if (taskM.role == Role.PB_Carryer) {
-                                            carryTask = taskM.role;
-                                            break;
-                                        }
-                                    }
-                                    if (!carryTask) {
-                                        // TODO 计算出几个carrier
-                                        let CreepBind = { 'pb_carryer': {num: 5, bind: []}};
-                                        global.createRoomTask(`${Role.PB_Carryer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Carryer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 5, CreepBind);
-                                    } 
-                                }
-                            } else {
-                                // TODO 删除任务
-
-                            }
-
-                        // }
+                    // if (Game.flags[PowerBank]) {
+                    //     // 已经发现powerBank 进行powerBank状态检查
                         
-                        // 剩余多少hits
-                        //    TODO 增加删除roomTask功能
-                        // 一共多少power，计算需要出多少carrier
-                    }
+                    //         var pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
+                    //             filter: (stru) => {
+                    //                 return stru.structureType == 'powerBank'
+                    //             }
+                    //         }) as StructurePowerBank[];
+                    //         if (pb.length > 0) {
+                    //             console.log(`当前pb剩余hits为[${pb[0].hits}]`);
+                    //             // 2M = 2000000
+                    //             if (pb[0].hits < 1000000) {
+                    //                 // TODO 计算什么时候发布任务
+                    //                 // 是否已经发布了任务
+                    //                 let task = Memory.roomTask[roomName];
+                    //                 let carryTask = null;
+                    //                 let carrierNum = 2;
+                    //                 for (let t in task) {
+                    //                     console.log(`当前t为[${t}]`);
+                    //                     let taskM = Memory.roomTask[roomName][t];
+                    //                     if (taskM.targetRoom == targetRoom && taskM.role != Role.PB_Carryer) {
+                    //                         continue;
+                    //                     }
+                    //                     if (taskM.role == Role.PB_Carryer) {
+                    //                         carryTask = taskM.role;
+                    //                         break;
+                    //                     }
+                    //                 }
+                    //                 if (!carryTask) {
+                    //                     // TODO 计算出几个carrier
+                    //                     let CreepBind = { 'pb_carryer': {num: 5, bind: []}};
+                    //                     global.createRoomTask(`${Role.PB_Carryer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Carryer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 5, CreepBind);
+                    //                 } 
+                    //             }
+                    //         } else {
+                    //             // TODO 删除任务
+
+                    //         }
+
+                        
+                        
+                    //     // 剩余多少hits
+                    //     //    TODO 增加删除roomTask功能
+                    //     // 一共多少power，计算需要出多少carrier
+                    // }
                 }
 
                 if (room.memory.observer.index == num - 1) room.memory.observer.index = 0;
