@@ -206,7 +206,13 @@ export default class Init extends Singleton {
     if (!Memory.roomTask[roomName]) return;
     for (let id in Memory.roomTask[roomName]) {
       let task = Memory.roomTask[roomName][id];
-      global.cc[roomName][task.role] = task.num;
+      if (id.includes(Role.PB_Attacker)) {
+        global.cc[roomName][Role.PB_Attacker] = task.num;
+        global.cc[roomName][Role.PB_Healer] = task.num;
+      } else {
+        global.cc[roomName][task.role] = task.num;
+      }
+      
     }
   }
 
@@ -282,7 +288,7 @@ export default class Init extends Singleton {
         let roleLen = roomCreeps[role].length || 0;
         if (!global.cc[roomName]) continue;
         if (roleLen < global.cc[roomName][role]) {
-          if (role == Role.RemoteTransfer || role == Role.PB_Attacker || role == Role.PB_Healer) {
+          if (role == Role.RemoteTransfer || role == Role.PB_Attacker || role == Role.PB_Healer || role == Role.PB_Carryer) {
             if (Memory.roomTask[roomName]) {
               for (let i in Memory.roomTask[roomName]) {
                 let task = Memory.roomTask[roomName][i];

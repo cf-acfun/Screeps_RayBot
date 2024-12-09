@@ -2,6 +2,7 @@ import { bodyConfigs, Role } from "@/common/Constant"
 import { GenNonDuplicateID } from "@/common/utils"
 import Singleton from "@/Singleton"
 import Boost from "@/state/Boost"
+import { bind } from "lodash"
 
 export default class Spawn extends Singleton {
   private getBodys(spawnName: string, bodyType: BodyAutoConfigConstant): BodyPartConstant[] {
@@ -47,8 +48,17 @@ export default class Spawn extends Singleton {
         });
         // 如果存在TaskId,则将creep添加到creepBind中
         if (taksId) {
+          let task = Memory.roomTask[roomName][taksId];
           if (!Memory.roomTask[roomName][taksId].CreepBind) {
             Memory.roomTask[roomName][taksId].CreepBind = {};
+          }
+          if (!Memory.roomTask[roomName][taksId].CreepBind[role]) {
+            Memory.roomTask[roomName][taksId].CreepBind = {
+              role: {
+                num: task.num,
+                bind: []
+              }
+            }
           }
           Memory.roomTask[roomName][taksId].CreepBind[role].bind.push(newName);
         }

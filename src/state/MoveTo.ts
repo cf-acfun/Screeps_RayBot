@@ -116,28 +116,14 @@ export default class MoveTo extends Singleton {
                 }
                 break;
             }
-            // case Role.PB_Attacker: {
-            //     // PowerBank = `PB_${roomName}_${targetRoom}`
-            //     // 获取目标房间
-            //     let targetRoom = creep.name.split("_")[2];
-            //     console.log(`目标房间为[${targetRoom}]`);
-            //     // 首先移动到目标房间
-            //     if (creep.room.name != targetRoom) {
-            //         creep.customMove(new RoomPosition(25, 25, targetRoom));
-            //     } else {
-            //         // 攻击powerBank
-
-            //     }
-
-            // }
             case Role.PB_Carryer: {
-                // PowerBank = `PB_${roomName}_${targetRoom}`
-                // 获取目标房间
-                let targetRoom = creep.name.split("_")[2];
-                // console.log(`目标房间为[${targetRoom}]`);
+                let task = Memory.roomTask[roomFrom][creep.memory.taskId];
+                if (!task) return;
                 // 首先移动到目标房间
-                if (creep.room.name != targetRoom) {
-                    creep.customMove(new RoomPosition(25, 25, targetRoom));
+                
+                
+                if (creep.room.name != task.targetRoom) {
+                    creep.customMove(new RoomPosition(25, 25, task.targetRoom));
                 } else {
                     let power = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
                         filter: (d) => d.amount >= 100 && d.resourceType == "power"
@@ -216,7 +202,7 @@ export default class MoveTo extends Singleton {
                     creep.customMove(Game.flags[powerBankFlag].pos);
                 }
                 // 附近没有治疗creep就等
-                if (Game.creeps[creep.memory.healer] && !creep.pos.isNearTo(Game.creeps[creep.memory.healer]) && (!isInArray([0, 49], creep.pos.x) && !isInArray([0, 49], creep.pos.y))) return;
+                // if (Game.creeps[creep.memory.healer] && !creep.pos.isNearTo(Game.creeps[creep.memory.healer]) && (!isInArray([0, 49], creep.pos.x) && !isInArray([0, 49], creep.pos.y))) return;
                 // 血量低于4000则等待治疗
                 if (creep.hits < 3500) {
                     return;
