@@ -314,6 +314,15 @@ export default class MoveTo extends Singleton {
                 }
                 break;
             }
+            case Role.PB_Attacker:
+            case Role.PB_Healer: {
+                if (creep.room.name != roomFrom) {
+                    creep.customMove(new RoomPosition(25, 25, roomFrom));
+                } else if (creep.room.name == roomFrom) {
+                    creep.memory.state = State.Unboost;
+                }
+                break;
+            }
             case Role.DepositHarvester: {
                 if (creep.store.getUsedCapacity() == 0) {
                     App.fsm.changeState(creep, State.MoveTo);

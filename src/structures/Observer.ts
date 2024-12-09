@@ -50,35 +50,35 @@ export default class Observer extends Singleton {
                             }
                         }
                     }
-                    if (!Game.flags[PowerBank]) {
-                        // TODO 发布房间任务 房间任务框架roomTask
-                        // let pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
-                        //     filter: { structureType: STRUCTURE_POWER_BANK }
-                        // });
-                        var pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
-                            filter: (stru) => {
-                                return stru.structureType == 'powerBank' && stru.ticksToDecay >= 3600 && stru.power > 3000
-                                // return stru.structureType == 'powerBank' && stru.power > 1000
-                            }
-                        }) as StructurePowerBank[];
-                        // 是否有他人creep
-                        let hostileCreeps = Game.rooms[targetRoom].find(FIND_HOSTILE_CREEPS);
-                        if (hostileCreeps.length > 0) {
-                            console.log(`当前房间存在他人creep[${hostileCreeps}]`);
-                        } else {
-                            // let power = Game.rooms[targetRoom].find(FIND_DROPPED_RESOURCES, {
-                            //     filter: (d) => d.amount >= 100 && d.resourceType == "power"
-                            // });
-                            // 插旗
-                            if (pb.length > 0) {
-                                Game.rooms[targetRoom].createFlag(pb[0].pos, PowerBank);
-                                // 创建roomTask
-                                let CreepBind = { 'pb_healer': {num: 1, bind: []}};
-                                global.createRoomTask(`${Role.PB_Attacker}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Attacker as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 1, CreepBind);
-                                // global.createRoomTask(`${Role.PB_Healer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Healer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 2);
-                            }
-                        }
-                    }
+                    // if (!Game.flags[PowerBank]) {
+                    //     // TODO 发布房间任务 房间任务框架roomTask
+                    //     // let pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
+                    //     //     filter: { structureType: STRUCTURE_POWER_BANK }
+                    //     // });
+                    //     var pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
+                    //         filter: (stru) => {
+                    //             return stru.structureType == 'powerBank' && stru.ticksToDecay >= 3600 && stru.power > 3000
+                    //             // return stru.structureType == 'powerBank' && stru.power > 1000
+                    //         }
+                    //     }) as StructurePowerBank[];
+                    //     // 是否有他人creep
+                    //     let hostileCreeps = Game.rooms[targetRoom].find(FIND_HOSTILE_CREEPS);
+                    //     if (hostileCreeps.length > 0) {
+                    //         console.log(`当前房间存在他人creep[${hostileCreeps}]`);
+                    //     } else {
+                    //         // let power = Game.rooms[targetRoom].find(FIND_DROPPED_RESOURCES, {
+                    //         //     filter: (d) => d.amount >= 100 && d.resourceType == "power"
+                    //         // });
+                    //         // 插旗
+                    //         if (pb.length > 0) {
+                    //             Game.rooms[targetRoom].createFlag(pb[0].pos, PowerBank);
+                    //             // 创建roomTask
+                    //             let CreepBind = { 'pb_healer': {num: 1, bind: []}};
+                    //             global.createRoomTask(`${Role.PB_Attacker}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Attacker as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 1, CreepBind);
+                    //             // global.createRoomTask(`${Role.PB_Healer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Healer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 2);
+                    //         }
+                    //     }
+                    // }
                     if (Game.flags[PowerBank]) {
                         // 已经发现powerBank 进行powerBank状态检查
                         // if (Game.time % 20 == 0) {
@@ -111,9 +111,11 @@ export default class Observer extends Singleton {
                                         // TODO 计算出几个carrier
                                         let CreepBind = { 'pb_carryer': {num: 5, bind: []}};
                                         global.createRoomTask(`${Role.PB_Carryer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Carryer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 5, CreepBind);
-                                    }
-                                    
+                                    } 
                                 }
+                            } else {
+                                // TODO 删除任务
+
                             }
 
                         // }
