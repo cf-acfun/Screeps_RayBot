@@ -57,8 +57,8 @@ export default class Observer extends Singleton {
                         // });
                         var pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
                             filter: (stru) => {
-                                // return stru.structureType == 'powerBank' && stru.ticksToDecay >= 3600 && stru.power > 3000
-                                return stru.structureType == 'powerBank' && stru.power > 3000
+                                return stru.structureType == 'powerBank' && stru.ticksToDecay >= 3600 && stru.power > 3000
+                                // return stru.structureType == 'powerBank' && stru.power > 1000
                             }
                         }) as StructurePowerBank[];
                         // 是否有他人creep
@@ -73,7 +73,8 @@ export default class Observer extends Singleton {
                             if (pb.length > 0) {
                                 Game.rooms[targetRoom].createFlag(pb[0].pos, PowerBank);
                                 // 创建roomTask
-                                global.createRoomTask(`${Role.PB_Attacker}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Attacker as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 2);
+                                let CreepBind = { 'pb_healer': {num: 1, bind: []}};
+                                global.createRoomTask(`${Role.PB_Attacker}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Attacker as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 1, CreepBind);
                                 // global.createRoomTask(`${Role.PB_Healer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Healer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 2);
                             }
                         }
@@ -89,11 +90,12 @@ export default class Observer extends Singleton {
                             if (pb.length > 0) {
                                 console.log(`当前pb剩余hits为[${pb[0].hits}]`);
                                 // 2M = 2000000
-                                if (pb[0].hits < 300000) {
-                                    // 发布任务
+                                if (pb[0].hits < 1000000) {
+                                    // TODO 计算什么时候发布任务
                                     // 是否已经发布了任务
                                     let task = Memory.roomTask[roomName];
                                     let carryTask = null;
+                                    let carrierNum = 2;
                                     for (let t in task) {
                                         console.log(`当前t为[${t}]`);
                                         let taskM = Memory.roomTask[roomName][t];
@@ -106,7 +108,9 @@ export default class Observer extends Singleton {
                                         }
                                     }
                                     if (!carryTask) {
-                                        global.createRoomTask(`${Role.PB_Carryer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Carryer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 4);
+                                        // TODO 计算出几个carrier
+                                        let CreepBind = { 'pb_carryer': {num: 5, bind: []}};
+                                        global.createRoomTask(`${Role.PB_Carryer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Carryer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 5, CreepBind);
                                     }
                                     
                                 }

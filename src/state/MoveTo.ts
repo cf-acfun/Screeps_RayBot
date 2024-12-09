@@ -119,9 +119,7 @@ export default class MoveTo extends Singleton {
             case Role.PB_Carryer: {
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
                 if (!task) return;
-                // 首先移动到目标房间
-                
-                
+                // TODO 移动到powerBank附近
                 if (creep.room.name != task.targetRoom) {
                     creep.customMove(new RoomPosition(25, 25, task.targetRoom));
                 } else {
@@ -212,6 +210,7 @@ export default class MoveTo extends Singleton {
                 if (creep.attack(powerBank) == ERR_NOT_IN_RANGE) {
                     creep.customMove(powerBank.pos);
                 }
+                // TODO 攻击完成之后防御，发现没有power之后返回并unboost
             }
             case Role.PB_Healer: {
                 if (!creep.memory.attacker) return;

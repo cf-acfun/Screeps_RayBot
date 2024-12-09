@@ -47,19 +47,7 @@ export default class Spawn extends Singleton {
           }
         });
         // 如果存在TaskId,则将creep添加到creepBind中
-        if (taksId) {
-          let task = Memory.roomTask[roomName][taksId];
-          if (!Memory.roomTask[roomName][taksId].CreepBind) {
-            Memory.roomTask[roomName][taksId].CreepBind = {};
-          }
-          if (!Memory.roomTask[roomName][taksId].CreepBind[role]) {
-            Memory.roomTask[roomName][taksId].CreepBind = {
-              role: {
-                num: task.num,
-                bind: []
-              }
-            }
-          }
+        if (taksId && role == Role.PB_Healer) { 
           Memory.roomTask[roomName][taksId].CreepBind[role].bind.push(newName);
         }
         break;
@@ -136,13 +124,13 @@ export default class Spawn extends Singleton {
         }
         if (creep.memory.role == Role.PB_Attacker) {
           Boost.SetBoostType(creep.name, [{
-            type: global.allRes["UH2O"] > 1000 ? "UH2O" : "UH",
+            type: global.allRes["XUH2O"] > 1000 ? "XUH2O" : "UH2O",
             num: Game.creeps[creep.name].getActiveBodyparts(ATTACK)
           }])
         }
         if (creep.memory.role == Role.PB_Healer) {
           Boost.SetBoostType(creep.name, [{
-            type: global.allRes["LHO2"] > 1000 ? "LHO2" : "LO",
+            type: global.allRes["XLHO2"] > 1000 ? "XLHO2" : "LHO2",
             num: Game.creeps[creep.name].getActiveBodyparts(HEAL)
           }])
         }
