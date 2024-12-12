@@ -2,7 +2,6 @@ import App from "@/App";
 import Singleton from "@/Singleton";
 import { Role } from "@/common/Constant";
 import { Operate } from "@/common/Constant"
-import { State } from "@/fsm/state";
 import { GenNonDuplicateID } from "@/common/utils"
 
 export default class Observer extends Singleton {
@@ -51,28 +50,25 @@ export default class Observer extends Singleton {
                         }
                     }
                     if (!Game.flags[PowerBank]) {
-                        // TODO 发布房间任务 房间任务框架roomTask
-                        // let pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
-                        //     filter: { structureType: STRUCTURE_POWER_BANK }
-                        // });
                         var pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
                             filter: (stru) => {
                                 return stru.structureType == 'powerBank' && stru.ticksToDecay >= 3600 && stru.power > 3000
-                                // return stru.structureType == 'powerBank' && stru.power > 1000
                             }
                         }) as StructurePowerBank[];
                         // 是否有他人creep
                         let hostileCreeps = Game.rooms[targetRoom].find(FIND_HOSTILE_CREEPS);
                         if (hostileCreeps.length > 0) {
-                            console.log(`当前房间存在他人creep[${hostileCreeps}]`);
+                            console.log(`当前房间[${roomName}]存在他人creep[${hostileCreeps}]`);
                         } else {
-                            let hasHarvestTask = true;
+                            let hasHarvestTask = false;
                             // 每个房间只允许同时存在一个采集power任务
-                            for (let i in Memory.roomTask[roomName]) {
-                                if (i.includes(Role.PB_Attacker)) {
-                                    console.log(`当前房间已经存在采集power任务[${i}]`);
-                                    hasHarvestTask = false;
-                                    break;
+                            if (Memory.roomTask[roomName]) {
+                                for (let i in Memory.roomTask[roomName]) {
+                                    if (i.includes(Role.PB_Attacker)) {
+                                        console.log(`目标房间[${targetRoom}]当前房间[${roomName}]已经存在采集power任务[${i}]`);
+                                        hasHarvestTask = true;
+                                        break;
+                                    }
                                 }
                             }
                             if (pb.length > 0 && !hasHarvestTask) {
@@ -80,23 +76,20 @@ export default class Observer extends Singleton {
                                 // 创建roomTask
                                 let CreepBind = { 'pb_healer': { num: 1, bind: [] } };
                                 global.createRoomTask(`${Role.PB_Attacker}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Attacker as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 1, CreepBind);
-                                // global.createRoomTask(`${Role.PB_Healer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Healer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 2);
                             }
                         }
                     }
                     if (Game.flags[PowerBank]) {
                         // 已经发现powerBank 进行powerBank状态检查
-
                         var pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
                             filter: (stru) => {
                                 return stru.structureType == 'powerBank'
                             }
                         }) as StructurePowerBank[];
                         if (pb.length > 0) {
-                            console.log(`当前pb剩余hits为[${pb[0].hits}]`);
+                            console.log(`当前房间[${targetRoom}]pb剩余hits为[${pb[0].hits}]`);
                             // 2M = 2000000
                             if (pb[0].hits < 1000000) {
-                                // TODO 计算什么时候发布任务
                                 // 是否已经发布了任务
                                 let task = Memory.roomTask[roomName];
                                 let carryTask = null;
@@ -120,19 +113,28 @@ export default class Observer extends Singleton {
                                 }
                             }
                         } else {
-                            // TODO 删除任务
                             // 查询是否剩余power
                             let power = Game.rooms[roomName].find(FIND_DROPPED_RESOURCES, {
                                 filter: (d) => d.amount >= 10 && d.resourceType == "power"
                             });
-                            if (!power) {
-                                console.log(`任务结束,删除任务`);
-                                
+                            if (power.length == 0) {
+                                console.log(`当前房间[${targetRoom}]任务结束,删除任务`);
+                                let task = Memory.roomTask[roomName];
+                                let carryTaskId = null;
+                                let attackTaskId = null;
+                                for (let t in task) {
+                                    let taskM = Memory.roomTask[roomName][t];
+                                    if (taskM.role == Role.PB_Carryer) {
+                                        carryTaskId = t;
+                                    }
+                                    if (taskM.role == Role.PB_Attacker) {
+                                        attackTaskId = t;
+                                    }
+                                }
+                                Game.flags[PowerBank].remove();
+                                delete Memory.roomTask[roomName][attackTaskId];
                             }
                         }
-                        // 剩余多少hits
-                        //    TODO 增加删除roomTask功能
-                        // 一共多少power，计算需要出多少carrier
                     }
                 }
 

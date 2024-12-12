@@ -124,14 +124,19 @@ export default class MoveTo extends Singleton {
                     creep.customMove(new RoomPosition(25, 25, task.targetRoom));
                 } else {
                     let power = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
-                        filter: (d) => d.amount >= 100 && d.resourceType == "power"
+                        filter: (d) => d.amount >= 10 && d.resourceType == "power"
                     });
                     console.log(`power[${power}]`);
                     if (power) {
                         if (creep.pickup(power) == ERR_NOT_IN_RANGE) {
                             creep.moveTo(power.pos);
+                            return;
                         }
+                    } else {
+                        console.log(`power搬运任务完成,删除任务`);
+                        // delete Memory.roomTask[creep.room.name][creep.memory.taskId];
                     }
+
                     if (creep.store.getUsedCapacity() > 0) {
                         creep.memory.state = State.Back;
                     }
@@ -178,7 +183,11 @@ export default class MoveTo extends Singleton {
             }
             case Role.PB_Attacker: {
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
-                if (!task) return;
+                if (!task) {
+                    console.log(`攻击powerBank任务结束`);
+                    creep.memory.state = State.Back;
+                    return;
+                }
                 // 先组队
                 if (!creep.memory.healer) {
                     if (Game.time % 7 == 0) {
