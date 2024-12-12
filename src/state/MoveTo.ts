@@ -133,15 +133,11 @@ export default class MoveTo extends Singleton {
                     if (Game.flags[powerBankFlag] && !creep.pos.inRangeTo(Game.flags[powerBankFlag].pos, 4)) {
                         creep.customMove(Game.flags[powerBankFlag].pos);
                         return;
-                    } else {
-                        console.log(`在power附近,待命`);
                     }
                     let power = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
                         filter: (d) => d.amount >= 10 && d.resourceType == "power"
                     });
                     if (power) {
-                        console.log(`当前帕瓦[${power}]`);
-                        
                         if (creep.pickup(power) == ERR_NOT_IN_RANGE) {
                             creep.moveTo(power.pos);
                             return;
@@ -236,7 +232,12 @@ export default class MoveTo extends Singleton {
                 // TODO 攻击完成之后防御，发现没有power之后返回并unboost
             }
             case Role.PB_Healer: {
-                if (!creep.memory.attacker) return;
+                let task = Memory.roomTask[roomFrom][creep.memory.taskId];
+                if (!creep.memory.attacker && task) return;
+                if (!Game.creeps[creep.memory.attacker] && !task) {
+                    creep.memory.state = State.Unboost;
+                    return;
+                }
                 if (Game.creeps[creep.memory.attacker]) {
                     if (creep.hits < creep.hitsMax) {
                         creep.heal(creep);

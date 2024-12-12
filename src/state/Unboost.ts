@@ -9,7 +9,6 @@ export default class Unboost extends Singleton {
             else {
                 let { x, y, roomName } = creep.room.memory.unboostContainerPos;
                 if (!Game.getObjectById(creep.room.memory.unboostContainer)) {
-                    // TODO unboost的容器待优化
                     let construcure = creep.room.lookForAt(LOOK_STRUCTURES, new RoomPosition(x, y, roomName)).filter(e => e.structureType == STRUCTURE_CONTAINER)
                     if (construcure.length) creep.room.memory.unboostContainer = construcure[0].id as Id<StructureContainer>;
                     else creep.suicide();
@@ -22,6 +21,10 @@ export default class Unboost extends Singleton {
     }
 
     public unboost(creep: Creep) {
+        // 遍历creep附近的5个lab
+        let labs = creep.room.lookForAtArea(LOOK_STRUCTURES, creep.pos.y - 1, creep.pos.x - 1, creep.pos.y + 1, creep.pos.x + 1, true)
+            .find(s => s.structure.structureType == STRUCTURE_LAB);
+        console.log(`unboost当前[${creep.room.name}]creep附近的lab为[${labs}]`);
         let lab1 = Game.getObjectById(creep.room.memory.labs[1]);
         if (lab1.cooldown) {
             let lab2 = Game.getObjectById(creep.room.memory.labs[2]);
