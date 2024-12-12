@@ -2,6 +2,7 @@ import App from "@/App";
 import { Role } from "@/common/Constant";
 import { State } from "@/fsm/state";
 import Singleton from "@/Singleton";
+import { inRange } from "lodash";
 
 
 export default class MoveTo extends Singleton {
@@ -118,23 +119,34 @@ export default class MoveTo extends Singleton {
             }
             case Role.PB_Carryer: {
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
-                if (!task) return;
-                // TODO 移动到powerBank附近
+                if (!task) {
+                    console.log(`任务结束`);
+                    if (creep.store.getUsedCapacity() == 0 && creep.memory.state != State.Back) {
+                        creep.suicide();
+                        return;
+                    }
+                }
+                let powerBankFlag = `PB_${creep.memory.roomFrom}_${task.targetRoom}`;
                 if (creep.room.name != task.targetRoom) {
                     creep.customMove(new RoomPosition(25, 25, task.targetRoom));
                 } else {
+                    if (Game.flags[powerBankFlag] && !creep.pos.inRangeTo(Game.flags[powerBankFlag].pos, 4)) {
+                        creep.customMove(Game.flags[powerBankFlag].pos);
+                        return;
+                    } else {
+                        console.log(`在power附近,待命`);
+                    }
                     let power = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
                         filter: (d) => d.amount >= 10 && d.resourceType == "power"
                     });
-                    console.log(`power[${power}]`);
                     if (power) {
                         if (creep.pickup(power) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(power.pos);
+                            creep.moveTo(power.pos, { ignoreCreeps: true });
                             return;
                         }
-                    } else {
-                        console.log(`power搬运任务完成,删除任务`);
-                        // delete Memory.roomTask[creep.room.name][creep.memory.taskId];
+                    } else if (!Game.flags[powerBankFlag]){
+                        console.log(`!Game.flags[powerBankFlag] = [${!Game.flags[powerBankFlag]}]power搬运任务完成,删除任务`);
+                        delete Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId];
                     }
 
                     if (creep.store.getUsedCapacity() > 0) {
