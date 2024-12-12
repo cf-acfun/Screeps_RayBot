@@ -58,10 +58,12 @@ export default class Observer extends Singleton {
                         // 是否有他人creep
                         let hostileCreeps = Game.rooms[targetRoom].find(FIND_HOSTILE_CREEPS);
                         if (hostileCreeps.length > 0) {
-                            console.log(`当前房间[${roomName}]存在他人creep[${hostileCreeps}]`);
+                            console.log(`当前房间[${roomName}], 目标房间[${targetRoom}]存在他人creep[${hostileCreeps}]`);
                         } else {
                             let hasHarvestTask = false;
                             // 每个房间只允许同时存在一个采集power任务
+                            if (!Memory.roomTask) Memory.roomTask = {};
+                            if (!Memory.roomTask[roomName]) Memory.roomTask[roomName] = {};
                             if (Memory.roomTask[roomName]) {
                                 for (let i in Memory.roomTask[roomName]) {
                                     if (i.includes(Role.PB_Attacker)) {

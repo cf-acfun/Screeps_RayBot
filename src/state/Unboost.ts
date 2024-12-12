@@ -9,6 +9,7 @@ export default class Unboost extends Singleton {
             else {
                 let { x, y, roomName } = creep.room.memory.unboostContainerPos;
                 if (!Game.getObjectById(creep.room.memory.unboostContainer)) {
+                    // TODO unboost的容器待优化
                     let construcure = creep.room.lookForAt(LOOK_STRUCTURES, new RoomPosition(x, y, roomName)).filter(e => e.structureType == STRUCTURE_CONTAINER)
                     if (construcure.length) creep.room.memory.unboostContainer = construcure[0].id as Id<StructureContainer>;
                     else creep.suicide();

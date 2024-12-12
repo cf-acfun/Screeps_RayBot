@@ -140,8 +140,10 @@ export default class MoveTo extends Singleton {
                         filter: (d) => d.amount >= 10 && d.resourceType == "power"
                     });
                     if (power) {
+                        console.log(`当前帕瓦[${power}]`);
+                        
                         if (creep.pickup(power) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(power.pos, { ignoreCreeps: true });
+                            creep.moveTo(power.pos);
                             return;
                         }
                     } else if (!Game.flags[powerBankFlag]){
