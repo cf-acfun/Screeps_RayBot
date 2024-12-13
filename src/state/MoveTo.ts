@@ -120,7 +120,6 @@ export default class MoveTo extends Singleton {
             case Role.PB_Carryer: {
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
                 if (!task) {
-                    console.log(`任务结束`);
                     if (creep.store.getUsedCapacity() == 0 && creep.memory.state != State.Back) {
                         creep.suicide();
                         return;
