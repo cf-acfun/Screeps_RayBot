@@ -22,9 +22,9 @@ export default class Unboost extends Singleton {
 
     public unboost(creep: Creep) {
         // 遍历creep附近的5个lab
-        let labs = creep.room.lookForAtArea(LOOK_STRUCTURES, creep.pos.y - 2, creep.pos.x - 2, creep.pos.y + 2, creep.pos.x + 2, true)
-            .find(s => s.structure.structureType == STRUCTURE_LAB);
-        console.log(`unboost当前[${creep.room.name}]creep附近的lab为[${JSON.stringify(labs)}]`);
+        // let labs = creep.room.lookForAtArea(LOOK_STRUCTURES, creep.pos.y - 2, creep.pos.x - 2, creep.pos.y + 2, creep.pos.x + 2, true)
+        //     .find(s => s.structure.structureType == STRUCTURE_LAB);
+        // console.log(`unboost当前[${creep.room.name}]creep附近的lab为[${JSON.stringify(labs)}]`);
         let lab1 = Game.getObjectById(creep.room.memory.labs[1]);
         if (lab1.cooldown) {
             let lab2 = Game.getObjectById(creep.room.memory.labs[2]);

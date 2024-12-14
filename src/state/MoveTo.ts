@@ -119,7 +119,9 @@ export default class MoveTo extends Singleton {
             }
             case Role.PB_Carryer: {
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
+                // console.log(`当前task[${creep.memory.taskId}], 需要孵化[${global.cc[creep.memory.roomFrom].pb_carryer}]个爬`);
                 if (!task) {
+                    global.cc[creep.memory.roomFrom].pb_carryer = 0;
                     if (creep.store.getUsedCapacity() == 0 && creep.memory.state != State.Back) {
                         creep.suicide();
                         return;
@@ -194,6 +196,8 @@ export default class MoveTo extends Singleton {
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
                 if (!task) {
                     console.log(`攻击powerBank任务结束`);
+                    global.cc[creep.memory.roomFrom].pb_attacker = 0;
+                    global.cc[creep.memory.roomFrom].pb_healer = 0;
                     creep.memory.state = State.Back;
                     return;
                 }
@@ -216,6 +220,7 @@ export default class MoveTo extends Singleton {
                 // 移动到powerBank
                 if (creep.room.name != task.targetRoom) {
                     creep.customMove(Game.flags[powerBankFlag].pos);
+                    return;
                 }
                 // 附近没有治疗creep就等
                 // if (Game.creeps[creep.memory.healer] && !creep.pos.isNearTo(Game.creeps[creep.memory.healer]) && (!isInArray([0, 49], creep.pos.x) && !isInArray([0, 49], creep.pos.y))) return;

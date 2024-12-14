@@ -52,7 +52,7 @@ export default class Observer extends Singleton {
                     if (!Game.flags[PowerBank]) {
                         var pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
                             filter: (stru) => {
-                                return stru.structureType == 'powerBank' && stru.ticksToDecay >= 3600 && stru.power > 3000
+                                return stru.structureType == 'powerBank' && stru.ticksToDecay >= 3000 && stru.power > 2000
                             }
                         }) as StructurePowerBank[];
                         // 是否有他人creep
@@ -67,7 +67,7 @@ export default class Observer extends Singleton {
                             if (Memory.roomTask[roomName]) {
                                 for (let i in Memory.roomTask[roomName]) {
                                     if (i.includes(Role.PB_Attacker)) {
-                                        console.log(`目标房间[${targetRoom}]当前房间[${roomName}]已经存在采集power任务[${i}]`);
+                                        // console.log(`目标房间[${targetRoom}]当前房间[${roomName}]已经存在采集power任务[${i}]`);
                                         hasHarvestTask = true;
                                         break;
                                     }
