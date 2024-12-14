@@ -118,6 +118,9 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.PB_Carryer: {
+                if (creep.store.getUsedCapacity() > 0) {
+                    creep.memory.state = State.Back;
+                }
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
                 // console.log(`当前task[${creep.memory.taskId}], 需要孵化[${global.cc[creep.memory.roomFrom].pb_carryer}]个爬`);
                 if (!task) {
@@ -146,10 +149,6 @@ export default class MoveTo extends Singleton {
                     } else if (!Game.flags[powerBankFlag]){
                         console.log(`!Game.flags[powerBankFlag] = [${!Game.flags[powerBankFlag]}]power搬运任务完成,删除任务`);
                         delete Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId];
-                    }
-
-                    if (creep.store.getUsedCapacity() > 0) {
-                        creep.memory.state = State.Back;
                     }
                 }
                 break;
