@@ -39,7 +39,7 @@ export default class Terminal extends Singleton {
             }
         }
 
-        // if (Game.time % (terminal.room.memory.index + 5000) == 0) {
+        // if (Game.time % (terminal.room.memory.index) == 0) {
         //     if (terminal.room.storage.store.power + terminal.store.power < 10000) {
         //         global.autoDeal(terminal.room.name, 'power', 1200);
         //         return;

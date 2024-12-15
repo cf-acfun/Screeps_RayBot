@@ -141,12 +141,14 @@ export default class MoveTo extends Singleton {
                     let power = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
                         filter: (d) => d.amount >= 10 && d.resourceType == "power"
                     });
+                    let pbRuin = creep.pos.findClosestByRange(FIND_RUINS);
+                    console.log(`当前房间[${creep.room.name}]的ruin为[${pbRuin}]`);
                     if (power) {
                         if (creep.pickup(power) == ERR_NOT_IN_RANGE) {
                             creep.moveTo(power.pos);
                             return;
                         }
-                    } else if (!Game.flags[powerBankFlag]){
+                    } else if (!Game.flags[powerBankFlag] && !pbRuin){
                         console.log(`!Game.flags[powerBankFlag] = [${!Game.flags[powerBankFlag]}]power搬运任务完成,删除任务`);
                         delete Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId];
                     }
