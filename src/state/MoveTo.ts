@@ -142,7 +142,6 @@ export default class MoveTo extends Singleton {
                         filter: (d) => d.amount >= 10 && d.resourceType == "power"
                     });
                     let pbRuin = creep.pos.findClosestByRange(FIND_RUINS);
-                    console.log(`当前房间[${creep.room.name}]的ruin为[${pbRuin}]`);
                     if (power) {
                         if (creep.pickup(power) == ERR_NOT_IN_RANGE) {
                             creep.moveTo(power.pos);
@@ -226,13 +225,20 @@ export default class MoveTo extends Singleton {
                 // 附近没有治疗creep就等
                 // if (Game.creeps[creep.memory.healer] && !creep.pos.isNearTo(Game.creeps[creep.memory.healer]) && (!isInArray([0, 49], creep.pos.x) && !isInArray([0, 49], creep.pos.y))) return;
                 // 血量低于4000则等待治疗
-                if (creep.hits < 3500) {
+                if (creep.hits < 3000) {
                     return;
                 }
                 // 攻击powerBank
                 let powerBank = Game.getObjectById(task.targetStructureId);
                 if (creep.attack(powerBank) == ERR_NOT_IN_RANGE) {
                     creep.customMove(powerBank.pos);
+                }
+                if (!powerBank) {
+                    console.log(`powerBank已被摧毁,返回`);
+                    global.cc[creep.memory.roomFrom].pb_attacker = 0;
+                    global.cc[creep.memory.roomFrom].pb_healer = 0;
+                    creep.memory.state = State.Back;
+                    return;
                 }
                 // TODO 攻击完成之后防御，发现没有power之后返回并unboost
             }

@@ -91,7 +91,7 @@ export default class Observer extends Singleton {
                         if (pb.length > 0) {
                             console.log(`当前房间[${targetRoom}]pb剩余hits为[${pb[0].hits}]`);
                             // 2M = 2000000
-                            if (pb[0].hits < 1000000) {
+                            if (pb[0].hits < 1500000) {
                                 // 是否已经发布了任务
                                 let task = Memory.roomTask[roomName];
                                 let carryTask = null;
@@ -109,7 +109,6 @@ export default class Observer extends Singleton {
                                 if (!carryTask) {
                                     let carrierNum = Math.ceil(pb[0].power / 1250);
                                     // console.log(`需要孵化[${carrierNum}]个搬运工`);
-                                    // TODO 计算出几个carrier
                                     let CreepBind = { 'pb_carryer': { num: carrierNum, bind: [] } };
                                     global.createRoomTask(`${Role.PB_Carryer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Carryer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, carrierNum, CreepBind);
                                 }
