@@ -126,7 +126,18 @@ export default class MoveTo extends Singleton {
                 if (!task) {
                     global.cc[creep.memory.roomFrom].pb_carryer = 0;
                     if (creep.store.getUsedCapacity() == 0 && creep.memory.state != State.Back) {
-                        creep.suicide();
+                        // 移动到unboost点然后suicide
+                        let { x, y, roomName } = creep.room.memory.unboostContainerPos;
+                        if (!Game.getObjectById(creep.room.memory.unboostContainer)) {
+                            let construcure = creep.room.lookForAt(LOOK_STRUCTURES, new RoomPosition(x, y, roomName)).filter(e => e.structureType == STRUCTURE_CONTAINER)
+                            if (construcure.length) creep.room.memory.unboostContainer = construcure[0].id as Id<StructureContainer>;
+                            else creep.suicide();
+                        } else {
+                            creep.customMove(new RoomPosition(x, y, roomName), 0);
+                            if (App.common.getDis(creep.pos, new RoomPosition(x, y, roomName)) == 0) {
+                                creep.suicide();
+                            }
+                        }
                         return;
                     }
                 }
@@ -147,8 +158,8 @@ export default class MoveTo extends Singleton {
                             creep.moveTo(power.pos);
                             return;
                         }
-                    } else if (!Game.flags[powerBankFlag] && !pbRuin){
-                        console.log(`目标房间[${creep.room.name}],power搬运任务完成,删除任务`);
+                    } else if (!Game.flags[powerBankFlag] && !pbRuin) {
+                        // console.log(`目标房间[${creep.room.name}],power搬运任务完成,删除任务`);
                         if (Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId]) {
                             delete Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId];
                         }
@@ -197,7 +208,7 @@ export default class MoveTo extends Singleton {
             case Role.PB_Attacker: {
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
                 if (!task) {
-                    console.log(`攻击powerBank任务结束`);
+                    // console.log(`攻击powerBank任务结束`);
                     global.cc[creep.memory.roomFrom].pb_attacker = 0;
                     global.cc[creep.memory.roomFrom].pb_healer = 0;
                     creep.memory.state = State.Back;
@@ -234,7 +245,7 @@ export default class MoveTo extends Singleton {
                     creep.customMove(powerBank.pos);
                 }
                 if (!powerBank) {
-                    console.log(`房间[${creep.room.name}],powerBank已被摧毁,返回`);
+                    // console.log(`房间[${creep.room.name}],powerBank已被摧毁,返回`);
                     global.cc[creep.memory.roomFrom].pb_attacker = 0;
                     global.cc[creep.memory.roomFrom].pb_healer = 0;
                     if (Game.flags[powerBankFlag]) {
@@ -270,7 +281,7 @@ export default class MoveTo extends Singleton {
                         creep.moveTo(Game.creeps[creep.memory.attacker].pos, { range: 1 })
                     }
                 }
-                
+
             }
             case Role.DepositHarvester: {
                 let df = Game.flags[creep.name];
@@ -379,9 +390,9 @@ export default class MoveTo extends Singleton {
 /*  判定是否在列表里 */
 export function isInArray(arr: any[], value: any): boolean {
     for (var i = 0; i < arr.length; i++) {
-      if (value === arr[i]) {
-        return true
-      }
+        if (value === arr[i]) {
+            return true
+        }
     }
     return false
-  }
+}

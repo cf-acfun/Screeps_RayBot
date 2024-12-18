@@ -55,31 +55,27 @@ export default class Observer extends Singleton {
                                 return stru.structureType == 'powerBank' && stru.ticksToDecay >= 3000 && stru.power > 2000
                             }
                         }) as StructurePowerBank[];
-                        // 是否有他人creep
-                        let hostileCreeps = Game.rooms[targetRoom].find(FIND_HOSTILE_CREEPS);
-                        if (hostileCreeps.length > 0) {
-                            console.log(`当前房间[${roomName}], 目标房间[${targetRoom}]存在他人creep[${hostileCreeps}]`);
-                        } else {
-                            let hasHarvestTask = false;
-                            // 每个房间只允许同时存在一个采集power任务
-                            if (!Memory.roomTask) Memory.roomTask = {};
-                            if (!Memory.roomTask[roomName]) Memory.roomTask[roomName] = {};
-                            if (Memory.roomTask[roomName]) {
-                                for (let i in Memory.roomTask[roomName]) {
-                                    if (i.includes(Role.PB_Attacker)) {
-                                        // console.log(`目标房间[${targetRoom}]当前房间[${roomName}]已经存在采集power任务[${i}]`);
-                                        hasHarvestTask = true;
-                                        break;
-                                    }
+
+                        let hasHarvestTask = false;
+                        // 每个房间只允许同时存在一个采集power任务
+                        if (!Memory.roomTask) Memory.roomTask = {};
+                        if (!Memory.roomTask[roomName]) Memory.roomTask[roomName] = {};
+                        if (Memory.roomTask[roomName]) {
+                            for (let i in Memory.roomTask[roomName]) {
+                                if (i.includes(Role.PB_Attacker)) {
+                                    // console.log(`目标房间[${targetRoom}]当前房间[${roomName}]已经存在采集power任务[${i}]`);
+                                    hasHarvestTask = true;
+                                    break;
                                 }
                             }
-                            if (pb.length > 0 && !hasHarvestTask) {
-                                Game.rooms[targetRoom].createFlag(pb[0].pos, PowerBank);
-                                // 创建roomTask
-                                let CreepBind = { 'pb_healer': { num: 1, bind: [] } };
-                                global.createRoomTask(`${Role.PB_Attacker}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Attacker as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 1, CreepBind);
-                            }
                         }
+                        if (pb.length > 0 && !hasHarvestTask) {
+                            Game.rooms[targetRoom].createFlag(pb[0].pos, PowerBank);
+                            // 创建roomTask
+                            let CreepBind = { 'pb_healer': { num: 1, bind: [] } };
+                            global.createRoomTask(`${Role.PB_Attacker}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Attacker as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 1, CreepBind);
+                        }
+
                     }
                     if (Game.flags[PowerBank]) {
                         // 已经发现powerBank 进行powerBank状态检查
@@ -113,7 +109,7 @@ export default class Observer extends Singleton {
                                     global.createRoomTask(`${Role.PB_Carryer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Carryer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, carrierNum, CreepBind);
                                 }
                             }
-                        } 
+                        }
                         // else {
                         //     // 查询是否剩余power
                         //     let power = Game.rooms[roomName].find(FIND_DROPPED_RESOURCES, {
