@@ -36,7 +36,7 @@ export default class MoveTo extends Singleton {
                 let transfer = Game.flags[`${roomFrom}_ts`];
                 if (transfer && !creep.memory.transferState) {
                     if (creep.pos != transfer.pos) {
-                        creep.moveTo(transfer.pos);
+                        creep.customMove(transfer.pos);
                         return;
                     } else {
                         creep.memory.transferState = true;
@@ -134,7 +134,7 @@ export default class MoveTo extends Singleton {
                 if (creep.room.name != task.targetRoom) {
                     creep.customMove(new RoomPosition(25, 25, task.targetRoom));
                 } else {
-                    if (Game.flags[powerBankFlag] && !creep.pos.inRangeTo(Game.flags[powerBankFlag].pos, 4)) {
+                    if (Game.flags[powerBankFlag] && !creep.pos.inRangeTo(Game.flags[powerBankFlag].pos, 3)) {
                         creep.customMove(Game.flags[powerBankFlag].pos);
                         return;
                     }
@@ -148,8 +148,10 @@ export default class MoveTo extends Singleton {
                             return;
                         }
                     } else if (!Game.flags[powerBankFlag] && !pbRuin){
-                        console.log(`!Game.flags[powerBankFlag] = [${!Game.flags[powerBankFlag]}]power搬运任务完成,删除任务`);
-                        delete Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId];
+                        console.log(`目标房间[${creep.room.name}],power搬运任务完成,删除任务`);
+                        if (Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId]) {
+                            delete Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId];
+                        }
                     }
                 }
                 break;
@@ -222,8 +224,6 @@ export default class MoveTo extends Singleton {
                     creep.customMove(Game.flags[powerBankFlag].pos);
                     return;
                 }
-                // 附近没有治疗creep就等
-                // if (Game.creeps[creep.memory.healer] && !creep.pos.isNearTo(Game.creeps[creep.memory.healer]) && (!isInArray([0, 49], creep.pos.x) && !isInArray([0, 49], creep.pos.y))) return;
                 // 血量低于4000则等待治疗
                 if (creep.hits < 3000) {
                     return;
@@ -234,13 +234,18 @@ export default class MoveTo extends Singleton {
                     creep.customMove(powerBank.pos);
                 }
                 if (!powerBank) {
-                    console.log(`powerBank已被摧毁,返回`);
+                    console.log(`房间[${creep.room.name}],powerBank已被摧毁,返回`);
                     global.cc[creep.memory.roomFrom].pb_attacker = 0;
                     global.cc[creep.memory.roomFrom].pb_healer = 0;
+                    if (Game.flags[powerBankFlag]) {
+                        Game.flags[powerBankFlag].remove();
+                    }
+                    if (Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId]) {
+                        delete Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId];
+                    }
                     creep.memory.state = State.Back;
                     return;
                 }
-                // TODO 攻击完成之后防御，发现没有power之后返回并unboost
             }
             case Role.PB_Healer: {
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];

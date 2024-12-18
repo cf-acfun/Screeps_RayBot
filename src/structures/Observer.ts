@@ -113,29 +113,30 @@ export default class Observer extends Singleton {
                                     global.createRoomTask(`${Role.PB_Carryer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Carryer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, carrierNum, CreepBind);
                                 }
                             }
-                        } else {
-                            // 查询是否剩余power
-                            let power = Game.rooms[roomName].find(FIND_DROPPED_RESOURCES, {
-                                filter: (d) => d.amount >= 10 && d.resourceType == "power"
-                            });
-                            if (power.length == 0) {
-                                console.log(`当前房间[${targetRoom}]任务结束,删除任务`);
-                                let task = Memory.roomTask[roomName];
-                                let carryTaskId = null;
-                                let attackTaskId = null;
-                                for (let t in task) {
-                                    let taskM = Memory.roomTask[roomName][t];
-                                    if (taskM.role == Role.PB_Carryer) {
-                                        carryTaskId = t;
-                                    }
-                                    if (taskM.role == Role.PB_Attacker) {
-                                        attackTaskId = t;
-                                    }
-                                }
-                                Game.flags[PowerBank].remove();
-                                delete Memory.roomTask[roomName][attackTaskId];
-                            }
-                        }
+                        } 
+                        // else {
+                        //     // 查询是否剩余power
+                        //     let power = Game.rooms[roomName].find(FIND_DROPPED_RESOURCES, {
+                        //         filter: (d) => d.amount >= 10 && d.resourceType == "power"
+                        //     });
+                        //     if (power.length == 0) {
+                        //         console.log(`当前房间[${targetRoom}]任务结束,删除任务`);
+                        //         let task = Memory.roomTask[roomName];
+                        //         let carryTaskId = null;
+                        //         let attackTaskId = null;
+                        //         for (let t in task) {
+                        //             let taskM = Memory.roomTask[roomName][t];
+                        //             if (taskM.role == Role.PB_Carryer) {
+                        //                 carryTaskId = t;
+                        //             }
+                        //             if (taskM.role == Role.PB_Attacker) {
+                        //                 attackTaskId = t;
+                        //             }
+                        //         }
+                        //         Game.flags[PowerBank].remove();
+                        //         delete Memory.roomTask[roomName][attackTaskId];
+                        //     }
+                        // }
                     }
                 }
 
