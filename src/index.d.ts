@@ -444,6 +444,7 @@ type BodyAutoConfigConstant =
 	'builder' |
 	'upgrader' |
 	'carrier' |
+	'mineralCarrier' |
 	'filler' |
 	'attacker' |
 	'centerTransfer' |

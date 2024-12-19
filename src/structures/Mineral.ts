@@ -58,14 +58,14 @@ export default class Mineral extends Singleton {
 
         if (!mineralMem.carrier) {
             let creepName = GenNonDuplicateID();
-            App.spawn.run(mineral.room.name, Role.Carrier, creepName);
+            App.spawn.run(mineral.room.name, Role.MineralCarrier, creepName);
             mineralMem.carrier = creepName;
             return;
         }
 
         let carrier = Game.creeps[mineralMem.carrier];
         if (!carrier) {
-            App.spawn.run(mineral.room.name, Role.Carrier, mineralMem.carrier);
+            App.spawn.run(mineral.room.name, Role.MineralCarrier, mineralMem.carrier);
             return;
         }
 

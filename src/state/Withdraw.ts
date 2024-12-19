@@ -402,6 +402,7 @@ export default class Withdraw extends Singleton {
                 }
                 break;
             }
+            case Role.MineralCarrier:
             case Role.Carrier: {
                 // TODO 代码待优化
                 let container = Game.getObjectById(creep.memory.targetContainer);

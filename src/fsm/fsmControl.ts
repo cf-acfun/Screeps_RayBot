@@ -67,6 +67,7 @@ export default class FsmControl extends FsmSystem {
     switch (creep.memory.role) {
       case Role.Harvester: creep.memory.state = State.MoveTo;
         break;
+      case Role.MineralCarrier:
       case Role.Carrier: creep.memory.state = State.Pick;
         break;
       case Role.Builder: creep.memory.state = State.Withdraw;

@@ -3,6 +3,7 @@ import { calcBodyPart } from "./utils";
 export const Role = {
   Harvester: 'harvester',
   Carrier: 'carrier',
+  MineralCarrier: 'mineralCarrier',
   Builder: 'builder',
   Upgrader: 'upgrader',
   Filler: 'filler',
@@ -178,6 +179,16 @@ export const bodyConfigs: BodyConfigs = {
     { [CARRY]: 14, [MOVE]: 7 },
     { [CARRY]: 10, [MOVE]: 5 },
     { [CARRY]: 10, [MOVE]: 5 },
+  ),
+  mineralCarrier: getBodyConfig(
+    { [CARRY]: 4, [MOVE]: 2 },
+    { [CARRY]: 4, [MOVE]: 4 },
+    { [CARRY]: 6, [MOVE]: 6 },
+    { [CARRY]: 12, [MOVE]: 6 },
+    { [CARRY]: 20, [MOVE]: 10 },
+    { [CARRY]: 30, [MOVE]: 15 },
+    { [CARRY]: 30, [MOVE]: 15 },
+    { [CARRY]: 30, [MOVE]: 15 },
   ),
   builder: getBodyConfig(
     { [WORK]: 1, [CARRY]: 1, [MOVE]: 1 },

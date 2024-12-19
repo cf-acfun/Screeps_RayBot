@@ -6,6 +6,7 @@ import Singleton from "@/Singleton";
 export default class Pick extends Singleton {
     public run(creep: Creep) {
         switch (creep.memory.role) {
+            case Role.MineralCarrier:
             case Role.Carrier: {
                 if (creep.room.name != creep.memory.roomFrom) {
                     creep.customMove(new RoomPosition(25, 25, creep.memory.roomFrom));

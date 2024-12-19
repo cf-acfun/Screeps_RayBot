@@ -7,6 +7,7 @@ export default class Transfer extends Singleton {
     public ToSpawn(creep: Creep) {
         if (creep.store.getUsedCapacity() == 0) {
             switch (creep.memory.role) {
+                case Role.MineralCarrier:
                 case Role.Carrier:
                     App.fsm.changeState(creep, State.Pick);
                     break;
@@ -20,6 +21,7 @@ export default class Transfer extends Singleton {
         if (!creep.store.energy) {
             if (creep.store.getUsedCapacity() == 0) {
                 switch (creep.memory.role) {
+                    case Role.MineralCarrier:
                     case Role.Carrier:
                         App.fsm.changeState(creep, State.Pick);
                         break;
@@ -55,6 +57,7 @@ export default class Transfer extends Singleton {
     public ToTower(creep: Creep) {
         if (creep.store.getUsedCapacity() == 0) {
             switch (creep.memory.role) {
+                case Role.MineralCarrier:
                 case Role.Carrier:
                     App.fsm.changeState(creep, State.Pick);
                     break;
@@ -69,6 +72,7 @@ export default class Transfer extends Singleton {
         if (!creep.store.energy) {
             if (creep.store.getUsedCapacity() == 0) {
                 switch (creep.memory.role) {
+                    case Role.MineralCarrier:
                     case Role.Carrier:
                         App.fsm.changeState(creep, State.Pick);
                         break;
@@ -109,6 +113,7 @@ export default class Transfer extends Singleton {
                 if (creep.store.getUsedCapacity() == 0) App.fsm.changeState(creep, State.Withdraw);
                 break;
             }
+            case Role.MineralCarrier:
             case Role.Carrier: {
                 if (!target?.my) {
                     App.fsm.changeState(creep, State.TransferToSpawn);
