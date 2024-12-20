@@ -125,21 +125,8 @@ export default class MoveTo extends Singleton {
                 // console.log(`当前task[${creep.memory.taskId}], 需要孵化[${global.cc[creep.memory.roomFrom].pb_carryer}]个爬`);
                 if (!task) {
                     global.cc[creep.memory.roomFrom].pb_carryer = 0;
-                    if (creep.store.getUsedCapacity() == 0 && creep.memory.state != State.Back) {
-                        // 移动到unboost点然后suicide
-                        let { x, y, roomName } = creep.room.memory.unboostContainerPos;
-                        if (!Game.getObjectById(creep.room.memory.unboostContainer)) {
-                            let construcure = creep.room.lookForAt(LOOK_STRUCTURES, new RoomPosition(x, y, roomName)).filter(e => e.structureType == STRUCTURE_CONTAINER)
-                            if (construcure.length) creep.room.memory.unboostContainer = construcure[0].id as Id<StructureContainer>;
-                            else creep.suicide();
-                        } else {
-                            creep.customMove(new RoomPosition(x, y, roomName), 0);
-                            if (App.common.getDis(creep.pos, new RoomPosition(x, y, roomName)) == 0) {
-                                creep.suicide();
-                            }
-                        }
-                        return;
-                    }
+                    creep.memory.state = State.Back;
+                    return;
                 }
                 let powerBankFlag = `PB_${creep.memory.roomFrom}_${task.targetRoom}`;
                 if (creep.room.name != task.targetRoom) {
@@ -346,7 +333,46 @@ export default class MoveTo extends Singleton {
     public back(creep: Creep) {
         let roomFrom = creep.memory.roomFrom;
         switch (creep.memory.role) {
-            case Role.PB_Carryer:
+            case Role.PB_Carryer: {
+                if (creep.room.name != roomFrom) {
+                    creep.customMove(new RoomPosition(25, 25, roomFrom));
+                } else if (creep.room.name == roomFrom) {
+                    if (creep.store.getUsedCapacity() > 0 && creep.room.storage.store.getFreeCapacity() > 10000) {
+                        App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
+                        return;
+                    }
+                    if (creep.store.getUsedCapacity() > 0 && creep.room.terminal.store.getFreeCapacity() > 10000) {
+                        App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].terminal);
+                        return;
+                    }
+                    let task = Memory.roomTask[roomFrom][creep.memory.taskId];
+                    if (!task) {
+                        global.cc[creep.memory.roomFrom].pb_carryer = 0;
+                        if (creep.store.getUsedCapacity() == 0) {
+                            // 移动到unboost点然后suicide
+                            let { x, y, roomName } = creep.room.memory.unboostContainerPos;
+                            if (!Game.getObjectById(creep.room.memory.unboostContainer)) {
+                                let construcure = creep.room.lookForAt(LOOK_STRUCTURES, new RoomPosition(x, y, roomName)).filter(e => e.structureType == STRUCTURE_CONTAINER)
+                                if (construcure.length) creep.room.memory.unboostContainer = construcure[0].id as Id<StructureContainer>;
+                                else creep.suicide();
+                            } else {
+                                creep.customMove(new RoomPosition(x, y, roomName), 0);
+                                if (App.common.getDis(creep.pos, new RoomPosition(x, y, roomName)) == 0) {
+                                    creep.suicide();
+                                }
+                            }
+                            return;
+                        }
+                    } else {
+                        // task存在就继续回去搬
+                        if (creep.ticksToLive > 200 && creep.store.getUsedCapacity() == 0) {
+                            App.fsm.changeState(creep, State.MoveTo);
+                            return;
+                        }
+                    }
+                }
+                break;
+            }
             case Role.RemoteTransfer: {
                 if (creep.ticksToLive > 200 && creep.store.getUsedCapacity() == 0) {
                     App.fsm.changeState(creep, State.MoveTo);
