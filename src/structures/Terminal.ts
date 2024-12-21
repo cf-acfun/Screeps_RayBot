@@ -10,9 +10,9 @@ export default class Terminal extends Singleton {
         if (terminal.cooldown) return;
 
         // 自动购买能量
-        if (Game.time % 10 == 0) {
-            this._autoBuyEnergy(roomName);
-        }
+        // if (Game.time % 10 == 0) {
+        //     this._autoBuyEnergy(roomName);
+        // }
 
         if (terminal.store.energy >= 40000 &&
             terminal.room.storage?.store[RESOURCE_ENERGY] >= 800000 &&
