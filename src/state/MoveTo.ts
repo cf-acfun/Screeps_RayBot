@@ -2,7 +2,8 @@ import App from "@/App";
 import { Role } from "@/common/Constant";
 import { State } from "@/fsm/state";
 import Singleton from "@/Singleton";
-import { inRange } from "lodash";
+import { Operate } from "@/common/Constant"
+import { GenNonDuplicateID } from "@/common/utils"
 
 
 export default class MoveTo extends Singleton {
@@ -227,9 +228,38 @@ export default class MoveTo extends Singleton {
                     return;
                 }
                 // 攻击powerBank
-                let powerBank = Game.getObjectById(task.targetStructureId);
+                let powerBank = Game.getObjectById(task.targetStructureId) as StructurePowerBank;
                 if (creep.attack(powerBank) == ERR_NOT_IN_RANGE) {
                     creep.customMove(powerBank.pos);
+                }
+                if (powerBank) {
+                    // console.log(`当前creep[${creep.name}]`);
+                    let roomName = creep.memory.roomFrom;
+                    // 检测powerBank的血量并发布Carry任务
+                    if (powerBank.hits < 1500000) {
+                        // 是否已经发布了任务
+                        let task = Memory.roomTask[roomName];
+                        let targetRoom = creep.room.name;
+                        let carryTask = null;
+                        for (let t in task) {
+                            // console.log(`当前t为[${t}]`);
+                            let taskM = Memory.roomTask[roomName][t];
+                            if (taskM.targetRoom == targetRoom && taskM.role != Role.PB_Carryer) {
+                                continue;
+                            }
+                            if (taskM.role == Role.PB_Carryer) {
+                                carryTask = t;
+                                break;
+                            }
+                        }
+                        // console.log(`当前搬运task为[${carryTask}]`);
+                        if (!carryTask) {
+                            let carrierNum = Math.ceil(powerBank.power / 1250);
+                            console.log(`当前房间[${creep.room.name}]需要孵化[${carrierNum}]个搬运工`);
+                            let CreepBind = { 'pb_carryer': { num: carrierNum, bind: [] } };
+                            global.createRoomTask(`${Role.PB_Carryer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Carryer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, powerBank.id, carrierNum, CreepBind);
+                        }
+                    }
                 }
                 if (!powerBank) {
                     // console.log(`房间[${creep.room.name}],powerBank已被摧毁,返回`);
