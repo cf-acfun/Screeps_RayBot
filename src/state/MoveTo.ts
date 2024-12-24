@@ -151,6 +151,38 @@ export default class MoveTo extends Singleton {
                         if (Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId]) {
                             delete Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId];
                         }
+                    } else {
+                        if (Game.flags[powerBankFlag]) {
+                            // 如果存在旗子检查是否有powerBank或者ruin或者power，都没有就删除任务
+                            let powerBank = Game.getObjectById(task.targetStructureId) as StructurePowerBank;
+                            // console.log(`当前room[${creep.room.name}]当前powerBank=[${powerBank}], power=[${power}],pbRuin=[${pbRuin}]`);
+                            if (!powerBank && !power && !pbRuin) {
+                                // console.log(`采集power任务取消,删除所有相关任务`);
+                                // 删除所有任务
+                                global.cc[creep.memory.roomFrom].pb_attacker = 0;
+                                global.cc[creep.memory.roomFrom].pb_healer = 0;
+                                creep.memory.state = State.Back;
+                                Game.flags[powerBankFlag].remove();
+                                let roomName = creep.memory.roomFrom;
+                                let task = Memory.roomTask[roomName];
+                                let targetRoom = creep.room.name;
+                                let attackTask = null;
+                                for (let t in task) {
+                                    // console.log(`当前t为[${t}]`);
+                                    let taskM = Memory.roomTask[roomName][t];
+                                    if (taskM.targetRoom == targetRoom && taskM.role != Role.PB_Attacker) {
+                                        continue;
+                                    }
+                                    if (taskM.role == Role.PB_Attacker) {
+                                        attackTask = t;
+                                        break;
+                                    }
+                                }
+                                if (Memory.roomTask[creep.memory.roomFrom][attackTask]) {
+                                    delete Memory.roomTask[creep.memory.roomFrom][attackTask];
+                                }
+                            }
+                        }
                     }
                 }
                 break;
