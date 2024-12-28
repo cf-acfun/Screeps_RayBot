@@ -14,6 +14,18 @@ export default class Terminal extends Singleton {
             this._autoBuyEnergy(roomName);
         }
 
+        if (terminal?.room.storage.store.energy > 700000 &&
+            terminal?.store.energy >= 40000) {
+            for (let i = 0; i < Memory.myrooms.length; i++) {
+                let room = Game.rooms[Memory.myrooms[i]];
+                if (terminal.room.name == room.name && !room.terminal?.my) continue;
+                if (room.storage?.store.energy < 100000 && room.terminal?.store.energy < 50000 && room.storage?.store.getFreeCapacity() > 50000) {
+                    global.send(terminal.room.name, room.name, 'energy', 25000);
+                    return;
+                }
+            }
+        }
+
         if (terminal.store.energy >= 40000 &&
             terminal.room.storage?.store[RESOURCE_ENERGY] >= 800000 &&
             terminal.room.controller.level == 8) {
@@ -24,18 +36,6 @@ export default class Terminal extends Singleton {
                 let num = order.amount > 25000 ? 25000 : order.amount;
                 Game.market.deal(order.id, num, terminal.room.name);
                 return;
-            }
-        }
-
-        if (terminal?.room.storage.store.energy > 1200000 &&
-            terminal?.store.energy >= 50000 && terminal?.room.storage.store.getCapacity() <= 1000000) {
-            for (let i = 0; i < Memory.myrooms.length; i++) {
-                let room = Game.rooms[Memory.myrooms[i]];
-                if (terminal.room.name == room.name && !room.terminal?.my) continue;
-                if (room.storage?.store.energy < 500000 && room.terminal?.store.energy < 50000 && room.storage?.store.getFreeCapacity() > 50000) {
-                    global.send(terminal.room.name, room.name, 'energy', 25000);
-                    return;
-                }
             }
         }
 
@@ -69,10 +69,6 @@ export default class Terminal extends Singleton {
                 }
                 if (terminal.room.storage.store.O + terminal.store.O < 6000) {
                     global.autoDeal(terminal.room.name, 'O', 40, 6000);
-                    return;
-                }
-                if (terminal.room.storage.store.U + + terminal.store.U < 6000) {
-                    global.autoDeal(terminal.room.name, 'U', 40, 6000);
                     return;
                 }
             }
