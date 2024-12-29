@@ -143,8 +143,8 @@ export default class AutoPlanner extends Singleton {
             flag.remove();
         }
         if (room.terminal) {
-            if (room.memory.autoRampart === void 0 && !room.memory.customRampartSites.length) {
-                if (Memory.RoomControlData[roomName].structMap.map(e => e.split("/")).filter(e => e[2] == "extension").length == 60) {
+            if ((room.memory.autoRampart === void 0 || room.memory.autoRampart === false) && !room.memory.customRampartSites.length) {
+                if (Memory.RoomControlData[roomName].structMap.map(e => e.split("/")).filter(e => e[2] == "extension").length == 40) {
                     room.memory.autoRampart = true;
                 } else room.memory.autoRampart = false;
                 if (room.memory.autoRampart) {
