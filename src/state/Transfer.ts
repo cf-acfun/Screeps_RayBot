@@ -321,20 +321,20 @@ export default class Transfer extends Singleton {
             } else if (creep.store.getUsedCapacity(RESOURCE_GHODIUM) == 0) {
                 if (creep.room.storage.store[RESOURCE_GHODIUM] > 0) {
                     App.common.getResourceFromTargetStructure(creep, creep.room.storage, RESOURCE_GHODIUM);
-                } else {
+                } else if (creep.room.terminal.store[RESOURCE_GHODIUM] > 0) {
                     App.common.getResourceFromTargetStructure(creep, creep.room.terminal, RESOURCE_GHODIUM);
+                } else {
+                    if (global.allRes.G >= 5000) {
+                        App.logistics.createTask(creep.room.name, RESOURCE_GHODIUM, 3000, 'nuker');
+                    } else {
+                        global.autoDeal(creep.room.name, 'G', 1000, Math.min(2000, needGhodiumQuantity));
+                    }
                 }
                 return;
             } else {
                 // 转移Ghodium到核弹
                 App.common.transferToTargetStructure(creep, nuker, RESOURCE_GHODIUM);
                 return;
-            }
-        } else {
-            if (global.allRes.G >= 10000) {
-                App.logistics.createTask(creep.room.name, RESOURCE_GHODIUM, 3000, 'nuker');
-            } else {
-                global.autoDeal(creep.room.name, "G", 1000, Math.min(2000, needGhodiumQuantity));
             }
         }
         // 如果核弹发射器的能量和Ghodium都充足，转换creep到其他状态
