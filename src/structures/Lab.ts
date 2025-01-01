@@ -43,7 +43,7 @@ export default class Lab extends Singleton {
     }
 
     public isEnough(res: MineralConstant | MineralCompoundConstant): boolean {
-        if (global.allRes[res] > 3000 * Memory.myrooms.length) return true;
+        if (global.allRes[res] > 6000 * Memory.myrooms.length) return true;
         return false;
     }
 
