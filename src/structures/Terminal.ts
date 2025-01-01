@@ -79,10 +79,10 @@ export default class Terminal extends Singleton {
             //     global.autoDeal(terminal.room.name, "KH2O", 700, 1000);
             //     return;
             // }
-            // if (global.allRes.LH < 100000) {
-            //     global.autoDeal(terminal.room.name, "LH", 350, 1000);
-            //     return;
-            // }
+            if (global.allRes.LH < 100000) {
+                global.autoDeal(terminal.room.name, "LH", 350, 1000);
+                return;
+            }
             if (terminal.room.controller.level < 8) return;
             let type: MineralConstant = room.memory.mineral.type;
             if (global.allRes[type] < 4000 * Memory.myrooms.length) {
