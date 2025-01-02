@@ -144,7 +144,7 @@ export default class AutoPlanner extends Singleton {
         }
         if (room.terminal) {
             if ((room.memory.autoRampart === void 0 || room.memory.autoRampart === false) && !room.memory.customRampartSites.length) {
-                if (Memory.RoomControlData[roomName].structMap.map(e => e.split("/")).filter(e => e[2] == "extension").length == 40) {
+                if (Memory.RoomControlData[roomName].structMap.map(e => e.split("/")).filter(e => e[2] == "extension").length == 50) {
                     room.memory.autoRampart = true;
                 } else room.memory.autoRampart = false;
                 if (room.memory.autoRampart) {
@@ -164,7 +164,7 @@ export default class AutoPlanner extends Singleton {
                 room.memory.lastRepairTick = null;
             }
         }
-        if (room.memory.customRampartSites.length && room.storage?.store.energy > 100000 && room.memory.wallHits < 300000000) global.cc[roomName].repairer = 1;
+        if (room.memory.customRampartSites.length && room.storage?.store.energy > 50000 && room.memory.wallHits < 300000000) global.cc[roomName].repairer = 1;
         else global.cc[roomName].repairer = 0;
     }
 }
