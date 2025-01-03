@@ -259,18 +259,22 @@ export default class MoveTo extends Singleton {
                 if (creep.hits < 3000) {
                     return;
                 }
-                // let hostileCreeps: Creep[] = Game.rooms[creep.room.name].find(FIND_HOSTILE_CREEPS) as Creep[];
-                // if (hostileCreeps.length > 0) {
-                //     if (creep.attack(hostileCreeps[0]) == ERR_NOT_IN_RANGE) {
-                //         creep.customMove(hostileCreeps[0].pos);
-                //     }
-                // }
                 // 攻击powerBank
                 let powerBank = Game.getObjectById(task.targetStructureId) as StructurePowerBank;
                 if (creep.attack(powerBank) == ERR_NOT_IN_RANGE) {
                     creep.customMove(powerBank.pos);
                 }
                 if (powerBank) {
+                    if (powerBank.hits < 10000) {
+                        let hostileCreeps: Creep[] = Game.rooms[creep.room.name].find(FIND_HOSTILE_CREEPS) as Creep[];
+                        if (hostileCreeps.length > 0) {
+                            if (hostileCreeps[0].owner.username == 'market') {
+                                if (creep.attack(hostileCreeps[0]) == ERR_NOT_IN_RANGE) {
+                                    creep.customMove(hostileCreeps[0].pos);
+                                }
+                            }
+                        }
+                    }
                     // console.log(`当前creep[${creep.name}]`);
                     let roomName = creep.memory.roomFrom;
                     // 检测powerBank的血量并发布Carry任务
