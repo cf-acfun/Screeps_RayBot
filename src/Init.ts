@@ -212,7 +212,7 @@ export default class Init extends Singleton {
       } else {
         global.cc[roomName][task.role] = task.num;
       }
-      
+
     }
   }
 
@@ -343,12 +343,12 @@ export default class Init extends Singleton {
   private _runCreeps() {
     for (let name in Game.creeps) {
       let creep = Game.creeps[name];
-      // try {
-      if (creep.hits < creep.hitsMax && creep.room.memory.towers?.length) global.towerTask[creep.room.name].injured.push(creep.id);
-      App.fsm.update(creep)
-      // } catch (error) {
-      //   console.log('Error:', creep.memory.roomFrom, '-', creep.memory.role, ':', error);
-      // }
+      try {
+        if (creep.hits < creep.hitsMax && creep.room.memory.towers?.length) global.towerTask[creep.room.name].injured.push(creep.id);
+        App.fsm.update(creep)
+      } catch (error) {
+        console.log('Error:', creep.name, '-', creep.memory.roomFrom, '-', creep.memory.role, ':', error);
+      }
     }
   }
 
