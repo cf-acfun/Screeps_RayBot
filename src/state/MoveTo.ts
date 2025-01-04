@@ -123,12 +123,6 @@ export default class MoveTo extends Singleton {
                     creep.memory.state = State.Back;
                 }
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
-                // console.log(`当前task[${creep.memory.taskId}], 需要孵化[${global.cc[creep.memory.roomFrom].pb_carryer}]个爬`);
-                if (!task) {
-                    global.cc[creep.memory.roomFrom].pb_carryer = 0;
-                    creep.memory.state = State.Back;
-                    return;
-                }
                 let powerBankFlag = `PB_${creep.memory.roomFrom}_${task.targetRoom}`;
                 if (creep.room.name != task.targetRoom) {
                     creep.customMove(new RoomPosition(25, 25, task.targetRoom));
@@ -148,6 +142,8 @@ export default class MoveTo extends Singleton {
                         }
                     } else if (!Game.flags[powerBankFlag] && !pbRuin) {
                         // console.log(`目标房间[${creep.room.name}],power搬运任务完成,删除任务`);
+                        global.cc[creep.memory.roomFrom].pb_carryer = 0;
+                        creep.memory.state = State.Back;
                         if (Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId]) {
                             delete Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId];
                         }
