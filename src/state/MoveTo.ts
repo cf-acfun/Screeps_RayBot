@@ -123,9 +123,13 @@ export default class MoveTo extends Singleton {
                     creep.memory.state = State.Back;
                 }
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
-                let powerBankFlag = `PB_${creep.memory.roomFrom}_${task.targetRoom}`;
-                if (creep.room.name != task.targetRoom) {
-                    creep.customMove(new RoomPosition(25, 25, task.targetRoom));
+                // 先赋值targetRoom，防止任务被删除之后无法处理
+                if (!creep.memory.targetRoom) {
+                    creep.memory.targetRoom = task.targetRoom;
+                }
+                let powerBankFlag = `PB_${creep.memory.roomFrom}_${creep.memory.targetRoom}`;
+                if (creep.room.name != creep.memory.targetRoom) {
+                    creep.customMove(new RoomPosition(25, 25, creep.memory.targetRoom));
                 } else {
                     if (Game.flags[powerBankFlag] && !creep.pos.inRangeTo(Game.flags[powerBankFlag].pos, 3)) {
                         creep.customMove(Game.flags[powerBankFlag].pos);

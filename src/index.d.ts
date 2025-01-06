@@ -248,6 +248,7 @@ interface CreepMemory {
 	role: string,
 	state?: string,
 	roomFrom: string,
+	targetRoom?: string,
 	targetSource?: Id<Source>,
 	targetMineral?: Id<Mineral>,
 	targetContainer?: Id<StructureContainer>,
