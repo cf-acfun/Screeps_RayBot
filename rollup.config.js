@@ -28,14 +28,14 @@ const pluginDeploy = config && config.copyPath ?
                 rename: name => name + '.map.js',
                 transform: contents => `module.exports = ${contents.toString()};`
             },
-            // {
-            //     src:'autoPlanner/autoPlanner.js',
-            //     dest: config.copyPath
-            // },
-            // {
-            //     src:'autoPlanner/algo_wasm_priorityqueue.wasm',
-            //     dest: config.copyPath 
-            // }
+            {
+                src:'autoPlanner/autoPlanner.js',
+                dest: config.copyPath
+            },
+            {
+                src:'autoPlanner/algo_wasm_priorityqueue.wasm',
+                dest: config.copyPath 
+            }
         ],
         hook: 'writeBundle',
         verbose: true
