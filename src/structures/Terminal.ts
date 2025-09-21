@@ -30,6 +30,7 @@ export default class Terminal extends Singleton {
             terminal.room.storage?.store[RESOURCE_ENERGY] >= 800000 &&
             terminal.room.controller.level == 8) {
             let orders = Game.market.getAllOrders({ type: ORDER_BUY, resourceType: 'energy' })
+                .filter(order => order.amount > 1)
                 .sort((a, b) => b.price - a.price);
             let order = orders[0];
             if (order && order.price >= 10) {
