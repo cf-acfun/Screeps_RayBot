@@ -139,6 +139,13 @@ export default class MoveTo extends Singleton {
                         filter: (d) => d.amount >= 10 && d.resourceType == "power"
                     });
                     let pbRuin = creep.pos.findClosestByRange(FIND_RUINS);
+                    /* 优先寻找ruin */
+                    if (pbRuin && pbRuin.store.getUsedCapacity('power') > 0) {
+                        if (creep.withdraw(pbRuin, 'power') == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(pbRuin);
+                            return;
+                        }
+                    }
                     if (power) {
                         if (creep.pickup(power) == ERR_NOT_IN_RANGE) {
                             creep.moveTo(power.pos);
