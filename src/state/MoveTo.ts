@@ -145,8 +145,7 @@ export default class MoveTo extends Singleton {
                             creep.moveTo(pbRuin);
                             return;
                         }
-                    }
-                    if (power) {
+                    } else if (power) {
                         if (creep.pickup(power) == ERR_NOT_IN_RANGE) {
                             creep.moveTo(power.pos);
                             return;
