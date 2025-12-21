@@ -150,7 +150,7 @@ export default class MoveTo extends Singleton {
                             creep.moveTo(power.pos);
                             return;
                         }
-                    } else if (!Game.flags[powerBankFlag] && !pbRuin) {
+                    } else if ((!Game.flags[powerBankFlag] && !pbRuin) || (pbRuin && pbRuin.store.getUsedCapacity('power') == 0)) {
                         // console.log(`目标房间[${creep.room.name}],power搬运任务完成,删除任务`);
                         global.cc[creep.memory.roomFrom].pb_carryer = 0;
                         creep.memory.state = State.Back;
