@@ -164,7 +164,7 @@ export default class AutoPlanner extends Singleton {
                 room.memory.lastRepairTick = null;
             }
         }
-        if (room.memory.customRampartSites.length && room.storage?.store.energy > 50000 && room.memory.wallHits < 300000000) global.cc[roomName].repairer = 1;
+        if (room.memory.customRampartSites.length && room.storage?.store.energy > 50000 && room.memory.wallHits < 200000000) global.cc[roomName].repairer = 1;
         else global.cc[roomName].repairer = 0;
     }
 }
