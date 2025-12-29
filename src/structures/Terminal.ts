@@ -55,11 +55,19 @@ export default class Terminal extends Singleton {
             if (Memory.username == 'ACFun') {
                 // 目前还没有X和U房间
                 if (terminal.room.storage.store.U + + terminal.store.U < 6000) {
-                    global.autoDeal(terminal.room.name, 'U', 40, 6000);
+                    global.autoDeal(terminal.room.name, 'U', 100, 6000);
                     return;
                 }
                 if (terminal.room.storage.store.X + terminal.store.X < 6000) {
                     global.autoDeal(terminal.room.name, 'X', 200, 6000);
+                    return;
+                }
+                if (terminal.room.storage.store.O + terminal.store.O < 6000) {
+                    global.autoDeal(terminal.room.name, 'O', 100, 6000);
+                    return;
+                }
+                if (terminal.room.storage.store.H + terminal.store.H < 6000) {
+                    global.autoDeal(terminal.room.name, 'H', 200, 6000);
                     return;
                 }
             }
