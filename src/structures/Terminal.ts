@@ -70,6 +70,10 @@ export default class Terminal extends Singleton {
                     global.autoDeal(terminal.room.name, 'H', 200, 6000);
                     return;
                 }
+                if (terminal.room.storage.store.L + terminal.store.L < 6000) {
+                    global.autoDeal(terminal.room.name, 'L', 200, 6000);
+                    return;
+                }
             }
             if (Memory.username == 'Spon-Singer') {
                 if (terminal.room.storage.store.Z + + terminal.store.Z < 6000) {

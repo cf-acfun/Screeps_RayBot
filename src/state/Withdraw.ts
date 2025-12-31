@@ -450,8 +450,13 @@ export default class Withdraw extends Singleton {
                         if (creep.store.energy) App.fsm.changeState(creep, State.TransferToSpawn);
                         else creep.suicide();
                     }
-                    if (container && container.store.energy >= creep.store.getCapacity()) {
-                        if (creep.store.getFreeCapacity() > 0) App.common.getResourceFromTargetStructure(creep, container);
+                    // if (container && container.store.energy >= creep.store.getCapacity()) {
+                    //     if (creep.store.getFreeCapacity() > 0) App.common.getResourceFromTargetStructure(creep, container);
+                    // }
+                    if (container && container.store.getUsedCapacity()) {
+                        let res = Object.keys(container.store) as ResourceConstant[];
+                        // console.log(`当前房间${creep.room.name},当前container${container.id},存储资源为${res}`);
+                        App.common.getResourceFromTargetStructure(creep, container, res[0]);
                     }
                     else App.fsm.changeState(creep, State.Pick);
                 }
