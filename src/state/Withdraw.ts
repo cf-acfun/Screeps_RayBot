@@ -447,8 +447,10 @@ export default class Withdraw extends Singleton {
                         return;
                     }
                     if (creep.ticksToLive < 50) {
-                        if (creep.store.energy) App.fsm.changeState(creep, State.TransferToSpawn);
-                        else creep.suicide();
+                        if (creep.store.getUsedCapacity() > 0) {
+                            App.fsm.changeState(creep, State.TransferToStorage);
+                            return;
+                        } else creep.suicide();
                     }
                     // if (container && container.store.energy >= creep.store.getCapacity()) {
                     //     if (creep.store.getFreeCapacity() > 0) App.common.getResourceFromTargetStructure(creep, container);
