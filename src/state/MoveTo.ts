@@ -247,21 +247,50 @@ export default class MoveTo extends Singleton {
                 // 先组队
                 if (!creep.memory.healer) {
                     if (Game.time % 7 == 0) {
-                        if (task.CreepBind && task.CreepBind[Role.PB_Healer] && task.CreepBind[Role.PB_Healer].bind.length > 0) {
-                            for (var c of task.CreepBind[Role.PB_Healer].bind) {
-                                if (Game.creeps[c] && Game.creeps[c].pos.roomName == creep.room.name) {
-                                    // 如果healer之前绑定的attacker不存在了，清除旧绑定
-                                    if (Game.creeps[c].memory.attacker && !Game.creeps[Game.creeps[c].memory.attacker]) {
-                                        Game.creeps[c].memory.attacker = undefined;
-                                    }
-                                    // 只有healer没有绑定attacker时才进行绑定
-                                    if (!Game.creeps[c].memory.attacker) {
-                                        var disCreep = Game.creeps[c];
-                                        disCreep.memory.attacker = creep.name;
-                                        creep.memory.healer = disCreep.name;
-                                        break; // 绑定成功后退出循环
-                                    }
+                        // 验证当前taskId对应的任务role是否正确，如果不正确则查找正确的任务
+                        if (task && task.role != Role.PB_Attacker) {
+                            // taskId错误，查找正确的PB_Attacker任务
+                            let foundCorrectTask = false;
+                            for (let taskId in Memory.roomTask[roomFrom]) {
+                                let correctTask = Memory.roomTask[roomFrom][taskId];
+                                if (correctTask.role == Role.PB_Attacker && 
+                                    correctTask.targetRoom == task.targetRoom &&
+                                    correctTask.targetStructureId == task.targetStructureId) {
+                                    // 更新creep的taskId并保存到memory
+                                    creep.memory.taskId = taskId;
+                                    task = correctTask;
+                                    foundCorrectTask = true;
+                                    break;
                                 }
+                            }
+                            // 如果找到了正确的任务，确保taskId已更新
+                            if (foundCorrectTask) {
+                                // taskId已经在上面的循环中更新，这里确保使用正确的task
+                                task = Memory.roomTask[roomFrom][creep.memory.taskId];
+                            }
+                        }
+                        // 查找同任务的healer进行绑定（不依赖CreepBind，直接遍历所有creeps）
+                        let healerCreeps: Creep[] = [];
+                        for (let name in Game.creeps) {
+                            let c = Game.creeps[name];
+                            if (c.memory.role == Role.PB_Healer && 
+                                c.memory.taskId == creep.memory.taskId && 
+                                c.memory.roomFrom == creep.memory.roomFrom &&
+                                c.pos.roomName == creep.room.name &&
+                                (!c.memory.attacker || (c.memory.attacker && !Game.creeps[c.memory.attacker]))) {
+                                healerCreeps.push(c);
+                            }
+                        }
+                        if (healerCreeps.length > 0) {
+                            let healer = healerCreeps[0];
+                            // 如果healer之前绑定的attacker不存在了，清除旧绑定
+                            if (healer.memory.attacker && !Game.creeps[healer.memory.attacker]) {
+                                healer.memory.attacker = undefined;
+                            }
+                            // 只有当healer也没有绑定attacker时才进行绑定
+                            if (!healer.memory.attacker) {
+                                healer.memory.attacker = creep.name;
+                                creep.memory.healer = healer.name;
                             }
                         }
                     }
@@ -344,6 +373,28 @@ export default class MoveTo extends Singleton {
                 // 如果没有绑定attacker且任务存在，尝试重新绑定
                 if (!creep.memory.attacker && task) {
                     if (Game.time % 7 == 0) {
+                        // 验证当前taskId对应的任务role是否正确，如果不正确则查找正确的任务
+                        if (task.role != Role.PB_Attacker) {
+                            // taskId错误，查找正确的PB_Attacker任务
+                            let foundCorrectTask = false;
+                            for (let taskId in Memory.roomTask[roomFrom]) {
+                                let correctTask = Memory.roomTask[roomFrom][taskId];
+                                if (correctTask.role == Role.PB_Attacker && 
+                                    correctTask.targetRoom == task.targetRoom &&
+                                    correctTask.targetStructureId == task.targetStructureId) {
+                                    // 更新creep的taskId并保存到memory
+                                    creep.memory.taskId = taskId;
+                                    task = correctTask;
+                                    foundCorrectTask = true;
+                                    break;
+                                }
+                            }
+                            // 如果找到了正确的任务，确保taskId已更新
+                            if (foundCorrectTask) {
+                                // taskId已经在上面的循环中更新，这里确保使用正确的task
+                                task = Memory.roomTask[roomFrom][creep.memory.taskId];
+                            }
+                        }
                         // 查找同任务的attacker进行绑定（不依赖CreepBind，直接遍历所有creeps）
                         let attackerCreeps: Creep[] = [];
                         for (let name in Game.creeps) {

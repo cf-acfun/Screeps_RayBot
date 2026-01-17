@@ -292,7 +292,16 @@ export default class Init extends Singleton {
             if (Memory.roomTask[roomName]) {
               for (let i in Memory.roomTask[roomName]) {
                 let task = Memory.roomTask[roomName][i];
-                if (task.roomName == roomName) App.spawn.run(roomName, role, null, i);
+                // PB_Healer 应该绑定到 PB_Attacker 的任务
+                if (task.roomName == roomName) {
+                  if (role == Role.PB_Healer && task.role == Role.PB_Attacker) {
+                    App.spawn.run(roomName, role, null, i);
+                    break; // 找到匹配的任务后退出循环
+                  } else if (role != Role.PB_Healer && task.role == role) {
+                    App.spawn.run(roomName, role, null, i);
+                    break; // 找到匹配的任务后退出循环
+                  }
+                }
               }
             }
           } else App.spawn.run(roomName, role);
