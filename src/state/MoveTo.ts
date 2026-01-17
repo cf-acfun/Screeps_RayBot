@@ -240,15 +240,27 @@ export default class MoveTo extends Singleton {
                     creep.memory.state = State.Back;
                     return;
                 }
+                // 验证并清理已绑定的healer，如果不存在则清除绑定
+                if (creep.memory.healer && !Game.creeps[creep.memory.healer]) {
+                    creep.memory.healer = undefined;
+                }
                 // 先组队
                 if (!creep.memory.healer) {
                     if (Game.time % 7 == 0) {
-                        if (task.CreepBind[Role.PB_Healer].bind.length > 0) {
+                        if (task.CreepBind && task.CreepBind[Role.PB_Healer] && task.CreepBind[Role.PB_Healer].bind.length > 0) {
                             for (var c of task.CreepBind[Role.PB_Healer].bind) {
-                                if (Game.creeps[c] && Game.creeps[c].pos.roomName == creep.room.name && !Game.creeps[c].memory.attacker) {
-                                    var disCreep = Game.creeps[c];
-                                    disCreep.memory.attacker = creep.name;
-                                    creep.memory.healer = disCreep.name;
+                                if (Game.creeps[c] && Game.creeps[c].pos.roomName == creep.room.name) {
+                                    // 如果healer之前绑定的attacker不存在了，清除旧绑定
+                                    if (Game.creeps[c].memory.attacker && !Game.creeps[Game.creeps[c].memory.attacker]) {
+                                        Game.creeps[c].memory.attacker = undefined;
+                                    }
+                                    // 只有healer没有绑定attacker时才进行绑定
+                                    if (!Game.creeps[c].memory.attacker) {
+                                        var disCreep = Game.creeps[c];
+                                        disCreep.memory.attacker = creep.name;
+                                        creep.memory.healer = disCreep.name;
+                                        break; // 绑定成功后退出循环
+                                    }
                                 }
                             }
                         }
@@ -325,11 +337,46 @@ export default class MoveTo extends Singleton {
             }
             case Role.PB_Healer: {
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
-                if (!creep.memory.attacker && task) return;
-                if (!Game.creeps[creep.memory.attacker] && !task) {
+                // 验证并清理已绑定的attacker，如果不存在则清除绑定
+                if (creep.memory.attacker && !Game.creeps[creep.memory.attacker]) {
+                    creep.memory.attacker = undefined;
+                }
+                // 如果没有绑定attacker且任务存在，尝试重新绑定
+                if (!creep.memory.attacker && task) {
+                    if (Game.time % 7 == 0) {
+                        // 查找同任务的attacker进行绑定（不依赖CreepBind，直接遍历所有creeps）
+                        let attackerCreeps: Creep[] = [];
+                        for (let name in Game.creeps) {
+                            let c = Game.creeps[name];
+                            if (c.memory.role == Role.PB_Attacker && 
+                                c.memory.taskId == creep.memory.taskId && 
+                                c.memory.roomFrom == creep.memory.roomFrom &&
+                                c.pos.roomName == creep.room.name &&
+                                (!c.memory.healer || (c.memory.healer && !Game.creeps[c.memory.healer]))) {
+                                attackerCreeps.push(c);
+                            }
+                        }
+                        if (attackerCreeps.length > 0) {
+                            let attacker = attackerCreeps[0];
+                            // 如果attacker之前绑定的healer不存在了，清除旧绑定
+                            if (attacker.memory.healer && !Game.creeps[attacker.memory.healer]) {
+                                attacker.memory.healer = undefined;
+                            }
+                            // 只有当attacker也没有绑定healer时才进行绑定
+                            if (!attacker.memory.healer) {
+                                attacker.memory.healer = creep.name;
+                                creep.memory.attacker = attacker.name;
+                            }
+                        }
+                    }
+                    return;
+                }
+                // 如果没有绑定attacker且任务不存在，返回unboost状态
+                if (!creep.memory.attacker && !task) {
                     creep.memory.state = State.Unboost;
                     return;
                 }
+                // 如果attacker存在，执行治疗逻辑
                 if (Game.creeps[creep.memory.attacker]) {
                     if (creep.hits < creep.hitsMax) {
                         creep.heal(creep);
