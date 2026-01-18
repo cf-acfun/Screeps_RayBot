@@ -404,63 +404,78 @@ export default class Withdraw extends Singleton {
             }
             case Role.MineralCarrier:
             case Role.Carrier: {
-                // TODO 代码待优化
                 let container = Game.getObjectById(creep.memory.targetContainer);
-                // let ruin = Game.getObjectById(creep.memory.ruinId);
-                if (creep.store.getFreeCapacity() == 0) {
-                    App.fsm.changeState(creep, State.TransferToSpawn);
+                const isMineralContainer = creep.memory.targetContainer == creep.room.memory.mineral?.container;
+                const freeCapacity = creep.store.getFreeCapacity();
+                const usedCapacity = creep.store.getUsedCapacity();
+                
+                // 检查背包是否已满
+                if (freeCapacity == 0) {
+                    const nextState = isMineralContainer ? State.TransferToStorage : State.TransferToSpawn;
+                    App.fsm.changeState(creep, nextState);
                     return;
                 }
-                // if (ruin && ruin.store.energy) {
-                //     App.common.getResourceFromTargetStructure(creep, ruin);
-                //     return;
-                // } else {
-                //     let ruin = creep.pos.findClosestByPath(FIND_RUINS, {
-                //         filter: r => r.store.energy
-                //     });
-                //     if (ruin) {
-                //         creep.memory.ruinId = ruin.id;
-                //         creep.memory.ruinState = true;
-                //     } else {
-                //         App.fsm.changeState(creep, State.Pick);
-                //         creep.memory.ruinState = false;
-                //     }
-                // }
-                if (creep.memory.targetContainer == creep.room.memory.mineral?.container) {
-                    if (creep.ticksToLive < 50) {
-                        if (creep.store.getUsedCapacity() > 0) App.fsm.changeState(creep, State.TransferToStorage);
-                        else creep.suicide();
+                
+                // 处理低生命值情况
+                if (creep.ticksToLive < 50) {
+                    if (usedCapacity > 0) {
+                        App.fsm.changeState(creep, State.TransferToStorage);
+                    } else {
+                        creep.suicide();
                     }
+                    return;
+                }
+                
+                // 处理 MineralContainer 的特殊逻辑
+                if (isMineralContainer) {
                     if (container && container.store.getUsedCapacity() >= creep.store.getCapacity()) {
                         let res = Object.keys(container.store) as ResourceConstant[];
                         App.common.getResourceFromTargetStructure(creep, container, res[0]);
                     }
-                    if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToStorage);
-                    return;
-                } else {
+                    // 如果提取后背包满了，切换到 TransferToStorage
                     if (creep.store.getFreeCapacity() == 0) {
-                        App.fsm.changeState(creep, State.TransferToSpawn);
-                        return;
+                        App.fsm.changeState(creep, State.TransferToStorage);
                     }
-                    if (creep.room.memory.ruinEnergyState) {
-                        this.withdrawRuin(creep);
-                        return;
-                    }
-                    if (creep.ticksToLive < 50) {
-                        if (creep.store.getUsedCapacity() > 0) {
-                            App.fsm.changeState(creep, State.TransferToStorage);
+                    return;
+                }
+                
+                // 处理普通 Container 的逻辑
+                // 优先处理 ruin energy
+                if (creep.room.memory.ruinEnergyState) {
+                    this.withdrawRuin(creep);
+                    return;
+                }
+                
+                // 从 container 提取资源
+                if (container && container.store.getUsedCapacity() >= creep.store.getCapacity()) {
+                    let res = Object.keys(container.store) as ResourceConstant[];
+                    App.common.getResourceFromTargetStructure(creep, container, res[0]);
+                } else {
+                    // container 资源不足，检查 centerContainer
+                    const centerContainerIds = creep.room.memory.centerContainer;
+                    if (centerContainerIds && centerContainerIds.length > 0 && creep.room.storage) {
+                        // 遍历 centerContainer 查找有资源的
+                        let foundCenterContainer = false;
+                        for (let centerContainerId of centerContainerIds) {
+                            let centerContainer = Game.getObjectById(centerContainerId);
+                            if (centerContainer && centerContainer.store.getUsedCapacity() >= creep.store.getCapacity()) {
+                                let res = Object.keys(centerContainer.store) as ResourceConstant[];
+                                App.common.getResourceFromTargetStructure(creep, centerContainer, res[0]);
+                                foundCenterContainer = true;
+                                break;
+                            }
+                        }
+                        // 如果找到 centerContainer 并提取了资源
+                        if (foundCenterContainer) {
+                            // 如果背包满了，立即切换到 TransferToStorage 转运到 storage
+                            if (creep.store.getFreeCapacity() == 0) {
+                                App.fsm.changeState(creep, State.TransferToStorage);
+                            }
                             return;
-                        } else creep.suicide();
+                        }
                     }
-                    // if (container && container.store.energy >= creep.store.getCapacity()) {
-                    //     if (creep.store.getFreeCapacity() > 0) App.common.getResourceFromTargetStructure(creep, container);
-                    // }
-                    if (container && container.store.getUsedCapacity() && container.store.getUsedCapacity() >= creep.store.getCapacity()) {
-                        let res = Object.keys(container.store) as ResourceConstant[];
-                        // console.log(`当前房间${creep.room.name},当前container${container.id},存储资源为${res}`);
-                        App.common.getResourceFromTargetStructure(creep, container, res[0]);
-                    }
-                    else App.fsm.changeState(creep, State.Pick);
+                    // container 和 centerContainer 都资源不足，切换到 Pick 状态
+                    App.fsm.changeState(creep, State.Pick);
                 }
                 break;
             }
