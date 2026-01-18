@@ -46,10 +46,6 @@ export default class Spawn extends Singleton {
             taskId: taksId
           }
         });
-        // 如果存在TaskId,则将creep添加到creepBind中
-        if (taksId && role == Role.PB_Healer) { 
-          Memory.roomTask[roomName][taksId].CreepBind[role].bind.push(newName);
-        }
         break;
       }
     }
