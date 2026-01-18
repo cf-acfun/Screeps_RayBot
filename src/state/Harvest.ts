@@ -15,7 +15,8 @@ export default class Harvest extends Singleton {
           if (creep.ticksToLive <= creep.memory.time + creep.body.length * 3) {
             if (sourceMem.harvester == creep.name) sourceMem.harvester = null;
           }
-          if (!Game.getObjectById(sourceMem.container)) {
+          let container = Game.getObjectById(sourceMem.container);
+          if (!container) {
             if (creep.store.energy >= 48) {
               if (!structures.length) {
                 let sites = creep.room.lookForAt(LOOK_CONSTRUCTION_SITES, creep.pos);
@@ -24,13 +25,12 @@ export default class Harvest extends Singleton {
               } else sourceMem.container = structures[0].id as Id<StructureContainer>;
             } else creep.harvest(target);
           } else {
-            let container = Game.getObjectById(sourceMem.container);
             if (creep.store.energy >= 50 && container.hits / container.hitsMax < 1) creep.repair(container);
             else creep.harvest(target);
           }
           let link = Game.getObjectById(sourceMem.link);
           if (!target.energy && link) {
-            let container = Game.getObjectById(sourceMem.container);
+            // container 已经在上面的代码中获取，直接使用
             if (container && container.store.energy && creep.store.getFreeCapacity() > 0) creep.withdraw(container, 'energy');
             else {
               let drop = creep.room.lookForAt(LOOK_RESOURCES, creep.pos).filter(d => d.resourceType == 'energy');

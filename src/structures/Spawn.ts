@@ -2,7 +2,6 @@ import { bodyConfigs, Role } from "@/common/Constant"
 import { GenNonDuplicateID } from "@/common/utils"
 import Singleton from "@/Singleton"
 import Boost from "@/state/Boost"
-import { bind } from "lodash"
 
 export default class Spawn extends Singleton {
   private getBodys(spawnName: string, bodyType: BodyAutoConfigConstant): BodyPartConstant[] {

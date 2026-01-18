@@ -4,6 +4,16 @@ import { State } from "@/fsm/state";
 import Singleton from "@/Singleton";
 
 export default class Transfer extends Singleton {
+    // 处理 DepositHarvester 的低生命值逻辑（提取为公共方法避免重复）
+    private handleDepositHarvesterLifecycle(creep: Creep): boolean {
+        if (creep.ticksToLive < creep.memory.time * 2 + 50) {
+            creep.suicide();
+            return true; // 已处理，需要返回
+        }
+        App.fsm.changeState(creep, State.MoveTo);
+        return true; // 已处理，需要返回
+    }
+
     public ToSpawn(creep: Creep) {
         if (creep.store.getUsedCapacity() == 0) {
             switch (creep.memory.role) {
@@ -153,9 +163,8 @@ export default class Transfer extends Singleton {
                 break;
             }
             case Role.DepositHarvester: {
-                if (creep.ticksToLive < creep.memory.time * 2 + 50) creep.suicide();
-                else App.fsm.changeState(creep, State.MoveTo);
-                break
+                this.handleDepositHarvesterLifecycle(creep);
+                break;
             }
         }
     }
@@ -165,9 +174,8 @@ export default class Transfer extends Singleton {
         if (target?.my) {
             switch (creep.memory.role) {
                 case Role.DepositHarvester: {
-                    if (creep.ticksToLive < creep.memory.time * 2 + 50) creep.suicide();
-                    else App.fsm.changeState(creep, State.MoveTo);
-                    break
+                    this.handleDepositHarvesterLifecycle(creep);
+                    break;
                 }
                 default: {
                     if (target.store.getFreeCapacity() == 0) {

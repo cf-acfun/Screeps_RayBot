@@ -25,11 +25,13 @@ export default class Observer extends Singleton {
         let index = room.memory.observer.index;
         let targetRoom = targets[index];
         let num = targets.length;
-        if (Game.time % (room.memory.observer.interval || (room.memory.index + 1) * 10 + 1) == 0) {
+        // 缓存 observer interval 计算，避免重复计算
+        const observerInterval = room.memory.observer.interval || (room.memory.index + 1) * 10 + 1;
+        if (Game.time % observerInterval == 0) {
             observer.observeRoom(targetRoom);
         }
 
-        if (Game.time % (room.memory.observer.interval || (room.memory.index + 1) * 10 + 1) == 1) {
+        if (Game.time % observerInterval == 1) {
             if (Game.rooms[targetRoom]) {
                 // 判断新手墙
                 let wall = Game.rooms[targetRoom].find(FIND_STRUCTURES, {

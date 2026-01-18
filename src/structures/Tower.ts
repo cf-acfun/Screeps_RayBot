@@ -8,43 +8,49 @@ export default class Tower extends Singleton {
     let towerIds = Game.rooms[roomName].memory.towers;
     let towerTask = global.towerTask[roomName];
     if (towerTask.enemys.length) {
+      // 缓存第一个敌人目标，避免在循环中重复获取
+      let enemyTarget = Game.getObjectById(towerTask.enemys[0]);
       for (let i = 0; i < towerIds.length; i++) {
         let tower = Game.getObjectById(towerIds[i]);
         if (!tower) continue;
-        let target = Game.getObjectById(towerTask.enemys[0]);
-        if (target) {
-          tower.attack(target);
+        if (enemyTarget) {
+          tower.attack(enemyTarget);
           continue;
         } else {
           towerTask.enemys.shift();
+          // 更新缓存的目标
+          if (towerTask.enemys.length) {
+            enemyTarget = Game.getObjectById(towerTask.enemys[0]);
+          }
         }
       }
     } else if (towerTask.injured.length) {
+      // 缓存第一个受伤单位目标，避免在循环中重复获取
+      let injuredTarget = Game.getObjectById(towerTask.injured[0]);
       for (let i = 0; i < 3; i++) {
         let tower = Game.getObjectById(towerIds[i]);
         if (!tower) continue;
-        let target = Game.getObjectById(towerTask.injured[0]);
-        if (target && target.hitsMax - target.hits > 0 && target.room.name == tower.room.name) {
-          tower.heal(target);
+        if (injuredTarget && injuredTarget.hitsMax - injuredTarget.hits > 0 && injuredTarget.room.name == tower.room.name) {
+          tower.heal(injuredTarget);
           continue;
         } else {
           towerTask.injured.shift();
+          // 更新缓存的目标
+          if (towerTask.injured.length) {
+            injuredTarget = Game.getObjectById(towerTask.injured[0]);
+          }
         }
       }
     } else if (towerTask.structures.length) {
       let tower = Game.getObjectById(towerIds[this.randInt(0, towerIds.length)]);
-      if(tower){
-        if (tower.store.energy > 500) {
-          if (towerTask.structures.length) {
-            let target = Game.getObjectById(towerTask.structures[0]);
-            if (target) {
-              tower.repair(target)
-              if (target.hits == target.hitsMax) towerTask.structures.shift();
-            } else {
-              towerTask.structures.shift();
-            }
-          }
-      }
+      if (tower && tower.store.energy > 500 && towerTask.structures.length) {
+        let target = Game.getObjectById(towerTask.structures[0]);
+        if (target) {
+          tower.repair(target);
+          if (target.hits == target.hitsMax) towerTask.structures.shift();
+        } else {
+          towerTask.structures.shift();
+        }
       }
     }
   }
