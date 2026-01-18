@@ -341,6 +341,7 @@ interface RoomMemory {
 	controllerLinkPos?: RoomPosition,
 	controllerLinkId?: Id<StructureLink>,
 	controllerContainerId?: Id<StructureContainer>[],
+	centerContainer?: Id<StructureContainer>[],
 	powerSpawnId?: Id<StructurePowerSpawn>,
 	ignoreRoom?: string[],
 	ruinState?: boolean,

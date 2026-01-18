@@ -12,6 +12,7 @@ export default class Common extends Singleton {
         this.findPowerSpawn(roomName);
         this.findNuker(roomName);
         this.findObserver(roomName);
+        this.findCenterContainer(roomName);
     }
     public getPosNear(pos: RoomPosition, sourceState: boolean = false) {
         if (pos.roomName == "W45S59") return new RoomPosition(48, 25, pos.roomName);
@@ -177,6 +178,84 @@ export default class Common extends Singleton {
         if (linkPos) {
             let centerLink = Game.rooms[roomName].lookForAt(LOOK_STRUCTURES, linkPos).filter(e => e.structureType == STRUCTURE_LINK)[0];
             if (centerLink) Game.rooms[roomName].memory.centerLinkId = centerLink.id as Id<StructureLink>;
+        }
+    }
+
+    public findCenterContainer(roomName: string) {
+        let room = Game.rooms[roomName];
+        // 如果已存在 centerContainer，则提前返回（后续代码会自动检测并更新，无需每次都验证）
+        if (room.memory.centerContainer && room.memory.centerContainer.length > 0) {
+            return;
+        }
+        if (!Memory.RoomControlData) return;
+        let structMap = Memory.RoomControlData[roomName]?.structMap;
+        if (!structMap) return;
+        
+        // 查找 storage、terminal、factory 的位置
+        let storagePos: RoomPosition = null;
+        let terminalPos: RoomPosition = null;
+        let factoryPos: RoomPosition = null;
+        
+        structMap.forEach(e => {
+            let strArr = e.split('/');
+            let x = +strArr[0];
+            let y = +strArr[1];
+            let structureType = strArr[2];
+            
+            if (structureType == STRUCTURE_STORAGE) {
+                storagePos = new RoomPosition(x, y, roomName);
+            } else if (structureType == STRUCTURE_TERMINAL) {
+                terminalPos = new RoomPosition(x, y, roomName);
+            } else if (structureType == STRUCTURE_FACTORY) {
+                factoryPos = new RoomPosition(x, y, roomName);
+            }
+        });
+        
+        // 如果三个建筑都找到了，计算中心点
+        if (storagePos && terminalPos && factoryPos) {
+            // 计算三个点的中心点（平均值）
+            let centerX = Math.round((storagePos.x + terminalPos.x + factoryPos.x) / 3);
+            let centerY = Math.round((storagePos.y + terminalPos.y + factoryPos.y) / 3);
+            let centerPos = new RoomPosition(centerX, centerY, roomName);
+            
+            // 在该位置查找 container
+            let centerContainers: StructureContainer[] = [];
+            centerContainers = room.lookForAt(LOOK_STRUCTURES, centerPos).filter(s => 
+                s.structureType == STRUCTURE_CONTAINER
+            ) as StructureContainer[];
+            
+            // 如果找到 container，存储到 memory
+            if (centerContainers.length > 0) {
+                room.memory.centerContainer ??= [];
+                let centerContainerIdList: Id<StructureContainer>[] = [];
+                for (let container of centerContainers) {
+                    centerContainerIdList.push(container.id);
+                }
+                room.memory.centerContainer = centerContainerIdList;
+            } else {
+                // 如果没有找到 container，检查该位置是否已有 StructureContainer（可能是 construction site）
+                let existingStructures = room.lookForAt(LOOK_STRUCTURES, centerPos);
+                let hasContainer = existingStructures.some(s => s.structureType == STRUCTURE_CONTAINER);
+                
+                // 检查是否有 construction site
+                let constructionSites = room.lookForAt(LOOK_CONSTRUCTION_SITES, centerPos);
+                let hasContainerSite = constructionSites.some(s => s.structureType == STRUCTURE_CONTAINER);
+                
+                // 如果既没有 container 也没有 construction site，则创建 container
+                if (!hasContainer && !hasContainerSite) {
+                    let result = room.createConstructionSite(centerX, centerY, STRUCTURE_CONTAINER);
+                    if (result == OK) {
+                        // 创建成功后，清空 centerContainer，等待下次检查
+                        room.memory.centerContainer = [];
+                    }
+                } else {
+                    // 如果有 construction site，清空 centerContainer，等待建造完成
+                    room.memory.centerContainer = [];
+                }
+            }
+        } else {
+            // 如果三个建筑没有全部找到，清空 centerContainer
+            room.memory.centerContainer = [];
         }
     }
 
