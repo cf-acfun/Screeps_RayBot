@@ -5,43 +5,39 @@ import Singleton from "@/Singleton";
 
 export default class Transfer extends Singleton {
     // 处理 DepositHarvester 的低生命值逻辑（提取为公共方法避免重复）
-    private handleDepositHarvesterLifecycle(creep: Creep): boolean {
+    private handleDepositHarvesterLifecycle(creep: Creep): void {
         if (creep.ticksToLive < creep.memory.time * 2 + 50) {
             creep.suicide();
-            return true; // 已处理，需要返回
+            return;
         }
         App.fsm.changeState(creep, State.MoveTo);
-        return true; // 已处理，需要返回
+    }
+
+    // 根据 role 切换到对应的状态（提取公共逻辑）
+    private switchStateByRoleWhenEmpty(creep: Creep): void {
+        switch (creep.memory.role) {
+            case Role.MineralCarrier:
+            case Role.Carrier:
+                App.fsm.changeState(creep, State.Pick);
+                break;
+            case Role.Filler:
+            case Role.HelpBuilder:
+                App.fsm.changeState(creep, State.Withdraw);
+                break;
+        }
     }
 
     public ToSpawn(creep: Creep) {
         if (creep.store.getUsedCapacity() == 0) {
-            switch (creep.memory.role) {
-                case Role.MineralCarrier:
-                case Role.Carrier:
-                    App.fsm.changeState(creep, State.Pick);
-                    break;
-                case Role.Filler:
-                case Role.HelpBuilder:
-                    App.fsm.changeState(creep, State.Withdraw);
-                    break;
-            }
+            this.switchStateByRoleWhenEmpty(creep);
             return;
         }
         if (!creep.store.energy) {
             if (creep.store.getUsedCapacity() == 0) {
-                switch (creep.memory.role) {
-                    case Role.MineralCarrier:
-                    case Role.Carrier:
-                        App.fsm.changeState(creep, State.Pick);
-                        break;
-                    case Role.Filler:
-                    case Role.HelpBuilder:
-                        App.fsm.changeState(creep, State.Withdraw);
-                        break;
-                }
+                this.switchStateByRoleWhenEmpty(creep);
+            } else {
+                App.fsm.changeState(creep, State.TransferToStorage);
             }
-            else App.fsm.changeState(creep, State.TransferToStorage);
             return;
         }
         if (global.et[creep.room.name]) {
@@ -66,34 +62,15 @@ export default class Transfer extends Singleton {
 
     public ToTower(creep: Creep) {
         if (creep.store.getUsedCapacity() == 0) {
-            switch (creep.memory.role) {
-                case Role.MineralCarrier:
-                case Role.Carrier:
-                    App.fsm.changeState(creep, State.Pick);
-                    break;
-                case Role.Filler:
-                case Role.HelpBuilder:
-                    App.fsm.changeState(creep, State.Withdraw);
-                    break;
-
-            }
+            this.switchStateByRoleWhenEmpty(creep);
             return;
         }
         if (!creep.store.energy) {
             if (creep.store.getUsedCapacity() == 0) {
-                switch (creep.memory.role) {
-                    case Role.MineralCarrier:
-                    case Role.Carrier:
-                        App.fsm.changeState(creep, State.Pick);
-                        break;
-                    case Role.Filler:
-                    case Role.HelpBuilder:
-                        App.fsm.changeState(creep, State.Withdraw);
-                        break;
-
-                }
+                this.switchStateByRoleWhenEmpty(creep);
+            } else {
+                App.fsm.changeState(creep, State.TransferToStorage);
             }
-            else App.fsm.changeState(creep, State.TransferToStorage);
             return;
         }
         let target = App.common.findTower(creep);
@@ -109,33 +86,21 @@ export default class Transfer extends Singleton {
         }
         switch (creep.memory.role) {
             case Role.Filler: {
-                if (!target?.my) {
+                if (!target?.my || target.store.getFreeCapacity() == 0) {
                     App.fsm.changeState(creep, State.TransferToSpawn);
                     return;
                 }
-                else {
-                    if (target.store.getFreeCapacity() == 0) {
-                        App.fsm.changeState(creep, State.TransferToSpawn);
-                        return;
-                    }
-                    App.common.transferToTargetStructure(creep, target);
-                }
+                App.common.transferToTargetStructure(creep, target);
                 if (creep.store.getUsedCapacity() == 0) App.fsm.changeState(creep, State.Withdraw);
                 break;
             }
             case Role.MineralCarrier:
             case Role.Carrier: {
-                if (!target?.my) {
+                if (!target?.my || target.store.getFreeCapacity() == 0) {
                     App.fsm.changeState(creep, State.TransferToSpawn);
                     return;
                 }
-                else {
-                    if (target.store.getFreeCapacity() == 0) {
-                        App.fsm.changeState(creep, State.TransferToSpawn);
-                        return;
-                    }
-                    App.common.transferToTargetStructure(creep, target);
-                }
+                App.common.transferToTargetStructure(creep, target);
                 if (creep.store.getUsedCapacity() == 0) App.fsm.changeState(creep, State.Pick);
                 break;
             }
@@ -144,9 +109,7 @@ export default class Transfer extends Singleton {
                     App.fsm.changeState(creep, State.TransferToTerminal);
                     return;
                 }
-                else {
-                    App.common.transferToTargetStructure(creep, target);
-                }
+                App.common.transferToTargetStructure(creep, target);
                 if (creep.store.getUsedCapacity() == 0) App.fsm.changeState(creep, State.Withdraw);
                 break;
             }
@@ -215,13 +178,12 @@ export default class Transfer extends Singleton {
         }
         if (target instanceof StructureLab) {
             App.common.transferToTargetStructure(creep, target);
-            if ((creep.store.energy && target.store.energy == 2000) ||
-                creep.store.getUsedCapacity() == 0) {
-                creep.memory.transferTargetId = null;
-                App.fsm.changeState(creep, State.Withdraw);
-                return
-            }
-            if (target.store[target.mineralType] == 3000 || creep.store.getUsedCapacity() == 0) {
+            const usedCapacity = creep.store.getUsedCapacity();
+            // 合并重复的 getUsedCapacity() 检查和状态切换逻辑
+            if (usedCapacity == 0 || (creep.store.energy && target.store.energy == 2000) || target.store[target.mineralType] == 3000) {
+                if (usedCapacity == 0 || (creep.store.energy && target.store.energy == 2000)) {
+                    creep.memory.transferTargetId = null;
+                }
                 App.fsm.changeState(creep, State.Withdraw);
             }
         } else App.fsm.changeState(creep, State.TransferToStorage);
