@@ -28,25 +28,22 @@ export default class Spawn extends Singleton {
     if (!room.memory.spawns) return;
     for (let i = 0; i < room.memory.spawns.length; i++) {
       let name = room.memory.spawns[i];
-      if (!Game.spawns[name]) continue;
-      if (Game.spawns[name] && Game.spawns[name].spawning) continue;
-      else {
-        if (!Game.spawns[name]) continue;
-        let newName = GenNonDuplicateID();
-        let body = this.getBodys(name, role as BodyAutoConfigConstant);
-        if (body.length <= 0) return ERR_NOT_ENOUGH_ENERGY;
-        Game.spawns[name].spawnCreep(
-          body,
-          creepName ?? newName, {
-          memory: {
-            role: role,
-            state: null,
-            roomFrom: roomName,
-            taskId: taksId
-          }
-        });
-        break;
-      }
+      let spawn = Game.spawns[name];
+      if (!spawn || spawn.spawning) continue;
+      let newName = GenNonDuplicateID();
+      let body = this.getBodys(name, role as BodyAutoConfigConstant);
+      if (body.length <= 0) return ERR_NOT_ENOUGH_ENERGY;
+      spawn.spawnCreep(
+        body,
+        creepName ?? newName, {
+        memory: {
+          role: role,
+          state: null,
+          roomFrom: roomName,
+          taskId: taksId
+        }
+      });
+      break;
     }
   }
 
@@ -60,73 +57,74 @@ export default class Spawn extends Singleton {
       if (spawn && spawn.spawning) {
         let spawningCreep = spawn.spawning?.name;
         let creep = Game.creeps[spawningCreep];
+        // 使用已存在的 creep 对象，避免重复的 Game.creeps 调用（优化性能）
         if (creep.memory.role == Role.Repairer) {
           // TODO 增加三种不同等级数量判断
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["LH2O"] > 1000 ? "LH2O" : "LH",
-            num: Game.creeps[creep.name].getActiveBodyparts(WORK)
+            num: creep.getActiveBodyparts(WORK)
           }, {
             type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
-            num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
+            num: creep.getActiveBodyparts(CARRY)
           }])
         }
         if (creep.memory.role == Role.HelpBuilder) {
           // TODO 增加三种不同等级数量判断
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["LH2O"] > 1000 ? "LH2O" : "LH",
-            num: Game.creeps[creep.name].getActiveBodyparts(WORK)
+            num: creep.getActiveBodyparts(WORK)
           }, {
             type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
-            num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
+            num: creep.getActiveBodyparts(CARRY)
           }, {
             type: global.allRes["ZHO2"] > 1000 ? "ZHO2" : "ZH",
-            num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
+            num: creep.getActiveBodyparts(MOVE)
           }])
         }
         if (creep.memory.role == Role.HelpUpgrader) {
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["GH2O"] > 1000 ? "GH2O" : "GH",
-            num: Game.creeps[creep.name].getActiveBodyparts(WORK)
+            num: creep.getActiveBodyparts(WORK)
           }, {
             type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
-            num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
+            num: creep.getActiveBodyparts(CARRY)
           }, {
             type: global.allRes["ZHO2"] > 1000 ? "ZHO2" : "ZH",
-            num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
+            num: creep.getActiveBodyparts(MOVE)
           }])
         }
         if (creep.memory.role == Role.Attacker) {
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["XUH2O"] > 500 ? "XUH2O" : "UH2O",
-            num: Game.creeps[creep.name].getActiveBodyparts(ATTACK)
+            num: creep.getActiveBodyparts(ATTACK)
           }])
         }
         if (creep.memory.role == Role.RemoteTransfer) {
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["XKH2O"] > 1000 ? "XKH2O" : "KH2O",
-            num: Game.creeps[creep.name].getActiveBodyparts(CARRY)
+            num: creep.getActiveBodyparts(CARRY)
           }, {
             type: global.allRes["XZHO2"] > 1000 ? "XZHO2" : "ZHO2",
-            num: Game.creeps[creep.name].getActiveBodyparts(MOVE)
+            num: creep.getActiveBodyparts(MOVE)
           }])
         }
         // boost DepositHarvester
         if (creep.memory.role == Role.DepositHarvester) {
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["UHO2"] > 1000 ? "UHO2" : "UO",
-            num: Game.creeps[creep.name].getActiveBodyparts(WORK)
+            num: creep.getActiveBodyparts(WORK)
           }])
         }
         if (creep.memory.role == Role.PB_Attacker) {
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["XUH2O"] > 1000 ? "XUH2O" : "UH2O",
-            num: Game.creeps[creep.name].getActiveBodyparts(ATTACK) - 5
+            num: creep.getActiveBodyparts(ATTACK) - 5
           }])
         }
         if (creep.memory.role == Role.PB_Healer) {
           Boost.SetBoostType(creep.name, [{
             type: global.allRes["XLHO2"] > 1000 ? "XLHO2" : "LHO2",
-            num: Game.creeps[creep.name].getActiveBodyparts(HEAL)
+            num: creep.getActiveBodyparts(HEAL)
           }])
         }
 
@@ -185,7 +183,8 @@ export default class Spawn extends Singleton {
    * @param boostBodyType 强化部件
    */
   private _setBoostType(creep: Creep, compoundType: MineralBoostConstant, boostBodyPartType: BodyPartConstant): void {
-    const boostBodyPartAmount = Game.creeps[creep.name].getActiveBodyparts(boostBodyPartType);
+    // 直接使用传入的 creep 对象，避免重复的 Game.creeps 调用（优化性能）
+    const boostBodyPartAmount = creep.getActiveBodyparts(boostBodyPartType);
     Boost.SetBoostType(creep.name, [{
       type: compoundType,
       num: boostBodyPartAmount
