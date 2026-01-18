@@ -166,7 +166,6 @@ export default class Terminal extends Singleton {
      *  对于没有购买能量订单且有terminal的房间，如果房间的能量低于某个阈值则创建订单并维护到内存中。
      *     合理的价格和订单容量，避免出现抬价的情况。 
      */
-    // TODO 当存在其他资源单子的时候会报错，待修复！
     private _autoBuyEnergy(roomName: string): void {
 
         // 检查能量存储情况
@@ -185,23 +184,25 @@ export default class Terminal extends Singleton {
         // 获取购买能量的房间并清除非活跃订单并删除非活跃订单
         for (let order in Game.market.orders) {
             const _order = Game.market.orders[order];
-            if (_order.roomName !== roomName) return;
+            if (_order.roomName !== roomName) continue;
+            // 只处理能量订单
+            if (_order.resourceType !== RESOURCE_ENERGY) continue;
+            
             const orderId = _order.id;
             const orderStatus = _order.active;
             if (!orderStatus) {
-                // 将订单从内存中移除
+                // 将能量订单从内存中移除并取消订单
                 Game.rooms[_order.roomName].memory.energyOrder = undefined;
                 Game.market.cancelOrder(orderId);
-                return;
+                continue; // 继续处理其他订单
             }
-            // 获取活跃的订单根据订单所属房间并将其存入到内存中
+            // 获取活跃的能量订单并将其存入到内存中
             if (orderStatus) {
-                // 将能量订单存储到内存中
-                if (_order.resourceType == RESOURCE_ENERGY && !Game.rooms[_order.roomName].memory.energyOrder) {
+                if (!Game.rooms[_order.roomName].memory.energyOrder) {
                     // 将订单id存到内存中
                     Game.rooms[_order.roomName].memory.energyOrder = _order.id;
-                    return;
                 }
+                break; // 找到能量订单后退出循环
             }
         }
 
