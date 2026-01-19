@@ -253,7 +253,7 @@ export default class MoveTo extends Singleton {
                             let foundCorrectTask = false;
                             for (let taskId in Memory.roomTask[roomFrom]) {
                                 let correctTask = Memory.roomTask[roomFrom][taskId];
-                                if (correctTask.role == Role.PB_Attacker && 
+                                if (correctTask.role == Role.PB_Attacker &&
                                     correctTask.targetRoom == task.targetRoom &&
                                     correctTask.targetStructureId == task.targetStructureId) {
                                     // 更新creep的taskId并保存到memory
@@ -273,10 +273,9 @@ export default class MoveTo extends Singleton {
                         let healerCreeps: Creep[] = [];
                         for (let name in Game.creeps) {
                             let c = Game.creeps[name];
-                            if (c.memory.role == Role.PB_Healer && 
-                                c.memory.taskId == creep.memory.taskId && 
+                            if (c.memory.role == Role.PB_Healer &&
+                                c.memory.taskId == creep.memory.taskId &&
                                 c.memory.roomFrom == creep.memory.roomFrom &&
-                                c.pos.roomName == creep.room.name &&
                                 (!c.memory.attacker || (c.memory.attacker && !Game.creeps[c.memory.attacker]))) {
                                 healerCreeps.push(c);
                             }
@@ -363,6 +362,7 @@ export default class MoveTo extends Singleton {
                     creep.memory.state = State.Back;
                     return;
                 }
+                break;
             }
             case Role.PB_Healer: {
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
@@ -379,7 +379,7 @@ export default class MoveTo extends Singleton {
                             let foundCorrectTask = false;
                             for (let taskId in Memory.roomTask[roomFrom]) {
                                 let correctTask = Memory.roomTask[roomFrom][taskId];
-                                if (correctTask.role == Role.PB_Attacker && 
+                                if (correctTask.role == Role.PB_Attacker &&
                                     correctTask.targetRoom == task.targetRoom &&
                                     correctTask.targetStructureId == task.targetStructureId) {
                                     // 更新creep的taskId并保存到memory
@@ -399,10 +399,9 @@ export default class MoveTo extends Singleton {
                         let attackerCreeps: Creep[] = [];
                         for (let name in Game.creeps) {
                             let c = Game.creeps[name];
-                            if (c.memory.role == Role.PB_Attacker && 
-                                c.memory.taskId == creep.memory.taskId && 
+                            if (c.memory.role == Role.PB_Attacker &&
+                                c.memory.taskId == creep.memory.taskId &&
                                 c.memory.roomFrom == creep.memory.roomFrom &&
-                                c.pos.roomName == creep.room.name &&
                                 (!c.memory.healer || (c.memory.healer && !Game.creeps[c.memory.healer]))) {
                                 attackerCreeps.push(c);
                             }
@@ -438,13 +437,17 @@ export default class MoveTo extends Singleton {
                             return;
                         }
                     } else {
+                        if (creep.room.name != task.targetRoom) {
+                            creep.customMove(Game.creeps[creep.memory.attacker].pos);
+                            return;
+                        }
                         if (creep.pos.inRangeTo(Game.creeps[creep.memory.attacker], 3)) {
                             creep.rangedHeal(Game.creeps[creep.memory.attacker])
                         }
                         creep.moveTo(Game.creeps[creep.memory.attacker].pos, { range: 1 })
                     }
                 }
-
+                break;
             }
             case Role.DepositHarvester: {
                 let df = Game.flags[creep.name];
