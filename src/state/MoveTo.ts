@@ -448,11 +448,17 @@ export default class MoveTo extends Singleton {
             }
             case Role.DepositHarvester: {
                 let df = Game.flags[creep.name];
+                // 如果没有对应的旗帜（任务已被取消或手动删除），直接回城走 Back → Unboost 流程
+                if (!df) {
+                    App.fsm.changeState(creep, State.Back);
+                    break;
+                }
                 if (df) {
                     if (creep.store.getFreeCapacity() == 0) {
                         App.fsm.changeState(creep, State.Back);
                         let d = creep.room.lookForAt(LOOK_DEPOSITS, df)[0]
-                        if (d.lastCooldown >= 100) {
+                        if (d && d.lastCooldown >= 100) {
+                            // 冷却过高，移除旗帜，视为任务结束，后续在 Back 中会进入 Unboost
                             df.remove();
                             return;
                         }
@@ -461,20 +467,15 @@ export default class MoveTo extends Singleton {
                     if (creep.pos.roomName == df.pos.roomName) {
                         let d = creep.room.lookForAt(LOOK_DEPOSITS, df)[0]
                         if (d) {
-                            if (creep.harvest(d) == ERR_NOT_IN_RANGE) {
-                                // 检测是否有其他玩家爬
-                                // if (Math.max(Math.abs(creep.pos.x - d.pos.x), Math.abs(creep.pos.y - d.pos.y)) <= 2) {
-                                //   let hostile = creep.room.find(FIND_HOSTILE_CREEPS, {
-                                //     filter: c => Math.abs(c.pos.x - creep.pos.x) <= 2 && Math.abs(c.pos.y - creep.pos.y) <= 2 && !whiteList.includes(c.owner.username)
-                                //   })[0]
-                                //   if (hostile) {
-                                //     if (creep.attack(hostile) == ERR_NOT_IN_RANGE) {
-                                //       creep.customMove(d.pos);
-                                //       return;
-                                //     }
-                                //   } else 
-                                //   creep.customMove(d.pos);
-                                // } else 
+                            let harvestResult = creep.harvest(d);
+                            if (harvestResult == ERR_NOT_IN_RANGE) {
+                                // 检测是否存在可用的采集点位，如果被敌方完全占满则放弃任务
+                                if (!this.hasAvailableDepositPos(d.pos)) {
+                                    // console.log(`当前房间[${creep.room.name}]没有可用的采集点位,取消任务`);
+                                    df.remove(); // 取消任务
+                                    App.fsm.changeState(creep, State.Back);
+                                    return;
+                                }
                                 creep.customMove(d.pos);
                             }
                             // 记录单程抵达时间
@@ -578,7 +579,12 @@ export default class MoveTo extends Singleton {
             }
             case Role.DepositHarvester: {
                 if (creep.store.getUsedCapacity() == 0) {
-                    App.fsm.changeState(creep, State.MoveTo);
+                    // 如果任务旗帜已经被移除（任务被取消或结束），则进入 Unboost
+                    if (!Game.flags[creep.name] && creep.room.name == roomFrom) {
+                        creep.memory.state = State.Unboost;
+                    } else {
+                        creep.customMove(new RoomPosition(25, 25, roomFrom));
+                    }
                     return;
                 }
                 if (creep.room.name == roomFrom) App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
@@ -586,6 +592,30 @@ export default class MoveTo extends Singleton {
                 break;
             }
         }
+    }
+
+    // 检测 deposit 周围是否存在可供我方采集的空位（没有墙且没有敌方 creep 占据）
+    private hasAvailableDepositPos(pos: RoomPosition): boolean {
+        let room = Game.rooms[pos.roomName];
+        // console.log(`当前room为[${room}], 开始检测是否有可用的采集点位`);
+        if (!room) return true; // 房间不可见时不做取消处理，保守返回 true
+        let terrain = Game.map.getRoomTerrain(pos.roomName);
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                // console.log(`当前dx为[${dx}],当前dy为[${dy}]`);
+                if (dx == 0 && dy == 0) continue;
+                let x = pos.x + dx;
+                let y = pos.y + dy;
+                if (x < 0 || x > 49 || y < 0 || y > 49) continue;
+                if (terrain.get(x, y) == TERRAIN_MASK_WALL) continue;
+                let creepsHere = room.lookForAt(LOOK_CREEPS, x, y) as Creep[];
+                let hostile = creepsHere.find(c => !c.my);
+                // 只要存在一个不是被敌方占据的可走位置，就认为可以采集
+                // console.log(`当前hostile为[${hostile}]`);
+                if (!hostile) return true;
+            }
+        }
+        return false;
     }
 }
 

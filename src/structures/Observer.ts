@@ -46,8 +46,12 @@ export default class Observer extends Singleton {
                                 filter: (deposit) => deposit.lastCooldown <= 60
                             })
                             if (deposits.length > 0) {
-                                Game.rooms[targetRoom].createFlag(deposits[0].pos, DN);
-                                App.spawn.run(roomName, Role.DepositHarvester, DN);
+                                let deposit = deposits[0];
+                                // 只有在存在可采集点位时才创建任务，避免被敌方完全占满时反复创建任务
+                                if (this.hasAvailableDepositPos(deposit.pos)) {
+                                    Game.rooms[targetRoom].createFlag(deposit.pos, DN);
+                                    App.spawn.run(roomName, Role.DepositHarvester, DN);
+                                }
                             }
                         }
                     }
@@ -84,5 +88,26 @@ export default class Observer extends Singleton {
                 else room.memory.observer.index++;
             }
         }
+    }
+
+    // 检测 deposit 周围是否存在可供我方采集的空位（没有墙且没有敌方 creep 占据）
+    private hasAvailableDepositPos(pos: RoomPosition): boolean {
+        let room = Game.rooms[pos.roomName];
+        if (!room) return true; // 房间不可见时不做取消处理，保守返回 true
+        let terrain = Game.map.getRoomTerrain(pos.roomName);
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                if (dx == 0 && dy == 0) continue;
+                let x = pos.x + dx;
+                let y = pos.y + dy;
+                if (x < 0 || x > 49 || y < 0 || y > 49) continue;
+                if (terrain.get(x, y) == TERRAIN_MASK_WALL) continue;
+                let creepsHere = room.lookForAt(LOOK_CREEPS, x, y) as Creep[];
+                let hostile = creepsHere.find(c => !c.my);
+                // 只要存在一个不是被敌方占据的可走位置，就认为可以采集
+                if (!hostile) return true;
+            }
+        }
+        return false;
     }
 }
