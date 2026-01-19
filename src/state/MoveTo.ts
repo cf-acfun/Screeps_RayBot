@@ -591,13 +591,17 @@ export default class MoveTo extends Singleton {
                 break;
             }
             case Role.DepositHarvester: {
-                if (creep.store.getUsedCapacity() == 0) {
+                if (creep.store.getUsedCapacity() == 0 && !Game.flags[creep.name]) {
                     // 如果任务旗帜已经被移除（任务被取消或结束），则进入 Unboost
-                    if (!Game.flags[creep.name] && creep.room.name == roomFrom) {
+                    if (creep.room.name == roomFrom) {
                         creep.memory.state = State.Unboost;
                     } else {
                         creep.customMove(new RoomPosition(25, 25, roomFrom));
                     }
+                    return;
+                }
+                if (creep.store.getUsedCapacity() == 0) {
+                    App.fsm.changeState(creep, State.MoveTo);
                     return;
                 }
                 if (creep.room.name == roomFrom) App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
