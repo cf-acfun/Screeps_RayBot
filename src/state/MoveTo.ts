@@ -366,6 +366,10 @@ export default class MoveTo extends Singleton {
             }
             case Role.PB_Healer: {
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
+                if (!task) {
+                    creep.memory.state = State.Back;
+                    return;
+                }
                 // 验证并清理已绑定的attacker，如果不存在则清除绑定
                 if (creep.memory.attacker && !Game.creeps[creep.memory.attacker]) {
                     creep.memory.attacker = undefined;
@@ -426,25 +430,31 @@ export default class MoveTo extends Singleton {
                     creep.memory.state = State.Unboost;
                     return;
                 }
-                // 如果attacker存在，执行治疗逻辑
-                if (Game.creeps[creep.memory.attacker]) {
+                // 如果attacker存在，执行治疗与跟随逻辑
+                const attacker = Game.creeps[creep.memory.attacker];
+                if (attacker) {
+                    // 先自疗
                     if (creep.hits < creep.hitsMax) {
                         creep.heal(creep);
                     }
-                    if (creep.pos.isNearTo(Game.creeps[creep.memory.attacker])) {
-                        if (Game.creeps[creep.memory.attacker] && Game.creeps[creep.memory.attacker].hits < Game.creeps[creep.memory.attacker].hitsMax) {
-                            creep.heal(Game.creeps[creep.memory.attacker]);
+
+                    // 不在同一房间时，优先向attacker所在房间的中点移动，避免跨房间寻路问题
+                    if (creep.room.name !== attacker.room.name) {
+                        creep.customMove(new RoomPosition(25, 25, attacker.room.name));
+                        return;
+                    }
+
+                    // 同房间内的治疗与跟随
+                    if (creep.pos.isNearTo(attacker)) {
+                        if (attacker.hits < attacker.hitsMax) {
+                            creep.heal(attacker);
                             return;
                         }
                     } else {
-                        if (creep.room.name != task.targetRoom) {
-                            creep.customMove(Game.creeps[creep.memory.attacker].pos);
-                            return;
+                        if (creep.pos.inRangeTo(attacker, 3)) {
+                            creep.rangedHeal(attacker);
                         }
-                        if (creep.pos.inRangeTo(Game.creeps[creep.memory.attacker], 3)) {
-                            creep.rangedHeal(Game.creeps[creep.memory.attacker])
-                        }
-                        creep.moveTo(Game.creeps[creep.memory.attacker].pos, { range: 1 })
+                        creep.customMove(attacker.pos, 1);
                     }
                 }
                 break;
