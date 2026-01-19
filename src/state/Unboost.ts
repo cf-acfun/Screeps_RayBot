@@ -3,6 +3,10 @@ import Singleton from "@/Singleton";
 
 export default class Unboost extends Singleton {
     public run(creep: Creep) {
+        if (creep.room.name != creep.memory.roomFrom) {
+            creep.customMove(new RoomPosition(25, 25, creep.memory.roomFrom));
+            return;
+        }
         if (creep.room.controller.level < 8) creep.suicide();
         else {
             if (!creep.room.memory.unboostContainerPos) creep.suicide();
