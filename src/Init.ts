@@ -150,6 +150,25 @@ export default class Init extends Singleton {
 
   private _showRoomInfo(roomName: string, used: number) {
     if (!Game.rooms[roomName]) return;
+
+    // 统计当前房间的 roomTask 信息，显示所有任务
+    let roomTask = Memory.roomTask?.[roomName];
+    let roomTaskText = '空闲';
+    if (roomTask) {
+      const ids = Object.keys(roomTask);
+      if (ids.length > 0) {
+        const parts: string[] = [];
+        for (const id of ids) {
+          const task: any = roomTask[id];
+          const role = task.role ?? id;
+          const targetRoom = task.targetRoom ?? task.roomName ?? '-';
+          const num = task.num ?? 1;
+          parts.push(`${role}@${targetRoom} creep num: ${num}`);
+        }
+        roomTaskText = parts.join(' | ');
+      }
+    }
+
     Game.rooms[roomName].visual
       .text(`CPU:${used}`, 0, 1, {
         color: colorHex(getColor(used / Game.cpu.limit * 100)),
@@ -173,6 +192,11 @@ export default class Init extends Singleton {
         color: '#8dc5e3',
         align: 'left'
       })
+      .text(`ROOM_TASK:${roomTaskText}`, 0, 6, {
+        color: roomTask ? '#c5c599' : '#6b9955',
+        align: 'left'
+      });
+
     let spawns: string[] = Game.rooms[roomName].memory['spawns'] || [];
     for (let i = 0; i < spawns.length; i++) {
       let spawningCreep = null;
@@ -184,7 +208,7 @@ export default class Init extends Singleton {
         .text(
           `${spawns[i]}:${spawningCreep?.memory['role'] ?? '空闲'} ${Game.spawns[spawns[i]].spawning?.remainingTime ?? ''}`,
           0,
-          6 + i, {
+          7 + i, {
           color: spawningCreep ? '#c5c599' : '#6b9955',
           align: 'left',
         });
