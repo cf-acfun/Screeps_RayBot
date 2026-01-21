@@ -193,7 +193,7 @@ export default class Init extends Singleton {
         align: 'left'
       })
       .text(`ROOM_TASK:${roomTaskText}`, 0, 6, {
-        color: roomTask ? '#c5c599' : '#6b9955',
+        color: roomTaskText === '空闲' ? '#6b9955' : '#c5c599',
         align: 'left'
       });
 
