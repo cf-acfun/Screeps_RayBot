@@ -366,10 +366,6 @@ export default class MoveTo extends Singleton {
             }
             case Role.PB_Healer: {
                 let task = Memory.roomTask[roomFrom][creep.memory.taskId];
-                if (!task) {
-                    creep.memory.state = State.Back;
-                    return;
-                }
                 // 验证并清理已绑定的attacker，如果不存在则清除绑定
                 if (creep.memory.attacker && !Game.creeps[creep.memory.attacker]) {
                     creep.memory.attacker = undefined;
@@ -455,6 +451,11 @@ export default class MoveTo extends Singleton {
                             creep.rangedHeal(attacker);
                         }
                         creep.customMove(attacker.pos, 1);
+                    }
+                } else {
+                    if (!task) {
+                        creep.memory.state = State.Back;
+                        return;
                     }
                 }
                 break;
