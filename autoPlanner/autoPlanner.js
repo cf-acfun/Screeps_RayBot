@@ -715,8 +715,8 @@ let pro = {
                 roomObjectCache.extractor = [[pos.x, pos.y]]
             }
             roomObjectCache.container = roomObjectCache.container || []
-            // if(i!=1)roomObjectCache.container.unshift(p) //如果是 mineral 最后一个
-            // else roomObjectCache.container.push(p)
+            if(i!=1)roomObjectCache.container.unshift(p) //如果是 mineral 最后一个
+            else roomObjectCache.container.push(p)
         }
 
         //插值，这里用拉普拉斯矩阵，对nearWall 插值 成 nearWallWithInterpolation
