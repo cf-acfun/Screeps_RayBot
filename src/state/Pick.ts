@@ -52,7 +52,7 @@ export default class Pick extends Singleton {
                                 let sourceMem = creep.room.memory.sources[sourceId];
                                 if (sourceMem.container) {
                                     let container = Game.getObjectById(sourceMem.container);
-                                    if (container && container.store.energy > 0) {
+                                    if (container && container.store.energy > 500) {
                                         App.common.getResourceFromTargetStructure(creep, container);
                                         foundContainer = true;
                                         break;
