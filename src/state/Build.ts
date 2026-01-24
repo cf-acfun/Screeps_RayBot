@@ -33,6 +33,7 @@ export default class Build extends Singleton {
                 }
                 break;
             }
+            case Role.HelpUpgrader:
             case Role.HelpBuilder: {
                 if (creep.store.getUsedCapacity() == 0) {
                     App.fsm.changeState(creep, State.Withdraw);
