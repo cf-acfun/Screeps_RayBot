@@ -167,7 +167,7 @@ export default class Solitary extends Singleton {
 					if (creep.hitsMax - creep.hits > 200) {
 						const exitDir = creep.room.findExitTo(creep.memory.roomFrom) as ExitConstant;
 						const exit = creep.pos.findClosestByRange(exitDir);
-						creep.moveTo(exit);
+						creep.customMove(exit);
 						return;
 					}
 				}
@@ -227,7 +227,7 @@ export default class Solitary extends Singleton {
 		let target: Structure = null;
 		if (flag2) {
 			creep.rangedMassAttack();
-			creep.moveTo(flag2);
+			creep.customMove(flag2.pos);
 		} else {
 			let enemy = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, {
 				filter: c => !Memory.whiteList.includes(c.owner.username) && !c.spawning && c.pos.x > 0 && c.pos.x < 49 && c.pos.y > 0 && c.pos.y < 49
@@ -237,10 +237,10 @@ export default class Solitary extends Singleton {
 				if (dis > 3) creep.rangedMassAttack();
 				else if (dis > 1) creep.rangedAttack(enemy);
 				else if (dis <= 1) creep.rangedMassAttack();
-				creep.moveTo(enemy);
+				creep.customMove(enemy.pos);
 			} else {
 				if (creep.pos.x < 1 || creep.pos.x > 48 || creep.pos.y < 1 || creep.pos.y > 48) {
-					creep.moveTo(new RoomPosition(25, 25, creep.room.name));
+					creep.customMove(new RoomPosition(25, 25, creep.room.name));
 					return;
 				}
 				if (flag) target = creep.room.lookForAt(LOOK_STRUCTURES, flag)[0];
@@ -262,7 +262,7 @@ export default class Solitary extends Singleton {
 			// 打野
 			let s = creep.room.lookForAt(LOOK_STRUCTURES, f);
 			if (s.length) {
-				if (this._getDis(creep.pos, s[0].pos) > 1) creep.moveTo(s[0]);
+				if (this._getDis(creep.pos, s[0].pos) > 1) creep.customMove(s[0].pos);
 				else creep.attack(s[0]);
 			}
 			return;
@@ -272,7 +272,7 @@ export default class Solitary extends Singleton {
 		});
 		if (enemy) {
 			if (creep.attack(enemy) == ERR_NOT_IN_RANGE) {
-				creep.moveTo(enemy);
+				creep.customMove(enemy.pos);
 			}
 		} else {
 			let flag = Game.flags[`atk_${creep.room.name}`];
@@ -283,7 +283,7 @@ export default class Solitary extends Singleton {
 			});
 			if (target) {
 				if (creep.attack(target) == ERR_NOT_IN_RANGE) {
-					creep.moveTo(target);
+					creep.customMove(target.pos);
 				}
 			}
 		}
@@ -293,7 +293,7 @@ export default class Solitary extends Singleton {
 		let flag = Game.flags[`dis_${creep.room.name}`];
 		let target: Structure = null;
 		// if (creep.pos.x <= 1 || creep.pos.x >= 48 || creep.pos.y <= 1 || creep.pos.y >= 48) {
-		// 	creep.moveTo(new RoomPosition(25, 25, creep.room.name));
+		// 	creep.customMove(new RoomPosition(25, 25, creep.room.name));
 		// 	return;
 		// }
 		if (flag) {
@@ -309,7 +309,7 @@ export default class Solitary extends Singleton {
 		});
 		if (target) {
 			if (creep.dismantle(target) == ERR_NOT_IN_RANGE) {
-				creep.moveTo(target);
+				creep.customMove(target.pos);
 			}
 		}
 	}

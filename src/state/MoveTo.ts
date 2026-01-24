@@ -59,17 +59,17 @@ export default class MoveTo extends Singleton {
                 }
                 if (target) {
                     if (creep.room.name != target.pos.roomName) {
-                        creep.moveTo(target.pos);
+                        creep.customMove(target.pos);
                         return
                     }
                     if (creep.room.controller.reservation && creep.room.controller.reservation.username != Memory.username) {
                         if (creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(creep.room.controller.pos);
+                            creep.customMove(creep.room.controller.pos);
                             return;
                         }
                     }
                     if (creep.claimController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(creep.room.controller.pos);
+                        creep.customMove(creep.room.controller.pos);
                     }
                     if (creep.room.name == target.pos.roomName && creep.room.controller.owner?.username == creep.owner.username) {
                         global.cc[creep.memory.roomFrom].claimer = 0;
@@ -142,12 +142,12 @@ export default class MoveTo extends Singleton {
                     /* 优先寻找ruin */
                     if (pbRuin && pbRuin.store.getUsedCapacity('power') > 0) {
                         if (creep.withdraw(pbRuin, 'power') == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(pbRuin);
+                            creep.customMove(pbRuin.pos);
                             return;
                         }
                     } else if (power) {
                         if (creep.pickup(power) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(power.pos);
+                            creep.customMove(power.pos);
                             return;
                         }
                     } else if ((!Game.flags[powerBankFlag] && !pbRuin) || (pbRuin && pbRuin.store.getUsedCapacity('power') == 0)) {
