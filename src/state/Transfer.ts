@@ -162,6 +162,12 @@ export default class Transfer extends Singleton {
     }
 
     public ToLab(creep: Creep) {
+        // 检查 labs 是否存在
+        if (!creep.room.memory.labs) {
+            App.fsm.changeState(creep, State.TransferToStorage);
+            return;
+        }
+        
         let target;
         if (creep.memory.role == Role.CenterTransfer) target = Game.getObjectById(creep.room.memory.labs[creep.memory.fillLabIndex]);
         else {
