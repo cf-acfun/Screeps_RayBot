@@ -45,11 +45,28 @@ export default class Pick extends Singleton {
                     })
                     if (drop) creep.memory.dropId = drop.id;
                     else {
-                        if (creep.room.storage?.store.energy) {
-                            App.common.getResourceFromTargetStructure(creep, creep.room.storage);
-                            return;
+                        // 检查 sourceMem.container 是否有能量
+                        let foundContainer = false;
+                        if (creep.room.memory.sources) {
+                            for (let sourceId in creep.room.memory.sources) {
+                                let sourceMem = creep.room.memory.sources[sourceId];
+                                if (sourceMem.container) {
+                                    let container = Game.getObjectById(sourceMem.container);
+                                    if (container && container.store.energy > 0) {
+                                        App.common.getResourceFromTargetStructure(creep, container);
+                                        foundContainer = true;
+                                        break;
+                                    }
+                                }
+                            }
                         }
-                        App.fsm.changeState(creep, State.Harvest);
+                        if (!foundContainer) {
+                            if (creep.room.storage?.store.energy) {
+                                App.common.getResourceFromTargetStructure(creep, creep.room.storage);
+                                return;
+                            }
+                            App.fsm.changeState(creep, State.Harvest);
+                        }
                     }
                 } else {
                     let drop = Game.getObjectById(creep.memory.dropId);
