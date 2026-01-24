@@ -101,12 +101,12 @@ export const RoleNum: {
     [Role.Upgrader]: 4
   },
   2: {
-    [Role.Builder]: 4,
-    [Role.Upgrader]: 4
+    [Role.Builder]: 1,
+    [Role.Upgrader]: 1
   },
   3: {
-    [Role.Builder]: 4,
-    [Role.Upgrader]: 10
+    [Role.Builder]: 1,
+    [Role.Upgrader]: 1
   },
   4: {
     [Role.Builder]: 1,
