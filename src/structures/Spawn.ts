@@ -71,11 +71,8 @@ export default class Spawn extends Singleton {
         if (creep.memory.role == Role.HelpBuilder) {
           // TODO 增加三种不同等级数量判断
           Boost.SetBoostType(creep.name, [{
-            type: global.allRes["LH2O"] > 1000 ? "LH2O" : "LH",
+            type: global.allRes["XLH2O"] > 1000 ? "XLH2O" : "LH2O",
             num: creep.getActiveBodyparts(WORK)
-          }, {
-            type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
-            num: creep.getActiveBodyparts(CARRY)
           }, {
             type: global.allRes["ZHO2"] > 1000 ? "ZHO2" : "ZH",
             num: creep.getActiveBodyparts(MOVE)
@@ -83,11 +80,8 @@ export default class Spawn extends Singleton {
         }
         if (creep.memory.role == Role.HelpUpgrader) {
           Boost.SetBoostType(creep.name, [{
-            type: global.allRes["GH2O"] > 1000 ? "GH2O" : "GH",
+            type: global.allRes["XGH2O"] > 1000 ? "XGH2O" : "GH2O",
             num: creep.getActiveBodyparts(WORK)
-          }, {
-            type: global.allRes["KH2O"] > 1000 ? "KH2O" : "KH",
-            num: creep.getActiveBodyparts(CARRY)
           }, {
             type: global.allRes["ZHO2"] > 1000 ? "ZHO2" : "ZH",
             num: creep.getActiveBodyparts(MOVE)
