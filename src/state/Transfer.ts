@@ -20,11 +20,6 @@ export default class Transfer extends Singleton {
             case Role.Carrier:
                 App.fsm.changeState(creep, State.Pick);
                 break;
-            case Role.Filler:
-            case Role.HelpUpgrader:
-            case Role.HelpBuilder:
-                App.fsm.changeState(creep, State.Withdraw);
-                break;
             default:
                 App.fsm.changeState(creep, State.Withdraw);
                 break;
