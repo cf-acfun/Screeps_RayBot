@@ -21,7 +21,11 @@ export default class Transfer extends Singleton {
                 App.fsm.changeState(creep, State.Pick);
                 break;
             case Role.Filler:
+            case Role.HelpUpgrader:
             case Role.HelpBuilder:
+                App.fsm.changeState(creep, State.Withdraw);
+                break;
+            default:
                 App.fsm.changeState(creep, State.Withdraw);
                 break;
         }
@@ -167,7 +171,7 @@ export default class Transfer extends Singleton {
             App.fsm.changeState(creep, State.TransferToStorage);
             return;
         }
-        
+
         let target;
         if (creep.memory.role == Role.CenterTransfer) target = Game.getObjectById(creep.room.memory.labs[creep.memory.fillLabIndex]);
         else {
