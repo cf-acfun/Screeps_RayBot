@@ -620,7 +620,7 @@ export default class Withdraw extends Singleton {
                     if (container.store.getFreeCapacity() >= 500) {
                         storeTarget = container;
                     }
-                    if (container.store[RESOURCE_ENERGY] >= 1500) {
+                    if (container.store[RESOURCE_ENERGY] >= 750) {
                         target = container;
                         break;
                     }

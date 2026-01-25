@@ -74,7 +74,8 @@ export default class Transfer extends Singleton {
         }
         let target = App.common.findTower(creep);
         if (creep.store.energy > 0 && target) App.common.transferToTargetStructure(creep, target);
-        else App.fsm.changeState(creep, State.TransferToPowerSpawn);
+        else if (creep.room.memory.powerSpawnId) App.fsm.changeState(creep, State.TransferToPowerSpawn);
+        else App.fsm.changeState(creep, State.TransferToStorage);
     }
 
     public ToStorage(creep: Creep) {
