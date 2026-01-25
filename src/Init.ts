@@ -305,7 +305,11 @@ export default class Init extends Singleton {
       // TODO 处理逻辑待优化
       let transE2SFlag = Game.flags[`${roomName}_transE2S`];
       if (transE2SFlag) {
-        global.cc[roomName].transfer2Container = 4;
+        if (room.controller.level >= 6 && room.terminal) {
+          global.cc[roomName].transfer2Container = 4;
+        } else {
+          global.cc[roomName].transfer2Container = 2;
+        }
       }
 
       for (let role in roomCreeps) {
