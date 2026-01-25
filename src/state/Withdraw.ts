@@ -101,7 +101,7 @@ export default class Withdraw extends Singleton {
                 }
                 creep.memory.test = 1;
                 // Boost
-                let str = creep.room.memory.labs.boostType;
+                let str = creep.room.memory.labs?.boostType;
                 if (str) {
                     let arr = str.split('-');
                     if (!Game.creeps[arr[0]]) creep.room.memory.labs.boostType = null;
@@ -142,20 +142,22 @@ export default class Withdraw extends Singleton {
                     }
                 }
                 // Lab0
-                let lab0 = Game.getObjectById(creep.room.memory.labs[0]);
-                if (lab0 && lab0.store.energy < 2000) {
-                    if (creep.store.energy) {
-                        App.common.transferToTargetStructure(creep, lab0, 'energy');
-                    } else if (creep.store.getUsedCapacity() > 0) {
-                        App.common.transferToTargetStructure(creep, storage);
-                    } else if (creep.store.getUsedCapacity() == 0) {
-                        App.common.getResourceFromTargetStructure(creep, storage, 'energy');
+                if (creep.room.memory.labs && creep.room.memory.labs[0]) {
+                    let lab0 = Game.getObjectById(creep.room.memory.labs[0]);
+                    if (lab0 && lab0.store.energy < 2000) {
+                        if (creep.store.energy) {
+                            App.common.transferToTargetStructure(creep, lab0, 'energy');
+                        } else if (creep.store.getUsedCapacity() > 0) {
+                            App.common.transferToTargetStructure(creep, storage);
+                        } else if (creep.store.getUsedCapacity() == 0) {
+                            App.common.getResourceFromTargetStructure(creep, storage, 'energy');
+                        }
+                        return;
                     }
-                    return;
                 }
                 creep.memory.test = 2;
                 // Lab
-                if (creep.room.memory.labs.clear) {
+                if (creep.room.memory.labs?.clear) {
                     if (creep.store.getFreeCapacity() > 0) {
                         for (let i = 0; i < creep.room.memory.labs.num; i++) {
                             let lab = Game.getObjectById(creep.room.memory.labs[i]);
@@ -181,7 +183,7 @@ export default class Withdraw extends Singleton {
                     App.common.getResourceFromTargetStructure(creep, unboostContainer, Object.keys(unboostContainer.store)[0] as ResourceConstant);
                     return;
                 }
-                if (creep.room.memory.labs.fillRes) {
+                if (creep.room.memory.labs?.fillRes) {
                     creep.room.memory.labs.creepName = creep.name;
                     if (creep.store.getUsedCapacity() > 0 && !creep.store[creep.room.memory.labs.fillRes]) {
                         App.common.transferToTargetStructure(creep, storage);
