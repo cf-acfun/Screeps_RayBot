@@ -33,7 +33,6 @@ export default class Pick extends Singleton {
                 if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToSpawn);
                 break
             }
-            case Role.HelpUpgrader:
             case Role.HelpBuilder: {
                 if (creep.store.getFreeCapacity() == 0) {
                     App.fsm.changeState(creep, State.Build);

@@ -408,14 +408,14 @@ export default class Withdraw extends Singleton {
                 const isMineralContainer = creep.memory.targetContainer == creep.room.memory.mineral?.container;
                 const freeCapacity = creep.store.getFreeCapacity();
                 const usedCapacity = creep.store.getUsedCapacity();
-                
+
                 // 检查背包是否已满
                 if (freeCapacity == 0) {
                     const nextState = isMineralContainer ? State.TransferToStorage : State.TransferToSpawn;
                     App.fsm.changeState(creep, nextState);
                     return;
                 }
-                
+
                 // 处理低生命值情况
                 if (creep.ticksToLive < 50) {
                     if (usedCapacity > 0) {
@@ -425,7 +425,7 @@ export default class Withdraw extends Singleton {
                     }
                     return;
                 }
-                
+
                 // 处理 MineralContainer 的特殊逻辑
                 if (isMineralContainer) {
                     if (container && container.store.getUsedCapacity() >= creep.store.getCapacity()) {
@@ -438,14 +438,14 @@ export default class Withdraw extends Singleton {
                     }
                     return;
                 }
-                
+
                 // 处理普通 Container 的逻辑
                 // 优先处理 ruin energy
                 if (creep.room.memory.ruinEnergyState) {
                     this.withdrawRuin(creep);
                     return;
                 }
-                
+
                 // 从 container 提取资源
                 if (container && container.store.getUsedCapacity() >= creep.store.getCapacity()) {
                     let res = Object.keys(container.store) as ResourceConstant[];
@@ -645,7 +645,7 @@ export default class Withdraw extends Singleton {
                 } else if (creep.room.storage?.store.energy) {
                     App.common.getResourceFromTargetStructure(creep, creep.room.storage);
                     return;
-                } else App.fsm.changeState(creep, State.Pick);
+                } else App.fsm.changeState(creep, State.Harvest);
                 break;
             }
             case Role.HelpBuilder: {
@@ -721,20 +721,23 @@ export default class Withdraw extends Singleton {
                     if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
                     return;
                 }
-                if (!creep.memory.targetContainer) {
-                    let containers: StructureContainer[] = creep.room.find(FIND_STRUCTURES, {
-                        filter: s => s.structureType == STRUCTURE_CONTAINER && s.store.energy
-                    })
-                    if (containers) {
-                        let container = containers.sort((a, b) => b.store.energy - a.store.energy)[0];
-                        creep.memory.targetContainer = container.id;
-                    } else {
-                        this.withdrawRuin(creep);
-                        return;
+                let foundContainer = false;
+                if (creep.room.memory.sources) {
+                    for (let sourceId in creep.room.memory.sources) {
+                        let sourceMem = creep.room.memory.sources[sourceId];
+                        if (sourceMem.container) {
+                            let container = Game.getObjectById(sourceMem.container);
+                            if (container && container.store.energy > 500) {
+                                App.common.getResourceFromTargetStructure(creep, container);
+                                foundContainer = true;
+                                break;
+                            }
+                        }
                     }
-                } else {
-                    let container = Game.getObjectById(creep.memory.targetContainer);
-                    App.common.getResourceFromTargetStructure(creep, container);
+                }
+                if (!foundContainer) {
+                    this.withdrawRuin(creep);
+                    return;
                 }
                 break;
             }
