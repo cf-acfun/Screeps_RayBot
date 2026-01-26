@@ -448,6 +448,54 @@ export default class Withdraw extends Singleton {
                     return;
                 }
 
+                // 优先从墓碑中获取资源（能量和强化物，使用缓存减少 CPU 消耗）
+                if (creep.memory.tombstoneId) {
+                    let tombstone = Game.getObjectById(creep.memory.tombstoneId);
+                    if (tombstone && tombstone.store.getUsedCapacity() > 0) {
+                        // 优先获取能量，如果没有能量则获取其他资源
+                        let resourceType: ResourceConstant;
+                        if (tombstone.store.energy > 0) {
+                            resourceType = RESOURCE_ENERGY;
+                        } else {
+                            let resources = Object.keys(tombstone.store) as ResourceConstant[];
+                            if (resources.length > 0) {
+                                resourceType = resources[0];
+                            } else {
+                                creep.memory.tombstoneId = null;
+                                return;
+                            }
+                        }
+                        App.common.getResourceFromTargetStructure(creep, tombstone, resourceType);
+                        if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToStorage);
+                        return;
+                    } else {
+                        creep.memory.tombstoneId = null;
+                    }
+                }
+                if (!creep.memory.tombstoneId) {
+                    let tombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES, {
+                        filter: t => t.store.getUsedCapacity() > 0
+                    });
+                    if (tombstone) {
+                        creep.memory.tombstoneId = tombstone.id;
+                        // 优先获取能量，如果没有能量则获取其他资源
+                        let resourceType: ResourceConstant;
+                        if (tombstone.store.energy > 0) {
+                            resourceType = RESOURCE_ENERGY;
+                        } else {
+                            let resources = Object.keys(tombstone.store) as ResourceConstant[];
+                            if (resources.length > 0) {
+                                resourceType = resources[0];
+                            }
+                        }
+                        if (resourceType) {
+                            App.common.getResourceFromTargetStructure(creep, tombstone, resourceType);
+                            if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToStorage);
+                            return;
+                        }
+                    }
+                }
+
                 // 从 container 提取资源
                 if (container && container.store.getUsedCapacity() >= creep.store.getCapacity()) {
                     let res = Object.keys(container.store) as ResourceConstant[];
@@ -712,6 +760,28 @@ export default class Withdraw extends Singleton {
                 if (creep.room.memory.ruinEnergyState) {
                     this.withdrawRuin(creep);
                     return;
+                }
+                // 优先从墓碑中获取能量（使用缓存减少 CPU 消耗）
+                if (creep.memory.tombstoneId) {
+                    let tombstone = Game.getObjectById(creep.memory.tombstoneId);
+                    if (tombstone && tombstone.store.energy > 0) {
+                        App.common.getResourceFromTargetStructure(creep, tombstone);
+                        if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
+                        return;
+                    } else {
+                        creep.memory.tombstoneId = null;
+                    }
+                }
+                if (!creep.memory.tombstoneId) {
+                    let tombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES, {
+                        filter: t => t.store.energy > 0
+                    });
+                    if (tombstone) {
+                        creep.memory.tombstoneId = tombstone.id;
+                        App.common.getResourceFromTargetStructure(creep, tombstone);
+                        if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
+                        return;
+                    }
                 }
                 if (terminal?.store.energy) {
                     App.common.getResourceFromTargetStructure(creep, terminal);

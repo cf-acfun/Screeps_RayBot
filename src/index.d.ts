@@ -255,6 +255,7 @@ interface CreepMemory {
 	taskId?: string,
 	transferTargetId?: Id<AnyStructure>,
 	dropId?: Id<Resource>,
+	tombstoneId?: Id<Tombstone>,
 	ruinId?: Id<Ruin>,
 	ruinState?: boolean,
 	constructionId?: Id<ConstructionSite>,
