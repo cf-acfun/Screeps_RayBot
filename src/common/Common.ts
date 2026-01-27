@@ -183,6 +183,7 @@ export default class Common extends Singleton {
 
     public findCenterContainer(roomName: string) {
         let room = Game.rooms[roomName];
+        if (room.controller.level < 8) return;
         // 如果已存在 centerContainer，则提前返回（后续代码会自动检测并更新，无需每次都验证）
         if (room.memory.centerContainer && room.memory.centerContainer.length > 0) {
             return;
