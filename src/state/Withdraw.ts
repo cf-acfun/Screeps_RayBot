@@ -762,27 +762,27 @@ export default class Withdraw extends Singleton {
                     return;
                 }
                 // 优先从墓碑中获取能量（使用缓存减少 CPU 消耗）
-                if (creep.memory.tombstoneId) {
-                    let tombstone = Game.getObjectById(creep.memory.tombstoneId);
-                    if (tombstone && tombstone.store.energy > 0) {
-                        App.common.getResourceFromTargetStructure(creep, tombstone);
-                        if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
-                        return;
-                    } else {
-                        creep.memory.tombstoneId = null;
-                    }
-                }
-                if (!creep.memory.tombstoneId) {
-                    let tombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES, {
-                        filter: t => t.store.energy > 0
-                    });
-                    if (tombstone) {
-                        creep.memory.tombstoneId = tombstone.id;
-                        App.common.getResourceFromTargetStructure(creep, tombstone);
-                        if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
-                        return;
-                    }
-                }
+                // if (creep.memory.tombstoneId) {
+                //     let tombstone = Game.getObjectById(creep.memory.tombstoneId);
+                //     if (tombstone && tombstone.store.energy > 0) {
+                //         App.common.getResourceFromTargetStructure(creep, tombstone);
+                //         if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
+                //         return;
+                //     } else {
+                //         creep.memory.tombstoneId = null;
+                //     }
+                // }
+                // if (!creep.memory.tombstoneId) {
+                //     let tombstone = creep.pos.findClosestByRange(FIND_TOMBSTONES, {
+                //         filter: t => t.store.energy > 0
+                //     });
+                //     if (tombstone) {
+                //         creep.memory.tombstoneId = tombstone.id;
+                //         App.common.getResourceFromTargetStructure(creep, tombstone);
+                //         if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
+                //         return;
+                //     }
+                // }
                 if (terminal?.store.energy) {
                     App.common.getResourceFromTargetStructure(creep, terminal);
                     if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
