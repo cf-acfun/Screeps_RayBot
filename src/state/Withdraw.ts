@@ -618,13 +618,13 @@ export default class Withdraw extends Singleton {
                 //     if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.Upgrade);
                 //     return;
                 // }
+                if (target) {
+                    this._moveToAndRetrieveEnergy(creep, target);
+                    return;
+                }
                 let controllerLink = Game.getObjectById(creep.room.memory.controllerLinkId);
                 if (controllerLink && controllerLink.store[RESOURCE_ENERGY] >= 150) {
                     this._moveToAndRetrieveEnergy(creep, controllerLink);
-                    return;
-                }
-                if (target) {
-                    this._moveToAndRetrieveEnergy(creep, target);
                     return;
                 }
                 // }
