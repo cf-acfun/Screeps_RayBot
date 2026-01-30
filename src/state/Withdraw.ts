@@ -717,6 +717,16 @@ export default class Withdraw extends Singleton {
                         creep.memory.ruinState = true;
                     }
                     else {
+                        if (storage?.store.energy) {
+                            App.common.getResourceFromTargetStructure(creep, storage);
+                            if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.Upgrade);
+                            return;
+                        }
+                        if (terminal?.store.energy) {
+                            App.common.getResourceFromTargetStructure(creep, terminal);
+                            if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.Upgrade);
+                            return;
+                        }
                         App.fsm.changeState(creep, State.Harvest);
                         creep.memory.ruinState = false;
                     }
