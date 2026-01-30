@@ -223,9 +223,10 @@ export default class Terminal extends Singleton {
         if (totalEnergy < energyThreshold && energyThreshold - totalEnergy >= 10000) {
             const roomEnergyOrder = Game.market.getOrderById(room.memory.energyOrder);
             let upgradePlusFlag = Game.flags[`${room.name}_upgradePlus`];
+            let buyEnergyFlag = Game.flags[`${room.name}_buyEnergy`];
             if (roomEnergyOrder) {
                 // 更新价格 每100tick执行一次, 价格高于25或者不在冲级则不进行更新
-                if (Game.time % 100 == 0 && (highestPrice <= 25 || upgradePlusFlag) && roomEnergyOrder.price !== (highestPrice - 0.01)) {
+                if (Game.time % 100 == 0 && (highestPrice <= 25 || upgradePlusFlag || buyEnergyFlag) && roomEnergyOrder.price !== (highestPrice - 0.01)) {
                     const newPrice = Math.max(roomEnergyOrder.price, highestPrice - 0.01);
                     Game.market.changeOrderPrice(roomEnergyOrder.id, newPrice);
                     console.log(colorful(`change`, 'yellow'), `room `, colorful(room.name, 'blue'), `order`, `[${roomEnergyOrder.id}]`, `price success, new price [${newPrice}]`);
@@ -237,7 +238,7 @@ export default class Terminal extends Singleton {
                     return;
                 }
                 // 创建新订单 最多创建20K的订单,价格高于25或者不在冲级则不进行创建
-                if (highestPrice > 25 && !upgradePlusFlag) return;
+                if (highestPrice > 25 && !upgradePlusFlag && !buyEnergyFlag) return;
                 if (room.terminal?.store.getFreeCapacity() <= 50000) return;
                 Game.market.createOrder({
                     type: ORDER_BUY,
