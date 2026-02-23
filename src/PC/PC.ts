@@ -80,6 +80,7 @@ export default class PC extends Singleton {
                 powerCreep.customMove(Game.rooms[room].storage.pos);
                 return;
             }
+            if (!powerCreep.room.memory?.factory) return;
             if (powerCreep.room.memory?.factory.lv == void 0 && powerCreep.powers[PWR_OPERATE_FACTORY]) {
                 powerCreep.room.memory.factory.lv = powerCreep.powers[PWR_OPERATE_FACTORY].level;
             }
