@@ -160,6 +160,7 @@ export default class Lab extends Singleton {
         }
         if(!Memory.isNoLabCD) if (Game.time % (room.memory.index * 2 + 30) != 0) return;
         let lab0 = Game.getObjectById(room.memory.labs[0]);
+        if (!lab0) return;
         this.reaction(lab1, lab2, lab0, roomName);
         for (let i = 3; i < room.memory.labs.num; i++) {
             let target = Game.getObjectById(room.memory.labs[i]);
