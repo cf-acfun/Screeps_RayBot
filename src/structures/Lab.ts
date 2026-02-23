@@ -116,6 +116,7 @@ export default class Lab extends Singleton {
         }
         let lab1 = Game.getObjectById(room.memory.labs[1]);
         let lab2 = Game.getObjectById(room.memory.labs[2]);
+        if (!lab1 || !lab2) return;
         if (room.memory.labs.fillState) {
             let res = Lab.Compound[room.memory.labs.target];
             let creep = Game.creeps[room.memory.labs.creepName];
