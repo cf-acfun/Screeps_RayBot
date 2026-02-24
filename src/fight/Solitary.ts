@@ -27,7 +27,7 @@ const bodys = {
 	"TEST": { [ATTACK]: 1, [MOVE]: 1 },
 	"B-TEST": { [ATTACK]: 1, [MOVE]: 1 },
 	"B-W-TEST":  { [WORK]: 1, [MOVE]: 1 },
-	"T-20": { [TOUGH]: 20, [MOVE]: 10, [HEAL]: 20 },
+	"B-T-20": { [TOUGH]: 20, [MOVE]: 10, [HEAL]: 20 },
 }
 
 const BoostType: {
