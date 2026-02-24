@@ -417,23 +417,23 @@ export default class Init extends Singleton {
 
   private _runStructures() {
     for (let i = 0; i < this.rooms.length; i++) {
-      // try {
-      App.energySource.run(this.rooms[i]);
-      App.powerSpawn.run(this.rooms[i]);
-      App.mineral.run(this.rooms[i]);
-      App.tower.run(this.rooms[i]);
-      App.link.run(this.rooms[i]);
-      App.lab.run(this.rooms[i]);
-      App.common.getControllerLink(this.rooms[i]);
-      App.common.getcontrollerContainerId(this.rooms[i]);
-      App.factory.run(this.rooms[i]);
-      App.terminal.run(this.rooms[i]);
-      App.spawn.update(this.rooms[i]);
-      App.pc.run(this.rooms[i]);
-      App.observer.run(this.rooms[i]);
-      // } catch (error) {
-      //   console.log(this.rooms[i], error)
-      // }
+      try {
+        App.energySource.run(this.rooms[i]);
+        App.powerSpawn.run(this.rooms[i]);
+        App.mineral.run(this.rooms[i]);
+        App.tower.run(this.rooms[i]);
+        App.link.run(this.rooms[i]);
+        App.lab.run(this.rooms[i]);
+        App.common.getControllerLink(this.rooms[i]);
+        App.common.getcontrollerContainerId(this.rooms[i]);
+        App.factory.run(this.rooms[i]);
+        App.terminal.run(this.rooms[i]);
+        App.spawn.update(this.rooms[i]);
+        App.pc.run(this.rooms[i]);
+        App.observer.run(this.rooms[i]);
+      } catch (error) {
+        console.log(this.rooms[i], error)
+      }
     }
   }
 

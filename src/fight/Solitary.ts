@@ -310,6 +310,7 @@ export default class Solitary extends Singleton {
 			filter: e => e.structureType != STRUCTURE_CONTROLLER
 		});
 		if (target) {
+			console.log(`开始dismantle` + creep.dismantle(target));
 			if (creep.dismantle(target) == ERR_NOT_IN_RANGE) {
 				creep.customMove(target.pos);
 			}
