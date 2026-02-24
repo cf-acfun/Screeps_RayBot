@@ -19,6 +19,7 @@ const bodys = {
 	'RA': { [RANGED_ATTACK]: 10, [MOVE]: 10 },
 	'W': { [WORK]: 25, [MOVE]: 25 },
 	'W-8': { [WORK]: 8, [MOVE]: 8 },
+	'B-W-30': { [WORK]: 30, [MOVE]: 10, [HEAL]: 10 },
 	'B-W-40': { [WORK]: 40, [MOVE]: 10 },
 	'A': { [ATTACK]: 10, [MOVE]: 10 },
 	'C': { [CLAIM]: 19, [MOVE]: 24 },
@@ -26,6 +27,7 @@ const bodys = {
 	"TEST": { [ATTACK]: 1, [MOVE]: 1 },
 	"B-TEST": { [ATTACK]: 1, [MOVE]: 1 },
 	"B-W-TEST":  { [WORK]: 1, [MOVE]: 1 },
+	"T-20": { [TOUGH]: 20, [MOVE]: 10, [HEAL]: 20 },
 }
 
 const BoostType: {
