@@ -312,7 +312,7 @@ export default class Solitary extends Singleton {
 		if (target) {
 			console.log(`开始dismantle` + creep.dismantle(target));
 			if (creep.dismantle(target) == ERR_NOT_IN_RANGE) {
-				creep.customMove(target.pos);
+				creep.customMove(target.pos,1,false);
 			}
 		}
 	}

@@ -18,7 +18,7 @@ export default class Init extends Singleton {
 
   public runInLoop() {
     // try {
-    TalkAll.run();
+    // TalkAll.run();
     if (Game.shard.name == "shard3" && Game.cpu.bucket < 100) return;
     if (Game.shard.name == "shard3") {
       // 默认关闭
