@@ -299,15 +299,6 @@ export default class Withdraw extends Singleton {
                     }
                     return;
                 }
-                creep.memory.test = 7.5;
-                if (creep.room.memory.nuker) {
-                    let nuker = Game.getObjectById(creep.room.memory.nuker);
-                    if (nuker.store[RESOURCE_GHODIUM] < nuker.store.getCapacity(RESOURCE_GHODIUM) ||
-                        nuker.store.energy < nuker.store.getCapacity(RESOURCE_ENERGY)) {
-                        App.fsm.changeState(creep, State.TransferToNuker);
-                        return;
-                    }
-                }
                 creep.memory.test = 8;
                 // factory
                 if (factory) {
@@ -401,6 +392,15 @@ export default class Withdraw extends Singleton {
                     }
                     if (factory.store[fts] < 1000 && !creep.store[fts]) creep.memory.FtS = null;
                     return;
+                }
+                creep.memory.test = 11;
+                if (creep.room.memory.nuker) {
+                    let nuker = Game.getObjectById(creep.room.memory.nuker);
+                    if (nuker.store[RESOURCE_GHODIUM] < nuker.store.getCapacity(RESOURCE_GHODIUM) ||
+                        nuker.store.energy < nuker.store.getCapacity(RESOURCE_ENERGY)) {
+                        App.fsm.changeState(creep, State.TransferToNuker);
+                        return;
+                    }
                 }
                 break;
             }
