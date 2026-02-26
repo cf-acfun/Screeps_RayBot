@@ -350,6 +350,14 @@ interface RoomMemory {
 	customRampartSites?: RoomPosition[],
 	energyOrder?: string,	// 能量购买订单
 	nuker: Id<StructureNuker>,
+	defenseRam?: {
+		[pos: string]: {
+			x: number,
+			y: number,
+			requiredHits: number,
+			hasRampart: boolean,
+		}
+	}
 }
 
 // 房间任务模板

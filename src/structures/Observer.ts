@@ -9,6 +9,16 @@ export default class Observer extends Singleton {
         let room = Game.rooms[roomName];
         if (Memory.username == 'Spon-Singer') return;
         if (room.controller.level < 8) return;
+
+        // 防核功能：每1000tick检查一次是否有即将落地的核弹
+        if (Game.time % 1000 === 0) {
+            const nukes = room.find(FIND_NUKES);
+            if (nukes.length > 0) {
+                console.log(`[防核警告] 房间 ${roomName} 检测到 ${nukes.length} 枚核弹即将落地！`);
+                this.handleNukeDefense(room, roomName, nukes);
+            }
+        }
+
         let observer: StructureObserver = Game.getObjectById(room.memory.observer.id);
         if (!observer) return;
         let targets = room.memory.observer.targets;
@@ -110,5 +120,75 @@ export default class Observer extends Singleton {
             }
         }
         return false;
+    }
+
+    // TODO 待验证
+    /**
+     * 处理核弹防御
+     * 对着落位置造成 10,000,000 hits 伤害
+     * 对周围 5x5 区域中的建筑造成 5,000,000 hits 伤害
+     */
+    private handleNukeDefense(room: Room, roomName: string, nukes: Nuke[]) {
+        // 初始化 defenseRam 内存
+        if (!room.memory.defenseRam) {
+            room.memory.defenseRam = {};
+        }
+
+        for (const nuke of nukes) {
+            const centerX = nuke.pos.x;
+            const centerY = nuke.pos.y;
+
+            // 检查 5x5 区域内的所有建筑
+            for (let dx = -2; dx <= 2; dx++) {
+                for (let dy = -2; dy <= 2; dy++) {
+                    const x = centerX + dx;
+                    const y = centerY + dy;
+
+                    // 边界检查
+                    if (x < 0 || x > 49 || y < 0 || y > 49) continue;
+
+                    const pos = new RoomPosition(x, y, roomName);
+                    
+                    // 查找该位置上的所有建筑（不包括墙和路）
+                    const structures = pos.lookFor(LOOK_STRUCTURES) as Structure[];
+                    const hasImportantStructure = structures.some(s => 
+                        s.structureType !== STRUCTURE_ROAD && 
+                        s.structureType !== STRUCTURE_WALL &&
+                        s.structureType !== STRUCTURE_RAMPART
+                    );
+
+                    if (hasImportantStructure) {
+                        // 计算所需血量：中心位置1000万，周围500万
+                        const requiredHits = (dx === 0 && dy === 0) ? 10000000 : 5000000;
+                        const posKey = `${x}_${y}`;
+
+                        // 检查该位置是否已有 rampart
+                        const existingRampart = structures.find(s => s.structureType === STRUCTURE_RAMPART) as StructureRampart;
+                        const hasRampart = !!existingRampart;
+
+                        // 更新内存
+                        room.memory.defenseRam[posKey] = {
+                            x: x,
+                            y: y,
+                            requiredHits: requiredHits,
+                            hasRampart: hasRampart
+                        };
+
+                        // 如果没有 rampart，创建 construction site
+                        if (!hasRampart) {
+                            const result = room.createConstructionSite(x, y, STRUCTURE_RAMPART);
+                            if (result === OK) {
+                                console.log(`[防核] 在 (${x}, ${y}) 创建 rampart 建筑工地`);
+                            }
+                        } else {
+                            // 已有 rampart，检查血量是否足够
+                            if (existingRampart.hits < requiredHits) {
+                                console.log(`[防核] 位置 (${x}, ${y}) 的 rampart 需要修复至 ${requiredHits}，当前 ${existingRampart.hits}`);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
