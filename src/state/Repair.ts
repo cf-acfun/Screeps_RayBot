@@ -41,7 +41,11 @@ export default class Repair extends Singleton {
             } else creep.memory.repairTarget = null;
             return;
         }
-        let target = this._getStructurce(creep);
+        let target = undefined;
+        target = this._getDefenceRam(creep);
+        if (!target) {
+            target = this._getStructurce(creep);
+        }
         if (target instanceof ConstructionSite) {
             creep.memory.constructionId = target.id;
         } else if (target instanceof StructureRampart) {
@@ -66,6 +70,26 @@ export default class Repair extends Singleton {
         }
         creep.room.memory.wallHits += 20000;
         if(creep.room.memory.wallHits >= 300000000) creep.room.memory.lastRepairTick = Game.time;
+        return null;
+    }
+
+    private _getDefenceRam(creep: Creep): StructureRampart | null {
+        const room = creep.room;
+        const defenseRam = room.memory.defenseRam;
+        if (!defenseRam) return null;
+
+        // 遍历所有核弹的防御记录
+        for (const nukeId in defenseRam) {
+            const nukeDefense = defenseRam[nukeId];
+            for (const posKey in nukeDefense) {
+                const { x, y, requiredHits } = nukeDefense[posKey];
+                const ramparts = room.lookForAt(LOOK_STRUCTURES, new RoomPosition(x, y, room.name))
+                    .filter(e => e.structureType == STRUCTURE_RAMPART) as StructureRampart[];
+                if (ramparts.length > 0 && ramparts[0].hits < requiredHits) {
+                    return ramparts[0];
+                }
+            }
+        }
         return null;
     }
 

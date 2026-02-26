@@ -196,7 +196,8 @@ export default class Observer extends Singleton {
 
                     if (hasImportantStructure) {
                         // 计算所需血量：中心位置1001万，周围501万
-                        const requiredHits = (dx === 0 && dy === 0) ? 10010000 : 5010000;
+                        // const requiredHits = (dx === 0 && dy === 0) ? 10010000 : 5010000;
+                        const requiredHits = (dx === 0 && dy === 0) ? 1000 : 500;
                         const posKey = `${x}_${y}`;
 
                         // 检查该位置是否已有 rampart
@@ -215,17 +216,57 @@ export default class Observer extends Singleton {
                         if (!hasRampart) {
                             const result = room.createConstructionSite(x, y, STRUCTURE_RAMPART);
                             if (result === OK) {
+                                if (!global.cc[roomName]) global.cc[roomName] = {};
+                                global.cc[roomName].repairer = 1;
                                 console.log(`[防核] 核弹 ${nukeId}：在 (${x}, ${y}) 创建 rampart 建筑工地`);
                             }
                         } else {
                             // 已有 rampart，检查血量是否足够
                             if (existingRampart.hits < requiredHits) {
                                 console.log(`[防核] 核弹 ${nukeId}：位置 (${x}, ${y}) 的 rampart 需要修复至 ${requiredHits}，当前 ${existingRampart.hits}`);
+                                // 设置修复工数量以确保防御
+                                if (!global.cc[roomName]) global.cc[roomName] = {};
+                                global.cc[roomName].repairer = 1;
                             }
                         }
                     }
                 }
             }
+        }
+
+        // 检查所有防核 rampart 是否都已满足血量要求
+        this._checkDefenseRamComplete(room, roomName);
+    }
+
+    /**
+     * 检查所有防核 rampart 是否都已满足血量要求
+     * 如果全部满足，则将 repairer 设为 0
+     */
+    private _checkDefenseRamComplete(room: Room, roomName: string) {
+        const defenseRam = room.memory.defenseRam;
+        if (!defenseRam) return;
+
+        let allDefensesComplete = true;
+
+        for (const nukeId in defenseRam) {
+            const nukeDefense = defenseRam[nukeId];
+            for (const posKey in nukeDefense) {
+                const { x, y, requiredHits } = nukeDefense[posKey];
+                const pos = new RoomPosition(x, y, roomName);
+                const ramparts = pos.lookFor(LOOK_STRUCTURES).filter(s => s.structureType === STRUCTURE_RAMPART) as StructureRampart[];
+                
+                if (ramparts.length === 0 || ramparts[0].hits < requiredHits) {
+                    allDefensesComplete = false;
+                    break;
+                }
+            }
+            if (!allDefensesComplete) break;
+        }
+
+        if (allDefensesComplete) {
+            if (!global.cc[roomName]) global.cc[roomName] = {};
+            global.cc[roomName].repairer = 0;
+            console.log(`[防核] 房间 ${roomName} 所有防核 rampart 已满足血量要求，重置 repairer 为 0`);
         }
     }
 }

@@ -165,6 +165,10 @@ export default class AutoPlanner extends Singleton {
             }
         }
         if (room.memory.customRampartSites.length && room.storage?.store.energy > 50000 && room.memory.wallHits < 300000000) global.cc[roomName].repairer = 1;
-        else global.cc[roomName].repairer = 0;
+        else if (!room.memory.defenseRam || Object.keys(room.memory.defenseRam).length === 0) {
+            // 只有在没有防核需求时才重置 repairer 为 0
+            global.cc[roomName].repairer = 0;
+        }
+        // 如果有防核需求 (defenseRam 存在且有值)，保持当前值（Observer 设置的 1）
     }
 }
