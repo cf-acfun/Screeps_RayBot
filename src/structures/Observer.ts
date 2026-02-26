@@ -7,18 +7,33 @@ import { GenNonDuplicateID } from "@/common/utils"
 export default class Observer extends Singleton {
     public run(roomName: string) {
         let room = Game.rooms[roomName];
-        if (Memory.username == 'Spon-Singer') return;
+        // if (Memory.username == 'Spon-Singer') return;
         if (room.controller.level < 8) return;
 
         // 防核功能：每1000tick检查一次是否有即将落地的核弹
-        if (Game.time % 1000 === 0) {
+        if (Game.time % 10 === 0) {
             const nukes = room.find(FIND_NUKES);
+
+            // 检测测试旗子，用于测试防核功能
+            const testFlag = Game.flags[`${roomName}_nukerTest`];
+            if (testFlag && testFlag.pos.roomName === roomName) {
+                console.log(`当前房间${roomName}存在testFlag`);
+                // 虚拟一个 nuke 对象，将旗子位置作为核弹落点
+                nukes.push({
+                    pos: testFlag.pos,
+                    id: 'test_nuke_' + Game.time,
+                    timeToLand: 100
+                } as Nuke);
+            }
+
             if (nukes.length > 0) {
                 console.log(`[防核警告] 房间 ${roomName} 检测到 ${nukes.length} 枚核弹即将落地！`);
                 this.handleNukeDefense(room, roomName, nukes);
             }
         }
-
+        if (Memory.username == 'Spon-Singer') {
+            return;
+        }
         let observer: StructureObserver = Game.getObjectById(room.memory.observer.id);
         if (!observer) return;
         let targets = room.memory.observer.targets;
@@ -149,17 +164,19 @@ export default class Observer extends Singleton {
 
                     const pos = new RoomPosition(x, y, roomName);
                     
-                    // 查找该位置上的所有建筑（不包括墙和路）
+                    // 查找该位置上的所有建筑（不包括墙和路以及extension和tower）
                     const structures = pos.lookFor(LOOK_STRUCTURES) as Structure[];
                     const hasImportantStructure = structures.some(s => 
                         s.structureType !== STRUCTURE_ROAD && 
                         s.structureType !== STRUCTURE_WALL &&
-                        s.structureType !== STRUCTURE_RAMPART
+                        s.structureType !== STRUCTURE_RAMPART &&
+                        s.structureType !== STRUCTURE_EXTENSION &&
+                        s.structureType !== STRUCTURE_TOWER
                     );
 
                     if (hasImportantStructure) {
-                        // 计算所需血量：中心位置1000万，周围500万
-                        const requiredHits = (dx === 0 && dy === 0) ? 10000000 : 5000000;
+                        // 计算所需血量：中心位置1001万，周围501万
+                        const requiredHits = (dx === 0 && dy === 0) ? 10010000 : 5010000;
                         const posKey = `${x}_${y}`;
 
                         // 检查该位置是否已有 rampart
