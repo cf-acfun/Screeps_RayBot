@@ -351,11 +351,13 @@ interface RoomMemory {
 	energyOrder?: string,	// 能量购买订单
 	nuker: Id<StructureNuker>,
 	defenseRam?: {
-		[pos: string]: {
-			x: number,
-			y: number,
-			requiredHits: number,
-			hasRampart: boolean,
+		[nukeId: string]: {
+			[pos: string]: {
+				x: number,
+				y: number,
+				requiredHits: number,
+				hasRampart: boolean,
+			}
 		}
 	}
 }

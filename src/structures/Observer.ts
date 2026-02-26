@@ -21,7 +21,18 @@ export default class Observer extends Singleton {
                 // 虚拟一个 nuke 对象，将旗子位置作为核弹落点
                 nukes.push({
                     pos: testFlag.pos,
-                    id: 'test_nuke_' + Game.time,
+                    id: 'test_nuke_' + 0,
+                    timeToLand: 100
+                } as Nuke);
+            }
+
+            const testFlag1 = Game.flags[`${roomName}_nukerTest1`];
+            if (testFlag1 && testFlag1.pos.roomName === roomName) {
+                console.log(`当前房间${roomName}存在testFlag`);
+                // 虚拟一个 nuke 对象，将旗子位置作为核弹落点
+                nukes.push({
+                    pos: testFlag1.pos,
+                    id: 'test_nuke_' + 1,
                     timeToLand: 100
                 } as Nuke);
             }
@@ -150,6 +161,14 @@ export default class Observer extends Singleton {
         }
 
         for (const nuke of nukes) {
+            const nukeId = nuke.id;
+            
+            // 为每个核弹初始化独立的防御记录
+            if (!room.memory.defenseRam[nukeId]) {
+                room.memory.defenseRam[nukeId] = {};
+                console.log(`[防核] 开始为核弹 ${nukeId} 在 (${nuke.pos.x}, ${nuke.pos.y}) 创建防御记录`);
+            }
+
             const centerX = nuke.pos.x;
             const centerY = nuke.pos.y;
 
@@ -171,7 +190,8 @@ export default class Observer extends Singleton {
                         s.structureType !== STRUCTURE_WALL &&
                         s.structureType !== STRUCTURE_RAMPART &&
                         s.structureType !== STRUCTURE_EXTENSION &&
-                        s.structureType !== STRUCTURE_TOWER
+                        s.structureType !== STRUCTURE_TOWER &&
+                        s.structureType !== STRUCTURE_LINK
                     );
 
                     if (hasImportantStructure) {
@@ -183,8 +203,8 @@ export default class Observer extends Singleton {
                         const existingRampart = structures.find(s => s.structureType === STRUCTURE_RAMPART) as StructureRampart;
                         const hasRampart = !!existingRampart;
 
-                        // 更新内存
-                        room.memory.defenseRam[posKey] = {
+                        // 更新内存 - 以核弹ID为第一层键
+                        room.memory.defenseRam[nukeId][posKey] = {
                             x: x,
                             y: y,
                             requiredHits: requiredHits,
@@ -195,12 +215,12 @@ export default class Observer extends Singleton {
                         if (!hasRampart) {
                             const result = room.createConstructionSite(x, y, STRUCTURE_RAMPART);
                             if (result === OK) {
-                                console.log(`[防核] 在 (${x}, ${y}) 创建 rampart 建筑工地`);
+                                console.log(`[防核] 核弹 ${nukeId}：在 (${x}, ${y}) 创建 rampart 建筑工地`);
                             }
                         } else {
                             // 已有 rampart，检查血量是否足够
                             if (existingRampart.hits < requiredHits) {
-                                console.log(`[防核] 位置 (${x}, ${y}) 的 rampart 需要修复至 ${requiredHits}，当前 ${existingRampart.hits}`);
+                                console.log(`[防核] 核弹 ${nukeId}：位置 (${x}, ${y}) 的 rampart 需要修复至 ${requiredHits}，当前 ${existingRampart.hits}`);
                             }
                         }
                     }
