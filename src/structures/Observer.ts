@@ -11,7 +11,7 @@ export default class Observer extends Singleton {
         if (room.controller.level < 8) return;
 
         // 防核功能：每1000tick检查一次是否有即将落地的核弹
-        if (Game.time % 10 === 0) {
+        if (Game.time % 1000 === 0) {
             const nukes = room.find(FIND_NUKES);
 
             // 检测测试旗子，用于测试防核功能
@@ -40,6 +40,16 @@ export default class Observer extends Singleton {
             if (nukes.length > 0) {
                 console.log(`[防核警告] 房间 ${roomName} 检测到 ${nukes.length} 枚核弹即将落地！`);
                 this.handleNukeDefense(room, roomName, nukes);
+            } else {
+                // 没有核弹时，清理防核内存
+                if (room.memory.defenseRam && Object.keys(room.memory.defenseRam).length > 0) {
+                    console.log(`[防核] 房间 ${roomName} 核弹已消失，清理防核内存`);
+                    room.memory.defenseRam = {};
+                    // 重置 repairer，让 AutoPlanner 恢复正常逻辑
+                    if (global.cc[roomName]) {
+                        global.cc[roomName].repairer = 0;
+                    }
+                }
             }
         }
         if (Memory.username == 'Spon-Singer') {
@@ -148,7 +158,6 @@ export default class Observer extends Singleton {
         return false;
     }
 
-    // TODO 待验证
     /**
      * 处理核弹防御
      * 对着落位置造成 10,000,000 hits 伤害
@@ -196,13 +205,23 @@ export default class Observer extends Singleton {
 
                     if (hasImportantStructure) {
                         // 计算所需血量：中心位置1001万，周围501万
-                        // const requiredHits = (dx === 0 && dy === 0) ? 10010000 : 5010000;
-                        const requiredHits = (dx === 0 && dy === 0) ? 1000 : 500;
+                        const testFlag = Game.flags[`${roomName}_nukerTest`];
+                        const testFlag1 = Game.flags[`${roomName}_nukerTest1`];
+                        let baseRequiredHits = 0;
+                        if (testFlag || testFlag1) {
+                            baseRequiredHits = (dx === 0 && dy === 0) ? 1000 : 500;
+                        } else {
+                            baseRequiredHits = (dx === 0 && dy === 0) ? 10200000 : 5200000;
+                        }
+                    
                         const posKey = `${x}_${y}`;
 
                         // 检查该位置是否已有 rampart
                         const existingRampart = structures.find(s => s.structureType === STRUCTURE_RAMPART) as StructureRampart;
                         const hasRampart = !!existingRampart;
+
+                        // 如果已有 rampart，取当前血量和所需血量的最大值，保持高血量不降低
+                        const requiredHits = hasRampart ? existingRampart.hits : baseRequiredHits;
 
                         // 更新内存 - 以核弹ID为第一层键
                         room.memory.defenseRam[nukeId][posKey] = {
@@ -234,39 +253,6 @@ export default class Observer extends Singleton {
             }
         }
 
-        // 检查所有防核 rampart 是否都已满足血量要求
-        this._checkDefenseRamComplete(room, roomName);
     }
 
-    /**
-     * 检查所有防核 rampart 是否都已满足血量要求
-     * 如果全部满足，则将 repairer 设为 0
-     */
-    private _checkDefenseRamComplete(room: Room, roomName: string) {
-        const defenseRam = room.memory.defenseRam;
-        if (!defenseRam) return;
-
-        let allDefensesComplete = true;
-
-        for (const nukeId in defenseRam) {
-            const nukeDefense = defenseRam[nukeId];
-            for (const posKey in nukeDefense) {
-                const { x, y, requiredHits } = nukeDefense[posKey];
-                const pos = new RoomPosition(x, y, roomName);
-                const ramparts = pos.lookFor(LOOK_STRUCTURES).filter(s => s.structureType === STRUCTURE_RAMPART) as StructureRampart[];
-                
-                if (ramparts.length === 0 || ramparts[0].hits < requiredHits) {
-                    allDefensesComplete = false;
-                    break;
-                }
-            }
-            if (!allDefensesComplete) break;
-        }
-
-        if (allDefensesComplete) {
-            if (!global.cc[roomName]) global.cc[roomName] = {};
-            global.cc[roomName].repairer = 0;
-            console.log(`[防核] 房间 ${roomName} 所有防核 rampart 已满足血量要求，重置 repairer 为 0`);
-        }
-    }
 }

@@ -35,6 +35,20 @@ export default class Repair extends Singleton {
                     creep.memory.repairTarget = null;
                     return;
                 }
+                // 判断是否有防核需求，如果有，则判断当前修复的这个ram的血量与memory.defenseRam中当前点位的requiredHits进行比较，如果大于则creep.memory.repairTarget = null;
+                if (creep.room.memory.defenseRam) {
+                    const defenseRam = creep.room.memory.defenseRam;
+                    for (const nukeId in defenseRam) {
+                        const nukeDefense = defenseRam[nukeId];
+                        for (const posKey in nukeDefense) {
+                            const { x, y, requiredHits } = nukeDefense[posKey];
+                            if (rampart.pos.x == x && rampart.pos.y == y && rampart.hits >= requiredHits) {
+                                creep.memory.repairTarget = null;
+                                return;
+                            }
+                        }
+                    }
+                }
                 if (creep.repair(rampart) == ERR_NOT_IN_RANGE) {
                     creep.customMove(rampart.pos, 3);
                 }
@@ -69,11 +83,11 @@ export default class Repair extends Singleton {
             }
         }
         creep.room.memory.wallHits += 20000;
-        if(creep.room.memory.wallHits >= 300000000) creep.room.memory.lastRepairTick = Game.time;
+        if (creep.room.memory.wallHits >= 300000000) creep.room.memory.lastRepairTick = Game.time;
         return null;
     }
 
-    private _getDefenceRam(creep: Creep): StructureRampart | null {
+    private _getDefenceRam(creep: Creep): StructureRampart | ConstructionSite {
         const room = creep.room;
         const defenseRam = room.memory.defenseRam;
         if (!defenseRam) return null;
@@ -87,6 +101,9 @@ export default class Repair extends Singleton {
                     .filter(e => e.structureType == STRUCTURE_RAMPART) as StructureRampart[];
                 if (ramparts.length > 0 && ramparts[0].hits < requiredHits) {
                     return ramparts[0];
+                } else {
+                    let sites = creep.room.lookForAt(LOOK_CONSTRUCTION_SITES, new RoomPosition(x, y, room.name));
+                    if (sites.length) return sites[0];
                 }
             }
         }
