@@ -131,6 +131,9 @@ export default class FsmControl extends FsmSystem {
 
 
   public update(creep: Creep) {
+    // 如果creep正在核弹疏散中，跳过FSM状态处理（疏散逻辑在Observer中处理）
+    if (creep.memory.evacuating) return;
+    
     if (creep.memory.state == 'Boost') return;
     if (!creep.memory.role) {
       let reg = /[0-9]+/g;

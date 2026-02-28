@@ -281,7 +281,10 @@ interface CreepMemory {
 	isCreate?: boolean,
 	upgradePos?: RoomPosition,
 	transferState?: boolean,
-	boost?: boolean
+	boost?: boolean,
+	evacuating?: boolean,       // 是否处于核弹疏散状态
+	evacuateTarget?: string,    // 疏散目标核弹的位置标识 "x_y"
+	evacuateSafeRoom?: string,  // 避难房间名称
 }
 
 interface FlagMemory { }

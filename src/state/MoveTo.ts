@@ -609,6 +609,13 @@ export default class MoveTo extends Singleton {
                 else creep.customMove(new RoomPosition(25, 25, roomFrom));
                 break;
             }
+            default: {
+                if (creep.room.name != roomFrom) {
+                    creep.customMove(new RoomPosition(25, 25, roomFrom));
+                } else if (creep.room.name == roomFrom) {
+                    creep.memory.state = undefined;
+                }
+            }
         }
     }
 
