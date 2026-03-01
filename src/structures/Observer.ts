@@ -13,7 +13,7 @@ export default class Observer extends Singleton {
         // 缓存 observer interval 计算，避免重复计算
         const observerInterval = room.memory.observer.interval || (room.memory.index + 1) * 10 + 1;
         // 检测测试旗子，用于测试防核功能
-        if (Game.time % 1000 === (room.memory.index % 10) || (room.memory.defenseRam && Object.keys(room.memory.defenseRam).length > 0)) {
+        if (Game.time % 10 === (room.memory.index % 10) || (room.memory.defenseRam && Object.keys(room.memory.defenseRam).length > 0)) {
 
 
             const nukes = room.find(FIND_NUKES) as Nuke[];
@@ -38,7 +38,7 @@ export default class Observer extends Singleton {
             }
             if (nukes.length > 0) {
                 // 每1000tick执行一次防御建筑检查
-                if (Game.time % 1000 === (room.memory.index % 10)) {
+                if (Game.time % 10 === (room.memory.index % 10)) {
                     console.log(`[防核警告] 房间 ${roomName} 检测到 ${nukes.length} 枚核弹即将落地！`);
                     this.handleNukeDefense(room, roomName, nukes);
                 }
@@ -53,6 +53,8 @@ export default class Observer extends Singleton {
                     }
                     // 清除所有creep的疏散状态
                     this._clearEvacuateStatus(roomName);
+                    // 重置 RoomControlData 刷新标记，准备下一次防核使用
+                    room.memory.isNukerDefenseFlush = undefined;
                 }
             }
             if (room.memory.defenseRam && Object.keys(room.memory.defenseRam).length > 0) {
@@ -175,6 +177,10 @@ export default class Observer extends Singleton {
         if (!room.memory.defenseRam) {
             room.memory.defenseRam = {};
         }
+        // 初始化 RoomControlData 刷新标记
+        if (room.memory.isNukerDefenseFlush === undefined) {
+            room.memory.isNukerDefenseFlush = false;
+        }
 
         for (const nuke of nukes) {
             const nukeId = nuke.id;
@@ -287,6 +293,11 @@ export default class Observer extends Singleton {
             // 只处理即将落地的核弹
             if (nuke.timeToLand > EVACUATION_THRESHOLD) continue;
 
+            // 检查是否需要刷新 RoomControlData（只刷新一次）
+            if (!room.memory.isNukerDefenseFlush) {
+                this._flushRoomControlData(room, roomName);
+                room.memory.isNukerDefenseFlush = true;
+            }
 
             // 处理 Creep 疏散
             this._evacuateUnits(Game.creeps, roomName, safeRoom, nuke, 'Creep');
@@ -379,6 +390,67 @@ export default class Observer extends Singleton {
         }
 
         return null;
+    }
+
+    /**
+     * 刷新 RoomControlData：在核弹疏散前保存当前房间的建筑信息
+     * 排除 defenseRam 中已有的 rampart（这些是核弹防御临时建的）
+     */
+    private _flushRoomControlData(room: Room, roomName: string) {
+        if (!Memory.RoomControlData) Memory.RoomControlData = {};
+        if (!Memory.RoomControlData[roomName]) Memory.RoomControlData[roomName] = {};
+        if (Memory.RoomControlData[roomName].nukerDefenseRam) Memory.RoomControlData[roomName].nukerDefenseRam = [];
+        if (Memory.RoomControlData[roomName].nukerDefenseStructMap) Memory.RoomControlData[roomName].nukerDefenseStructMap = [];
+        // 收集 defenseRam 中已有的位置，用于排除 rampart
+        const defenseRamPositions = new Set<string>();
+        const defenseRam = room.memory.defenseRam;
+        if (defenseRam) {
+            for (const nukeId in defenseRam) {
+                // 跳过非核弹ID的字段
+                const nukeDefense = defenseRam[nukeId];
+                if (typeof nukeDefense === 'object') {
+                    for (const posKey in nukeDefense) {
+                        const pos = nukeDefense[posKey];
+                        if (pos && typeof pos.x === 'number' && typeof pos.y === 'number') {
+                            defenseRamPositions.add(`${pos.x}_${pos.y}`);
+                        }
+                    }
+                }
+            }
+        }
+
+        // 收集所有 rampart 位置（排除防核 rampart）
+        const ramparts: number[][] = [];
+        const rampartStructures = room.find(FIND_STRUCTURES, {
+            filter: (s) => s.structureType === STRUCTURE_RAMPART
+        }) as StructureRampart[];
+        for (const rampart of rampartStructures) {
+            const posKey = `${rampart.pos.x}_${rampart.pos.y}`;
+            if (!defenseRamPositions.has(posKey)) {
+                ramparts.push([rampart.pos.x, rampart.pos.y]);
+            }
+        }
+
+        // 收集所有重要建筑到 structMap
+        // 格式: "x/y/structureType/level"
+        const structMap: string[] = [];
+        const allStructures = room.find(FIND_STRUCTURES, {
+            filter: (s) => s.structureType !== STRUCTURE_RAMPART && s.structureType !== STRUCTURE_WALL // 排除 rampart 和 wall
+        }) as Structure[];
+        
+        for (const struct of allStructures) {
+            const structType = struct.structureType;
+            // 再次确认排除 wall（双重保险）
+            if (structType === STRUCTURE_WALL) continue;
+            // 获取建筑等级（如果有）
+            let level = 8;
+            structMap.push(`${struct.pos.x}/${struct.pos.y}/${structType}/${level}`);
+        }
+
+        // 更新 RoomControlData（使用独立的 nukerDefense 字段，避免覆盖原有数据）
+        Memory.RoomControlData[roomName].nukerDefenseRam = ramparts;
+        Memory.RoomControlData[roomName].nukerDefenseStructMap = structMap;
+        console.log(`[防核] 房间 ${roomName} RoomControlData 已刷新，保存了 ${ramparts.length} 个 rampart、${structMap.length} 个建筑（排除了 ${defenseRamPositions.size} 个防核 rampart）`);
     }
 
     /**

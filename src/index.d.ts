@@ -152,6 +152,9 @@ interface RoomControlData {
 		}
 		structMap?: string[]
 		rams?: number[][]
+		// 防核备份数据（核弹疏散前保存的建筑信息）
+		nukerDefenseRam?: number[][]  // 备份的 rampart 位置
+		nukerDefenseStructMap?: string[]  // 备份的建筑结构图
 	}
 }
 
@@ -363,6 +366,7 @@ interface RoomMemory {
 			}
 		}
 	}
+	isNukerDefenseFlush?: boolean  // 是否已经刷新过 RoomControlData（防核用）
 }
 
 // 房间任务模板
