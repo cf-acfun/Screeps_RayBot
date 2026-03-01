@@ -1,4 +1,5 @@
 import App from "@/App";
+import { State } from "@/fsm/state";
 import Singleton from "@/Singleton";
 
 export default class PC extends Singleton {
@@ -62,6 +63,27 @@ export default class PC extends Singleton {
         if (!Memory.pcConfig[room]) return;
 
         let powerCreep = Game.powerCreeps[Memory.pcConfig[room]];
+        if (!powerCreep) return;
+
+        // 处理核弹疏散后的返回逻辑
+        if (powerCreep.memory.evacuating && powerCreep.memory.state == State.Back) {
+            const roomFrom = powerCreep.memory.roomFrom;
+            // 如果不在原房间，移动回去
+            if (powerCreep.room.name !== roomFrom) {
+                powerCreep.moveTo(new RoomPosition(25, 25, roomFrom), {
+                    visualizePathStyle: { stroke: '#00ff00' }
+                });
+                console.log(`[防核] PowerCreep ${powerCreep.name} 正在返回房间 ${roomFrom}`);
+                return;
+            } else {
+                // 已经回到原房间，清除疏散状态
+                powerCreep.memory.evacuating = false;
+                powerCreep.memory.evacuateTarget = undefined;
+                powerCreep.memory.evacuateSafeRoom = undefined;
+                powerCreep.memory.state = undefined;
+                console.log(`[防核] PowerCreep ${powerCreep.name} 已返回房间 ${roomFrom}，恢复正常工作`);
+            }
+        }
 
         let invader = Game.rooms[room].find(FIND_HOSTILE_CREEPS, {
             filter: (creep) => {

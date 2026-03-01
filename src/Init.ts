@@ -110,7 +110,7 @@ export default class Init extends Singleton {
         }
       }
     }
-    console.log(colorful('Success ', 'green'), 'load memory');
+    console.log(colorful('Success', 'green'), 'load memory');
   }
 
   private _globalMount() {
