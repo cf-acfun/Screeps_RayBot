@@ -7,6 +7,7 @@ export default class Build extends Singleton {
     public run(creep: Creep) {
         switch (creep.memory.role) {
             case Role.Upgrader:
+            case Role.TemporaryBuilder:
             case Role.Builder: {
                 if (creep.store.getUsedCapacity() == 0) {
                     creep.memory.targetContainer = null;

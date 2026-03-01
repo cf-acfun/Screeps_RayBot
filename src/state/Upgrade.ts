@@ -8,6 +8,7 @@ export default class Upgrade extends Singleton {
         switch (creep.memory.role) {
             case Role.HelpUpgrader:
             case Role.Builder:
+            case Role.TemporaryBuilder:
             case Role.Upgrader: {    
                 let target = Game.flags[`${creep.memory.roomFrom}_helpUpgrade`];
                 if (target && creep.room.name != creep.memory.roomFrom) {

@@ -119,6 +119,8 @@ export default class FsmControl extends FsmSystem {
         break;
       case Role.Transfer2Container: creep.memory.state = State.Withdraw;
         break;
+      case Role.TemporaryBuilder: creep.memory.state = State.Withdraw;
+        break;
     }
   }
 

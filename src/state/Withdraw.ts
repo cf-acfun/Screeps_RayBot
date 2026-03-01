@@ -529,6 +529,7 @@ export default class Withdraw extends Singleton {
                 }
                 break;
             }
+            case Role.TemporaryBuilder:
             case Role.Builder: {
                 if (creep.store.getFreeCapacity() == 0) {
                     App.fsm.changeState(creep, State.Build);

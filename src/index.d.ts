@@ -94,6 +94,7 @@ interface StructMap {
 type Role =
 	'harvester' |
 	'builder' |
+	'temporaryBuilder' |
 	'upgrader' |
 	'carrier' |
 	'filler' |
@@ -486,4 +487,5 @@ type BodyAutoConfigConstant =
 	'defense_attacker' |
 	'defense_healer' |
 	'transfer' |
-	'transfer2Container'
+	'transfer2Container'|
+	'temporaryBuilder'

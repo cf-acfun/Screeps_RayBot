@@ -5,6 +5,7 @@ export const Role = {
   Carrier: 'carrier',
   MineralCarrier: 'mineralCarrier',
   Builder: 'builder',
+  TemporaryBuilder: 'temporaryBuilder',
   Upgrader: 'upgrader',
   Filler: 'filler',
   Claimer: 'claimer',
@@ -98,41 +99,49 @@ export const RoleNum: {
 } = {
   1: {
     [Role.Builder]: 4,
+    [Role.TemporaryBuilder]: 0,
     [Role.Upgrader]: 4
   },
   2: {
     [Role.Builder]: 1,
+    [Role.TemporaryBuilder]: 0,
     [Role.Upgrader]: 1
   },
   3: {
     [Role.Builder]: 1,
+    [Role.TemporaryBuilder]: 0,
     [Role.Upgrader]: 1
   },
   4: {
     [Role.Builder]: 1,
+    [Role.TemporaryBuilder]: 0,
     [Role.Upgrader]: 1,
     [Role.Filler]: 1,
   },
   5: {
     [Role.Builder]: 1,
+    [Role.TemporaryBuilder]: 0,
     [Role.Upgrader]: 1,
     [Role.Filler]: 1,
     [Role.CenterTransfer]: 1,
   },
   6: {
     [Role.Builder]: 1,
+    [Role.TemporaryBuilder]: 0,
     [Role.Upgrader]: 1,
     [Role.Filler]: 1,
     [Role.CenterTransfer]: 1,
   },
   7: {
     [Role.Builder]: 1,
+    [Role.TemporaryBuilder]: 0,
     [Role.Upgrader]: 1,
     [Role.Filler]: 1,
     [Role.CenterTransfer]: 1,
   },
   8: {
     [Role.Builder]: 0,
+    [Role.TemporaryBuilder]: 0,
     [Role.Upgrader]: 1,
     [Role.Filler]: 1,
     [Role.CenterTransfer]: 1,
@@ -191,6 +200,16 @@ export const bodyConfigs: BodyConfigs = {
     { [CARRY]: 30, [MOVE]: 15 },
   ),
   builder: getBodyConfig(
+    { [WORK]: 1, [CARRY]: 1, [MOVE]: 1 },
+    { [WORK]: 2, [CARRY]: 2, [MOVE]: 2 },
+    { [WORK]: 3, [CARRY]: 3, [MOVE]: 3 },
+    { [WORK]: 4, [CARRY]: 8, [MOVE]: 6 },
+    { [WORK]: 6, [CARRY]: 10, [MOVE]: 8 },
+    { [WORK]: 8, [CARRY]: 12, [MOVE]: 10 },
+    { [WORK]: 15, [CARRY]: 15, [MOVE]: 15 },
+    { [WORK]: 15, [CARRY]: 15, [MOVE]: 15 }
+  ),
+  temporaryBuilder: getBodyConfig(
     { [WORK]: 1, [CARRY]: 1, [MOVE]: 1 },
     { [WORK]: 2, [CARRY]: 2, [MOVE]: 2 },
     { [WORK]: 3, [CARRY]: 3, [MOVE]: 3 },

@@ -13,7 +13,7 @@ export default class Observer extends Singleton {
         // 缓存 observer interval 计算，避免重复计算
         const observerInterval = room.memory.observer.interval || (room.memory.index + 1) * 10 + 1;
         // 检测测试旗子，用于测试防核功能
-        if (Game.time % 10 === (room.memory.index % 10) || (room.memory.defenseRam && Object.keys(room.memory.defenseRam).length > 0)) {
+        if (Game.time % 1000 === (room.memory.index % 1000) || (room.memory.defenseRam && Object.keys(room.memory.defenseRam).length > 0)) {
 
 
             const nukes = room.find(FIND_NUKES) as Nuke[];
@@ -38,7 +38,7 @@ export default class Observer extends Singleton {
             }
             if (nukes.length > 0) {
                 // 每1000tick执行一次防御建筑检查
-                if (Game.time % 10 === (room.memory.index % 10)) {
+                if (Game.time % 1000 === (room.memory.index % 1000)) {
                     console.log(`[防核警告] 房间 ${roomName} 检测到 ${nukes.length} 枚核弹即将落地！`);
                     this.handleNukeDefense(room, roomName, nukes);
                 }
@@ -63,6 +63,10 @@ export default class Observer extends Singleton {
                 // 每tick检查是否需要疏散creep（核弹快落地时）
                 this._evacuateCreeps(room, roomName, nukes);
             }
+        }
+        // 检查是否需要设置 temporaryBuilder 数量
+        if (Game.time % (1000 + observerInterval) === (room.memory.index % (1000 + observerInterval))) {
+            this._updateBuilderCount(room, roomName);
         }
 
         if (Memory.username == 'Spon-Singer') {
@@ -439,7 +443,7 @@ export default class Observer extends Singleton {
         const allStructures = room.find(FIND_STRUCTURES, {
             filter: (s) => s.structureType !== STRUCTURE_RAMPART && s.structureType !== STRUCTURE_WALL // 排除 rampart 和 wall
         }) as Structure[];
-        
+
         for (const struct of allStructures) {
             const structType = struct.structureType;
             // 再次确认排除 wall（双重保险）
@@ -502,6 +506,32 @@ export default class Observer extends Singleton {
                     (unit as Creep).memory.state = undefined;
                 }
                 console.log(`[防核] ${unitType} ${unit.name} 已返回房间 ${roomName}，恢复正常工作`);
+            }
+        }
+    }
+
+    /**
+     * 更新 TemporaryBuilder 数量：检查房间是否有建筑工地，设置 temporaryBuilder 数量
+     * 使用独立的 temporaryBuilder role，不影响普通 builder
+     * 有建筑工地时设为 1，没有时设为 0
+     */
+    private _updateBuilderCount(room: Room, roomName: string) {
+        // 检查房间中是否有建筑工地
+        const constructionSites = room.find(FIND_CONSTRUCTION_SITES);
+
+        if (!global.cc[roomName]) global.cc[roomName] = {};
+
+        if (constructionSites.length > 0) {
+            // 有建筑工地，设置 temporaryBuilder = 1（独立于普通 builder）
+            if (global.cc[roomName].temporaryBuilder !== 1) {
+                global.cc[roomName].temporaryBuilder = 1;
+                console.log(`房间 ${roomName} 存在 ${constructionSites.length} 个建筑工地，设置 temporaryBuilder = 1`);
+            }
+        } else {
+            // 没有建筑工地，重置 temporaryBuilder = 0
+            if (global.cc[roomName].temporaryBuilder !== 0) {
+                global.cc[roomName].temporaryBuilder = 0;
+                console.log(`房间 ${roomName} 没有建筑工地，设置 temporaryBuilder = 0`);
             }
         }
     }
