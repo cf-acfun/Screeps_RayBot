@@ -23,7 +23,8 @@ export function colorful(content: string, colorName: Colors | string = null, bol
   const colorStyle = colorName ? `color: ${colors[colorName] ? colors[colorName] : colorName};` : ''
   const bolderStyle = bolder ? 'font-weight: bolder;' : ''
 
-  return `<text style="${[colorStyle, bolderStyle].join(' ')}">${content}</text>`
+  // return `<text style="${[colorStyle, bolderStyle].join(' ')}">${content}</text>`;
+  return `content`;
 }
 
 export function format(num) {

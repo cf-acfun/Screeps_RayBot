@@ -56,7 +56,6 @@ export default class Observer extends Singleton {
             }
             if (room.memory.defenseRam && Object.keys(room.memory.defenseRam).length > 0) {
                 // 每tick检查是否需要疏散creep（核弹快落地时）
-                console.log(`每tick检查是否需要疏散creep（核弹快落地时）`);
                 this._evacuateCreeps(room, roomName, nukes);
             }
         }
@@ -289,36 +288,37 @@ export default class Observer extends Singleton {
             // 只处理即将落地的核弹
             if (nuke.timeToLand > EVACUATION_THRESHOLD) continue;
 
-            // 获取房间内所有我的creep
-            const myCreeps = room.find(FIND_MY_CREEPS);
 
-            for (const creep of myCreeps) {
+            // 查找所有属于当前房间的creep（通过 roomFrom 判断），无论它们现在在哪里
+            // 包括：还在原房间的、已经在疏散途中的、已经到达避难房间的
+            for (const creepName in Game.creeps) {
+                const creep = Game.creeps[creepName];
                 // 标记疏散状态
-                if (!creep.memory.evacuating) {
+                if (creep.room.name == roomName && !creep.memory.evacuating) {
                     creep.memory.evacuating = true;
                     creep.memory.evacuateTarget = `${nuke.pos.x}_${nuke.pos.y}`;
                     creep.memory.evacuateSafeRoom = safeRoom; // 记录避难房间
                     console.log(`[防核疏散] Creep ${creep.name} 开始疏散到房间 ${safeRoom}`);
                 }
 
-                // 移动到避难房间
-                if (creep.room.name !== safeRoom) {
-                    // 还没到达避难房间，继续移动
-                    // const exitDir = Game.map.findExit(creep.room.name, safeRoom);
-                    // if (exitDir !== ERR_NO_PATH && exitDir !== ERR_INVALID_ARGS) {
-                    //     const exit = creep.pos.findClosestByPath(exitDir as ExitConstant);
-                    //     if (exit) {
-                    //         creep.moveTo(exit, { visualizePathStyle: { stroke: '#ff0000' } });
-                    //     }
-                    // }
-                    creep.moveTo(new RoomPosition(25, 25, creep.memory.evacuateSafeRoom), { visualizePathStyle: { stroke: '#ff0000' } });
-                } else {
-                    // 已经到达避难房间，在安全位置等待
-                    // 远离出口，避免被核弹波及
-                    
-                    creep.moveTo(new RoomPosition(25, 25, creep.memory.evacuateSafeRoom), { visualizePathStyle: { stroke: '#00ff00' } });
-                    
+                
+                if (creep.memory.evacuating && creep.memory.evacuateSafeRoom) {
+                    const targetSafeRoom = creep.memory.evacuateSafeRoom;
+                    // 移动到避难房间
+                    if (creep.room.name !== targetSafeRoom) {
+                        // 还没到达避难房间，继续移动（红色路径）
+                        creep.moveTo(new RoomPosition(25, 25, targetSafeRoom), {
+                            visualizePathStyle: { stroke: '#ff0000' }
+                        });
+                    } else {
+                        // 已经到达避难房间，检查是否还在边缘
+                        creep.moveTo(new RoomPosition(25, 25, targetSafeRoom), {
+                            visualizePathStyle: { stroke: '#00ff00' }
+                        });
+
+                    }
                 }
+
             }
         }
     }
@@ -334,7 +334,7 @@ export default class Observer extends Singleton {
         // 优先选择相邻的我方房间（排除 ignoreRoom）
         for (const dir in adjacentRooms) {
             const adjacentRoomName = adjacentRooms[dir as ExitKey];
-        
+
             if (ignoreRooms.includes(adjacentRoomName)) continue;
             return adjacentRoomName;
         }
@@ -374,6 +374,7 @@ export default class Observer extends Singleton {
                     creep.memory.evacuating = false;
                     creep.memory.evacuateTarget = undefined;
                     creep.memory.evacuateSafeRoom = undefined;
+                    creep.memory.state = undefined;
                     console.log(`[防核] Creep ${creep.name} 已返回房间 ${roomName}，恢复正常工作`);
                 }
             }
