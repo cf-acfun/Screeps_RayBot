@@ -255,7 +255,7 @@ export default class Observer extends Singleton {
                             const result = room.createConstructionSite(x, y, STRUCTURE_RAMPART);
                             if (result === OK) {
                                 if (!global.cc[roomName]) global.cc[roomName] = {};
-                                global.cc[roomName].repairer = 1;
+                                global.cc[roomName].repairer = 3;
                                 console.log(`[防核] 核弹 ${nukeId}：在 (${x}, ${y}) 创建 rampart 建筑工地`);
                             }
                         } else {
