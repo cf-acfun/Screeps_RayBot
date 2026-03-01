@@ -56,6 +56,8 @@ export default class Observer extends Singleton {
                     // 重置 RoomControlData 刷新标记，准备下一次防核使用
                     room.memory.isNukerDefenseFlush = undefined;
                 }
+                // 检查并重建被核弹摧毁的建筑
+                this._checkAndRebuildStructures(room, roomName);
             }
             if (room.memory.defenseRam && Object.keys(room.memory.defenseRam).length > 0) {
                 // 每tick检查是否需要疏散creep（核弹快落地时）
@@ -443,7 +445,7 @@ export default class Observer extends Singleton {
             // 再次确认排除 wall（双重保险）
             if (structType === STRUCTURE_WALL) continue;
             // 获取建筑等级（如果有）
-            let level = 8;
+            let level = 1;
             structMap.push(`${struct.pos.x}/${struct.pos.y}/${structType}/${level}`);
         }
 
@@ -501,6 +503,62 @@ export default class Observer extends Singleton {
                 }
                 console.log(`[防核] ${unitType} ${unit.name} 已返回房间 ${roomName}，恢复正常工作`);
             }
+        }
+    }
+
+    /**
+     * 检查并重建被核弹摧毁的建筑
+     * 对比 nukerDefenseStructMap 和当前建筑，缺失的创建 construction site
+     */
+    private _checkAndRebuildStructures(room: Room, roomName: string) {
+        const roomControlData = Memory.RoomControlData?.[roomName];
+        if (!roomControlData?.nukerDefenseStructMap) return;
+
+        const structMap = roomControlData.nukerDefenseStructMap;
+        let rebuildCount = 0;
+
+        for (const structInfo of structMap) {
+            // 格式: "x/y/structureType/level"
+            const [xStr, yStr, structType, levelStr] = structInfo.split('/');
+            const x = parseInt(xStr);
+            const y = parseInt(yStr);
+            const level = parseInt(levelStr);
+
+            if (isNaN(x) || isNaN(y) || !structType) continue;
+
+            // 检查该位置是否已有相同类型的建筑或建筑工地
+            const pos = new RoomPosition(x, y, roomName);
+            const existingStructures = pos.lookFor(LOOK_STRUCTURES) as Structure[];
+            const existingSites = pos.lookFor(LOOK_CONSTRUCTION_SITES) as ConstructionSite[];
+
+            // 如果已有该类型的建筑或建筑工地，跳过
+            const hasStructure = existingStructures.some(s => s.structureType === structType);
+            const hasSite = existingSites.some(s => s.structureType === structType);
+
+            if (hasStructure || hasSite) continue;
+
+            // 检查控制器等级是否足够
+            if (room.controller && room.controller.level < level) continue;
+
+            // 创建建筑工地
+            const result = room.createConstructionSite(x, y, structType as BuildableStructureConstant);
+            if (result === OK) {
+                rebuildCount++;
+                console.log(`[防核重建] 在 (${x}, ${y}) 创建 ${structType} 建筑工地`);
+            } else if (result === ERR_RCL_NOT_ENOUGH) {
+                // 控制器等级不足，跳过
+                continue;
+            } else if (result === ERR_INVALID_TARGET) {
+                // 无效目标，可能是该位置不能建造此建筑
+                console.log(`[防核重建] 无法创建 ${structType} 在 (${x}, ${y})，位置无效`);
+            }
+        }
+
+        if (rebuildCount > 0) {
+            console.log(`[防核重建] 房间 ${roomName} 重建了 ${rebuildCount} 个建筑`);
+            // 重建完成后，可以清理备份数据（可选）
+            // roomControlData.nukerDefenseStructMap = undefined;
+            // roomControlData.nukerDefenseRam = undefined;
         }
     }
 
