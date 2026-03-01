@@ -13,7 +13,7 @@ export default class Observer extends Singleton {
         // 缓存 observer interval 计算，避免重复计算
         const observerInterval = room.memory.observer.interval || (room.memory.index + 1) * 10 + 1;
         // 检测测试旗子，用于测试防核功能
-        if (Game.time % 1000 === (room.memory.index % 1000) || (room.memory.defenseRam && Object.keys(room.memory.defenseRam).length > 0)) {
+        if (Game.time % 500 === (room.memory.index % 500) || (room.memory.defenseRam && Object.keys(room.memory.defenseRam).length > 0)) {
 
 
             const nukes = room.find(FIND_NUKES) as Nuke[];
@@ -38,7 +38,7 @@ export default class Observer extends Singleton {
             }
             if (nukes.length > 0) {
                 // 每1000tick执行一次防御建筑检查
-                if (Game.time % 1000 === (room.memory.index % 1000)) {
+                if (Game.time % 500 === (room.memory.index % 500)) {
                     console.log(`[防核警告] 房间 ${roomName} 检测到 ${nukes.length} 枚核弹即将落地！`);
                     this.handleNukeDefense(room, roomName, nukes);
                 }
