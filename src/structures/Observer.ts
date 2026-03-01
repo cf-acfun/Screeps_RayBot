@@ -289,36 +289,62 @@ export default class Observer extends Singleton {
             if (nuke.timeToLand > EVACUATION_THRESHOLD) continue;
 
 
-            // 查找所有属于当前房间的creep（通过 roomFrom 判断），无论它们现在在哪里
-            // 包括：还在原房间的、已经在疏散途中的、已经到达避难房间的
-            for (const creepName in Game.creeps) {
-                const creep = Game.creeps[creepName];
-                // 标记疏散状态
-                if (creep.room.name == roomName && !creep.memory.evacuating) {
-                    creep.memory.evacuating = true;
-                    creep.memory.evacuateTarget = `${nuke.pos.x}_${nuke.pos.y}`;
-                    creep.memory.evacuateSafeRoom = safeRoom; // 记录避难房间
-                    console.log(`[防核疏散] Creep ${creep.name} 开始疏散到房间 ${safeRoom}`);
-                }
+            // 处理 Creep 疏散
+            this._evacuateUnits(Game.creeps, roomName, safeRoom, nuke, 'Creep');
+            // 处理 PowerCreep 疏散
+            this._evacuateUnits(Game.powerCreeps, roomName, safeRoom, nuke, 'PowerCreep');
+        }
+    }
 
-                
-                if (creep.memory.evacuating && creep.memory.evacuateSafeRoom) {
-                    const targetSafeRoom = creep.memory.evacuateSafeRoom;
-                    // 移动到避难房间
-                    if (creep.room.name !== targetSafeRoom) {
-                        // 还没到达避难房间，继续移动（红色路径）
-                        creep.moveTo(new RoomPosition(25, 25, targetSafeRoom), {
-                            visualizePathStyle: { stroke: '#ff0000' }
-                        });
-                    } else {
-                        // 已经到达避难房间，检查是否还在边缘
-                        creep.moveTo(new RoomPosition(25, 25, targetSafeRoom), {
-                            visualizePathStyle: { stroke: '#00ff00' }
-                        });
+    /**
+     * 统一处理单位疏散（Creep 或 PowerCreep）
+     * @param units 单位集合（Game.creeps 或 Game.powerCreeps）
+     * @param roomName 原房间名
+     * @param safeRoom 避难房间名
+     * @param nuke 核弹对象
+     * @param unitType 单位类型（用于日志）
+     */
+    private _evacuateUnits(
+        units: { [name: string]: Creep | PowerCreep },
+        roomName: string,
+        safeRoom: string,
+        nuke: Nuke,
+        unitType: string
+    ) {
+        for (const name in units) {
+            const unit = units[name];
+            // 只处理属于当前房间的单位
+            if (unit.memory.roomFrom !== roomName) continue;
 
+            // 标记疏散状态
+            if (unit.room.name == roomName && !unit.memory.evacuating) {
+                unit.memory.evacuating = true;
+                unit.memory.evacuateTarget = `${nuke.pos.x}_${nuke.pos.y}`;
+                unit.memory.evacuateSafeRoom = safeRoom;
+                console.log(`[防核疏散] ${unitType} ${unit.name} 开始疏散到房间 ${safeRoom}`);
+            }
+
+            // 执行移动
+            if (unit.memory.evacuating && unit.memory.evacuateSafeRoom) {
+                const targetSafeRoom = unit.memory.evacuateSafeRoom;
+
+                if (unit.room.name !== targetSafeRoom) {
+                    // 还没到达避难房间，继续移动（红色路径）
+                    unit.moveTo(new RoomPosition(25, 25, targetSafeRoom), {
+                        visualizePathStyle: { stroke: '#ff0000' }
+                    });
+                } else {
+                    // 已经到达避难房间，检查是否太靠近边缘（距离边缘至少保持2格）
+                    const isNearEdge = unit.pos.x < 2 || unit.pos.x > 47 || unit.pos.y < 2 || unit.pos.y > 47;
+                    if (isNearEdge) {
+                        // 太靠近边缘，往中心方向移动一点（绿色路径）
+                        unit.moveTo(new RoomPosition(25, 25, targetSafeRoom), {
+                            visualizePathStyle: { stroke: '#00ff00' },
+                            range: 10  // 不需要到正中心，靠近中心即可
+                        });
                     }
+                    // 距离边缘至少2格，安全位置，停止移动等待核弹落地
                 }
-
             }
         }
     }
@@ -352,31 +378,50 @@ export default class Observer extends Singleton {
     }
 
     /**
-     * 清除疏散状态：核弹消失后恢复creep正常状态，并让creep返回原房间
+     * 清除疏散状态：核弹消失后恢复单位正常状态，并让单位返回原房间
      */
     private _clearEvacuateStatus(roomName: string) {
-        for (const creepName in Game.creeps) {
-            const creep = Game.creeps[creepName];
-            if (creep.memory.evacuating && creep.memory.evacuateSafeRoom) {
-                // 检查creep是否是从该房间疏散的（通过避难房间判断）
-                const safeRoom = creep.memory.evacuateSafeRoom;
+        // 处理 Creep
+        this._clearUnitsEvacuateStatus(Game.creeps, roomName, 'Creep');
+        // 处理 PowerCreep
+        this._clearUnitsEvacuateStatus(Game.powerCreeps, roomName, 'PowerCreep');
+    }
 
-                // 如果creep在避难房间，让它返回原房间
-                if (creep.room.name === safeRoom) {
-                    // 返回原房间
-                    creep.memory.state = State.Back;
-                    creep.memory.evacuating = false;
-                    creep.memory.evacuateTarget = undefined;
-                    creep.memory.evacuateSafeRoom = undefined;
-                    console.log(`[防核] Creep ${creep.name} 开始返回房间 ${roomName}，恢复正常工作`);
-                } else if (creep.room.name === roomName) {
-                    // 已经返回原房间，清除疏散状态
-                    creep.memory.evacuating = false;
-                    creep.memory.evacuateTarget = undefined;
-                    creep.memory.evacuateSafeRoom = undefined;
-                    creep.memory.state = undefined;
-                    console.log(`[防核] Creep ${creep.name} 已返回房间 ${roomName}，恢复正常工作`);
+    /**
+     * 清除单位的疏散状态
+     */
+    private _clearUnitsEvacuateStatus(
+        units: { [name: string]: Creep | PowerCreep },
+        roomName: string,
+        unitType: string
+    ) {
+        for (const name in units) {
+            const unit = units[name];
+            // 只处理属于当前房间且正在疏散的单位
+            if (unit.memory.roomFrom !== roomName) continue;
+            if (!unit.memory.evacuating || !unit.memory.evacuateSafeRoom) continue;
+
+            const safeRoom = unit.memory.evacuateSafeRoom;
+
+            // 如果单位在避难房间，让它返回原房间
+            if (unit.room.name === safeRoom) {
+                // 返回原房间
+                if (unitType === 'Creep') {
+                    (unit as Creep).memory.state = State.Back;
                 }
+                unit.memory.evacuating = false;
+                unit.memory.evacuateTarget = undefined;
+                unit.memory.evacuateSafeRoom = undefined;
+                console.log(`[防核] ${unitType} ${unit.name} 开始返回房间 ${roomName}，恢复正常工作`);
+            } else if (unit.room.name === roomName) {
+                // 已经返回原房间，清除疏散状态
+                unit.memory.evacuating = false;
+                unit.memory.evacuateTarget = undefined;
+                unit.memory.evacuateSafeRoom = undefined;
+                if (unitType === 'Creep') {
+                    (unit as Creep).memory.state = undefined;
+                }
+                console.log(`[防核] ${unitType} ${unit.name} 已返回房间 ${roomName}，恢复正常工作`);
             }
         }
     }

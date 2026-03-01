@@ -24,7 +24,7 @@ export function colorful(content: string, colorName: Colors | string = null, bol
   const bolderStyle = bolder ? 'font-weight: bolder;' : ''
 
   // return `<text style="${[colorStyle, bolderStyle].join(' ')}">${content}</text>`;
-  return `content`;
+  return content;
 }
 
 export function format(num) {
