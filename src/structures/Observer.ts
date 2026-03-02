@@ -218,8 +218,7 @@ export default class Observer extends Singleton {
                         s.structureType !== STRUCTURE_WALL &&
                         s.structureType !== STRUCTURE_RAMPART &&
                         s.structureType !== STRUCTURE_EXTENSION &&
-                        s.structureType !== STRUCTURE_TOWER &&
-                        s.structureType !== STRUCTURE_LINK
+                        s.structureType !== STRUCTURE_TOWER
                     );
 
                     if (hasImportantStructure) {
