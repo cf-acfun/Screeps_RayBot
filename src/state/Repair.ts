@@ -50,7 +50,7 @@ export default class Repair extends Singleton {
                     }
                 }
                 if (creep.repair(rampart) == ERR_NOT_IN_RANGE) {
-                    creep.customMove(rampart.pos, 3);
+                    creep.customMove(rampart.pos);
                 }
             } else creep.memory.repairTarget = null;
             return;

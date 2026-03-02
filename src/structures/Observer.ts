@@ -259,7 +259,7 @@ export default class Observer extends Singleton {
                             }
                         } else {
                             // 已有 rampart，检查血量是否足够
-                            if (existingRampart.hits < requiredHits - 300000) {
+                            if (existingRampart.hits < requiredHits - 200000) {
                                 console.log(`[防核] 核弹 ${nukeId}：位置 (${x}, ${y}) 的 rampart 需要修复至 ${requiredHits}，当前 ${existingRampart.hits}`);
                                 // 设置修复工数量以确保防御
                                 if (!global.cc[roomName]) global.cc[roomName] = {};
