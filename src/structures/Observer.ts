@@ -230,7 +230,7 @@ export default class Observer extends Singleton {
                         if (testFlag || testFlag1) {
                             baseRequiredHits = (dx === 0 && dy === 0) ? 1000 : 500;
                         } else {
-                            baseRequiredHits = (dx === 0 && dy === 0) ? 10200000 : 5200000;
+                            baseRequiredHits = (dx === 0 && dy === 0) ? 10300000 : 5300000;
                         }
 
                         const posKey = `${x}_${y}`;
@@ -255,19 +255,19 @@ export default class Observer extends Singleton {
                             const result = room.createConstructionSite(x, y, STRUCTURE_RAMPART);
                             if (result === OK) {
                                 if (!global.cc[roomName]) global.cc[roomName] = {};
-                                global.cc[roomName].repairer = 3;
+                                global.cc[roomName].repairer = 2;
                                 console.log(`[防核] 核弹 ${nukeId}：在 (${x}, ${y}) 创建 rampart 建筑工地`);
                             }
                         } else {
                             // 已有 rampart，检查血量是否足够
-                            if (existingRampart.hits < requiredHits) {
+                            if (existingRampart.hits < requiredHits - 300000) {
                                 console.log(`[防核] 核弹 ${nukeId}：位置 (${x}, ${y}) 的 rampart 需要修复至 ${requiredHits}，当前 ${existingRampart.hits}`);
                                 // 设置修复工数量以确保防御
                                 if (!global.cc[roomName]) global.cc[roomName] = {};
                                 if (testFlag || testFlag1) {
                                     global.cc[roomName].repairer = 1;
                                 } else {
-                                    global.cc[roomName].repairer = 3;
+                                    global.cc[roomName].repairer = 2;
                                 }
                             }
                         }
