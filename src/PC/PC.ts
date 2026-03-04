@@ -87,8 +87,7 @@ export default class PC extends Singleton {
 
         let invader = Game.rooms[room].find(FIND_HOSTILE_CREEPS, {
             filter: (creep) => {
-                return creep.owner.username == 'Invader' &&
-                    (creep.getActiveBodyparts(ATTACK) > 0 || creep.getActiveBodyparts(RANGED_ATTACK) > 0)
+                return (creep.getActiveBodyparts(ATTACK) > 0 || creep.getActiveBodyparts(RANGED_ATTACK) > 0)
             }
         });
 

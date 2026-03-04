@@ -331,7 +331,7 @@ export default class Observer extends Singleton {
             // 只处理属于当前房间的单位
             // 对于 Creep，使用 roomFrom 判断；对于 PowerCreep，如果没有 roomFrom，使用当前所在房间判断
             // 如果 PowerCreep 没有 roomFrom，设置为其当前房间
-            if (unitType === 'PowerCreep' && !unit.memory.roomFrom) {
+            if (unitType === 'PowerCreep' && (!unit.memory.roomFrom || unit.memory.roomFrom !== unit.room.name)) {
                 unit.memory.roomFrom = roomName;
             }
             if (unit.memory.roomFrom !== roomName) continue;
@@ -480,7 +480,7 @@ export default class Observer extends Singleton {
             const unit = units[name];
             // 只处理属于当前房间且正在疏散的单位
             // 对于 Creep，使用 roomFrom 判断；对于 PowerCreep，如果没有 roomFrom，使用当前所在房间判断
-            const unitRoomFrom = unit.memory.roomFrom || (unitType === 'PowerCreep' ? unit.room?.name : undefined);
+            const unitRoomFrom = unit.memory.roomFrom;
             if (unitRoomFrom !== roomName) continue;
             if (!unit.memory.evacuating || !unit.memory.evacuateSafeRoom) continue;
 
