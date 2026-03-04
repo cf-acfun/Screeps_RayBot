@@ -15,7 +15,6 @@ export default class Observer extends Singleton {
         // 检测测试旗子，用于测试防核功能
         if (Game.time % 500 === (room.memory.index % 500) || (room.memory.defenseRam && Object.keys(room.memory.defenseRam).length > 0)) {
 
-
             const nukes = room.find(FIND_NUKES) as Nuke[];
             const testFlag = Game.flags[`${roomName}_nukerTest`];
             if (testFlag && testFlag.pos.roomName === roomName) {
@@ -69,9 +68,6 @@ export default class Observer extends Singleton {
             this._updateBuilderCount(room, roomName);
         }
 
-        if (Memory.username == 'Spon-Singer') {
-            return;
-        }
         let observer: StructureObserver = Game.getObjectById(room.memory.observer.id);
         if (!observer) return;
         let targets = room.memory.observer.targets;
