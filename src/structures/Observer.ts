@@ -526,7 +526,6 @@ export default class Observer extends Singleton {
             // 没有建筑工地，重置 temporaryBuilder = 0
             if (global.cc[roomName].temporaryBuilder !== 0) {
                 global.cc[roomName].temporaryBuilder = 0;
-                console.log(`房间 ${roomName} 没有建筑工地，设置 temporaryBuilder = 0`);
             }
         }
     }
