@@ -3,6 +3,7 @@ import { Role } from "@/common/Constant";
 import { GenNonDuplicateID } from "@/common/utils";
 import { Boost } from "@/indexManager";
 import Singleton from "@/Singleton";
+import PC from "@/PC/PC";
 
 export default class Mineral extends Singleton {
     public run(roomName: string) {
@@ -16,6 +17,12 @@ export default class Mineral extends Singleton {
             mineralMem.harvestPos = App.common.getPosNear(mineral.pos);
             return;
         }
+
+        // add regen task for powered room
+        if (room.controller.isPowerEnabled &&
+            (!mineral.ticksToRegeneration && (!mineral.effects || !mineral.effects.length))) {
+            PC.addPCTask(roomName, PC.PCTaskName.operate_mineral, 10, mineral.id);
+        }       
 
         if (!Game.getObjectById(mineralMem.container)) {
             let { x, y, roomName } = mineralMem.harvestPos;

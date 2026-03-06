@@ -12,6 +12,7 @@ export default class PC extends Singleton {
         operate_spawn: 'operate_spawn',
         operate_lab: 'operate_lab',
         operate_power: 'operate_power',
+        operate_mineral: 'operate_mineral',
         clearStore: 'clearStore'
     }
 
@@ -46,6 +47,10 @@ export default class PC extends Singleton {
                     break;
                 case "operate_power":
                     if (!powerCreep.powers[PWR_OPERATE_POWER]) return;
+                    break;
+                case "operate_mineral":
+                    if (!powerCreep.powers[PWR_REGEN_MINERAL]) return;
+                    if (powerCreep.powers[PWR_REGEN_MINERAL].cooldown) return;
                     break;
             }
             if (!powerCreep.memory.task) powerCreep.memory.task = {};
@@ -213,6 +218,14 @@ export default class PC extends Singleton {
         if (App.common.getDis(powerCreep.pos, target.pos) > 3) powerCreep.customMove(target.pos, 3);
         else if (!target.effects || !target.effects.length || target.effects[0].ticksRemaining == 1) {
             if (powerCreep.usePower(PWR_REGEN_SOURCE, target) == OK) this.deleteTask(powerCreep, PC.PCTaskName.operate_source);
+        }
+    }
+
+    public operate_mineral(powerCreep: PowerCreep, targetId: Id<Mineral>) {
+        let target = Game.getObjectById(targetId);
+        if (App.common.getDis(powerCreep.pos, target.pos) > 3) powerCreep.customMove(target.pos, 3);
+        else if (!target.effects || !target.effects.length || target.effects[0].ticksRemaining == 1) {
+            if (powerCreep.usePower(PWR_REGEN_MINERAL, target) == OK) this.deleteTask(powerCreep, PC.PCTaskName.operate_mineral);
         }
     }
 
