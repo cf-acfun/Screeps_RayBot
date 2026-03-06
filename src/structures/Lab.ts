@@ -134,12 +134,12 @@ export default class Lab extends Singleton {
                 room.memory.labs.fillTargetIndex = null;
                 return
             }
-            if (lab1.store[res[0]] < 3000 && global.allRes[res[0]] <= 3000 * Memory.myrooms.length) {
+            if (lab1.store[res[0]] < 3000 && global.allRes[res[0]] <= 1500 * Memory.myrooms.length) {
                 room.memory.labs.fillRes = null;
                 room.memory.labs.fillTargetIndex = null;
                 return;
             }
-            if (lab2.store[res[1]] < 3000 && global.allRes[res[1]] <= 3000 * Memory.myrooms.length) {
+            if (lab2.store[res[1]] < 3000 && global.allRes[res[1]] <= 1500 * Memory.myrooms.length) {
                 room.memory.labs.fillRes = null;
                 room.memory.labs.fillTargetIndex = null;
                 return;
