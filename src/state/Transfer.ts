@@ -280,7 +280,11 @@ export default class Transfer extends Singleton {
         // 检查核弹发射器是否需要能量
         if (nuker.store.energy < nuker.store.getCapacity(RESOURCE_ENERGY)) {
             if (creep.store.getUsedCapacity() === 0) {
-                App.common.getResourceFromTargetStructure(creep, creep.room.storage, RESOURCE_ENERGY);
+                if (creep.room.storage?.store.energy > 0) {
+                    App.common.getResourceFromTargetStructure(creep, creep.room.storage, RESOURCE_ENERGY);
+                } else if (creep.room.terminal?.store.energy > 0) {
+                    App.common.getResourceFromTargetStructure(creep, creep.room.terminal, RESOURCE_ENERGY);
+                }
                 return;
             }
             // 转移能量到核弹发射器
