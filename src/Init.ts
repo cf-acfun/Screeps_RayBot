@@ -460,6 +460,33 @@ export default class Init extends Singleton {
       else {
         if (global.cc[this.rooms[i]]) global.cc[this.rooms[i]].attacker = 0;
       }
+
+      // sendNuker 功能：检测旗帜并发射核弹
+      // 旗帜格式: ${roomName}_sendNuker，将 flag 放在目标位置即可
+      let sendNukerFlag = Game.flags[`${this.rooms[i]}_sendNuker`];
+      if (sendNukerFlag) {
+        let room = Game.rooms[this.rooms[i]];
+        if (room) {
+          let nuker = room.find(FIND_STRUCTURES, {
+            filter: (s) => s.structureType === STRUCTURE_NUKER
+          })[0] as StructureNuker;
+          
+          if (nuker) {
+            let targetRoom = sendNukerFlag.pos.roomName;
+            let x = sendNukerFlag.pos.x;
+            let y = sendNukerFlag.pos.y;
+            let result = nuker.launchNuke(new RoomPosition(x, y, targetRoom));
+            console.log(`[Nuker] ${this.rooms[i]} 向 ${targetRoom} (${x}, ${y}) 发射核弹，结果: ${result}`);
+            if (result === OK) {
+              sendNukerFlag.remove();
+              console.log(`[Nuker] 旗帜 ${this.rooms[i]}_sendNuker 已移除`);
+            }
+          } else {
+            console.log(`[Nuker] ${this.rooms[i]} 中没有找到核弹发射井`);
+            sendNukerFlag.remove();
+          }
+        }
+      }
     }
 
     /**
