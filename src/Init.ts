@@ -476,11 +476,20 @@ export default class Init extends Singleton {
             let x = sendNukerFlag.pos.x;
             let y = sendNukerFlag.pos.y;
             let result = nuker.launchNuke(new RoomPosition(x, y, targetRoom));
-            console.log(`[Nuker] ${this.rooms[i]} 向 ${targetRoom} (${x}, ${y}) 发射核弹，结果: ${result}`);
-            if (result === OK) {
-              sendNukerFlag.remove();
-              console.log(`[Nuker] 旗帜 ${this.rooms[i]}_sendNuker 已移除`);
-            }
+            let resultMap: Record<number, string> = {
+              [OK]: '成功纳入计划',
+              [ERR_NOT_OWNER]: '不是建筑拥有者',
+              [ERR_NOT_ENOUGH_RESOURCES]: '能量和/或ghodium不足',
+              [ERR_INVALID_TARGET]: '目标位置无效(可能在起始区域)',
+              [ERR_NOT_IN_RANGE]: '目标房间超出打击范围',
+              [ERR_INVALID_ARGS]: '目标不是有效的RoomPosition',
+              [ERR_TIRED]: '建筑仍在冷却中',
+              [ERR_RCL_NOT_ENOUGH]: '房间控制中心等级不足'
+            };
+            let resultText = resultMap[result] || `未知错误码(${result})`;
+            console.log(`[Nuker] ${this.rooms[i]} 向 ${targetRoom} (${x}, ${y}) 发射核弹，结果: ${resultText}`);
+            sendNukerFlag.remove();
+            console.log(`[Nuker] 旗帜 ${this.rooms[i]}_sendNuker 已移除`);
           } else {
             console.log(`[Nuker] ${this.rooms[i]} 中没有找到核弹发射井`);
             sendNukerFlag.remove();
