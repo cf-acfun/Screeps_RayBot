@@ -528,12 +528,12 @@ export default class MoveTo extends Singleton {
                 if (creep.room.name != roomFrom) {
                     creep.customMove(new RoomPosition(25, 25, roomFrom));
                 } else if (creep.room.name == roomFrom) {
-                    if (creep.store.getUsedCapacity() > 0 && creep.room.storage.store.getFreeCapacity() > 10000) {
-                        App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
-                        return;
-                    }
                     if (creep.store.getUsedCapacity() > 0 && creep.room.terminal.store.getFreeCapacity() > 10000) {
                         App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].terminal);
+                        return;
+                    }
+                    if (creep.store.getUsedCapacity() > 0 && creep.room.storage.store.getFreeCapacity() > 10000) {
+                        App.common.transferToTargetStructure(creep, Game.rooms[roomFrom].storage);
                         return;
                     }
                     let task = Memory.roomTask[roomFrom][creep.memory.taskId];
