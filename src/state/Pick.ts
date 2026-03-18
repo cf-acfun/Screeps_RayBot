@@ -19,7 +19,7 @@ export default class Pick extends Singleton {
                 }
                 if (!creep.memory.dropId) {
                     let drop = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
-                        filter: (d) => d.amount >= 100 && d.resourceType == 'energy'
+                        filter: (d) => d.amount >= 100
                     })
                     if (drop) creep.memory.dropId = drop.id;
                     else App.fsm.changeState(creep, State.Withdraw);
