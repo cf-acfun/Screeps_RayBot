@@ -1,11 +1,15 @@
 {
     "compilerOptions": {
         "target": "es2017",
-        "moduleResolution": "Node", 
+        "moduleResolution": "Node",
+        "ignoreDeprecations": "6.0", 
         "outDir": "dist/",
         "baseUrl": "./",
         "sourceMap": true,
         "allowSyntheticDefaultImports": true,
+        "types": ["screeps", "node"],
+        "strictNullChecks": false,
+        "noImplicitAny": false,
         "paths": {
             "@/*": ["./src/*"]
         }

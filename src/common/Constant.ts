@@ -371,7 +371,7 @@ export const bodyConfigs: BodyConfigs = {
     { [WORK]: 5, [CARRY]: 5, [MOVE]: 5 },
     { [WORK]: 10, [CARRY]: 10, [MOVE]: 10 },
     { [WORK]: 15, [CARRY]: 15, [MOVE]: 15 },
-    { [WORK]: 15, [CARRY]: 15, [MOVE]: 15 },
+    { [WORK]: 20, [CARRY]: 15, [MOVE]: 15 },
   ),
   helpUpgrader: getBodyConfig(
     { [WORK]: 4, [CARRY]: 2, [MOVE]: 2 },
@@ -381,7 +381,7 @@ export const bodyConfigs: BodyConfigs = {
     { [WORK]: 5, [CARRY]: 5, [MOVE]: 5 },
     { [WORK]: 10, [CARRY]: 10, [MOVE]: 10 },
     { [WORK]: 15, [CARRY]: 15, [MOVE]: 15 },
-    { [WORK]: 15, [CARRY]: 15, [MOVE]: 15 },
+    { [WORK]: 20, [CARRY]: 15, [MOVE]: 15 },
   ),
   pb_attacker: getBodyConfig(
     { [MOVE]: 25, [ATTACK]: 25 },
