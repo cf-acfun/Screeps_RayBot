@@ -121,6 +121,12 @@ export default class Spawn extends Singleton {
             num: creep.getActiveBodyparts(HEAL)
           }])
         }
+        if (creep.memory.role == Role.PB_Carryer) {
+          Boost.SetBoostType(creep.name, [{
+            type: global.allRes["XKH2O"] > 1000 ? "XKH2O" : "KH2O",
+            num: creep.getActiveBodyparts(CARRY)
+          }])
+        }
 
         /**
          * 升级boost
