@@ -138,6 +138,8 @@ export default class Observer extends Singleton {
                             // 创建roomTask
                             let CreepBind = { 'pb_healer': { num: 1, bind: [] } };
                             global.createRoomTask(`${Role.PB_Attacker}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Attacker as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 1, CreepBind);
+                        } else if (pb.length > 0 && !Game.flags[PowerBank]) {
+                            Game.rooms[targetRoom].createFlag(pb[0].pos, PowerBank);
                         }
                     }
                 }
