@@ -40,6 +40,20 @@ export default class Terminal extends Singleton {
             }
         }
 
+        // 自动出售多余矿物
+        let mineralType: MineralConstant = room.memory.mineral.type;
+        if (mineralType && terminal.room.storage?.store[mineralType] >= 290000) {
+            let orders = Game.market.getAllOrders({ type: ORDER_BUY, resourceType: mineralType })
+                .filter(order => order.amount > 1000)
+                .sort((a, b) => b.price - a.price);
+            let order = orders[0];
+            if (order) {
+                let num = order.amount > 3000 ? 3000 : order.amount;
+                Game.market.deal(order.id, num, terminal.room.name);
+                return;
+            }
+        }
+
         // if (Game.time % (terminal.room.memory.index) == 0) {
         //     if (terminal.room.storage.store.power + terminal.store.power < 10000) {
         //         global.autoDeal(terminal.room.name, 'power', 1200);
