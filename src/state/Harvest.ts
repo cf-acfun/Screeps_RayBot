@@ -40,7 +40,8 @@ export default class Harvest extends Singleton {
           if (link && creep.store.energy >= 40) creep.transfer(link, 'energy');
         } else if (creep.memory.targetMineral) {
           let target = Game.getObjectById(creep.memory.targetMineral);
-          if (target.mineralAmount) creep.harvest(target);
+          let mineralContainer = Game.getObjectById(creep.room.memory.mineral.container);;
+          if (target.mineralAmount && mineralContainer.store.getUsedCapacity() <= 1800) creep.harvest(target);
         }
         break;
       }
