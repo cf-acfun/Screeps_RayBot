@@ -17,19 +17,31 @@ export default class Pick extends Singleton {
                     App.fsm.changeState(creep, State.Withdraw);
                     return;
                 }
-                if (!creep.memory.dropId) {
+                if (!creep.memory.dropId && !creep.memory.ruinId) {
                     let drop = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {
                         filter: (d) => d.amount >= 100
                     })
                     if (drop) creep.memory.dropId = drop.id;
-                    else App.fsm.changeState(creep, State.Withdraw);
-                } else {
+                    else {
+                        let ruin = creep.pos.findClosestByRange(FIND_RUINS, {
+                            filter: (r) => Object.keys(r.store).length > 0
+                        })
+                        if (ruin) creep.memory.ruinId = ruin.id;
+                        else App.fsm.changeState(creep, State.Withdraw);
+                    }
+                } else if (creep.memory.dropId) {
                     let drop = Game.getObjectById(creep.memory.dropId);
                     if (drop) {
                         if (creep.pickup(drop) == ERR_NOT_IN_RANGE) {
                             creep.customMove(drop.pos);
                         }
                     } else creep.memory.dropId = null;
+                } else if (creep.memory.ruinId) {
+                    let ruin = Game.getObjectById(creep.memory.ruinId);
+                    if (ruin && Object.keys(ruin.store).length > 0) {
+                        let res = Object.keys(ruin.store)[0] as ResourceConstant;
+                        App.common.getResourceFromTargetStructure(creep, ruin, res);
+                    } else creep.memory.ruinId = null;
                 }
                 if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToSpawn);
                 break
