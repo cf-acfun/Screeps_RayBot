@@ -115,7 +115,7 @@ export default class AutoPlanner extends Singleton {
     private _createSites(roomName: string, lv: number) {
         if (Memory.RoomControlData && Memory.RoomControlData[roomName]?.structMap) {
             let data = Memory.RoomControlData[roomName].structMap.filter(e => e.split('').reverse().join('')[0] == lv.toString())
-            if (100 - Object.keys(Game.constructionSites).length < data.length) return;
+            // if (100 - Object.keys(Game.constructionSites).length < data.length) return;
             data.forEach(e => {
                 let strArr = e.split('/');
                 // let structureType = strArr[2] as BuildableStructureConstant;
