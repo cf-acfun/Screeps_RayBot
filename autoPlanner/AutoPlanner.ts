@@ -118,6 +118,8 @@ export default class AutoPlanner extends Singleton {
             if (100 - Object.keys(Game.constructionSites).length < data.length) return;
             data.forEach(e => {
                 let strArr = e.split('/');
+                // let structureType = strArr[2] as BuildableStructureConstant;
+                // if (structureType == "road") return;
                 Game.rooms[roomName].createConstructionSite(+strArr[0], +strArr[1], strArr[2] as BuildableStructureConstant);
             })
         }

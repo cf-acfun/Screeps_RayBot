@@ -696,7 +696,36 @@ export default class Withdraw extends Singleton {
                 } else if (creep.room.storage?.store.energy) {
                     App.common.getResourceFromTargetStructure(creep, creep.room.storage);
                     return;
-                } else App.fsm.changeState(creep, State.Harvest);
+                } else {
+                    let ruin = Game.getObjectById(creep.memory.ruinId);
+                    if (ruin && ruin.store.energy) {
+                        App.common.getResourceFromTargetStructure(creep, ruin);
+                        return;
+                    } else creep.memory.ruinId = null;
+                    if (!creep.memory.ruinId) {
+                        let ruin = creep.pos.findClosestByPath(FIND_RUINS, {
+                            filter: r => r.store.energy
+                        })
+                        if (ruin) {
+                            creep.memory.ruinId = ruin.id;
+                            creep.memory.ruinState = true;
+                        }
+                        else {
+                            if (storage?.store.energy) {
+                                App.common.getResourceFromTargetStructure(creep, storage);
+                                if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.Upgrade);
+                                return;
+                            }
+                            if (terminal?.store.energy) {
+                                App.common.getResourceFromTargetStructure(creep, terminal);
+                                if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.Upgrade);
+                                return;
+                            }
+                            App.fsm.changeState(creep, State.Harvest);
+                            creep.memory.ruinState = false;
+                        }
+                    }
+                }
                 break;
             }
             case Role.HelpBuilder: {
