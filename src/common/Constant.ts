@@ -115,13 +115,13 @@ export const RoleNum: {
   4: {
     [Role.Builder]: 1,
     [Role.TemporaryBuilder]: 0,
-    [Role.Upgrader]: 1,
+    [Role.Upgrader]: 3,
     [Role.Filler]: 1,
   },
   5: {
     [Role.Builder]: 1,
     [Role.TemporaryBuilder]: 0,
-    [Role.Upgrader]: 1,
+    [Role.Upgrader]: 3,
     [Role.Filler]: 1,
     [Role.CenterTransfer]: 1,
   },

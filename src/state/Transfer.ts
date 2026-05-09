@@ -253,12 +253,9 @@ export default class Transfer extends Singleton {
             } else {
                 // 当controller附近有terminal时目标不存在转为向storage中转运能量
                 if (creep.room.terminal?.store.getFreeCapacity() <= 50000) {
-                    App.common.transferToTargetStructure(creep, creep.room.storage);
+                    App.common.transferToTargetStructure(creep, creep.room.terminal);
                 }
-                let transE2SFlag = Game.flags[`${creep.room.name}_transE2S`];
-                if (transE2SFlag) {
-                    App.common.transferToTargetStructure(creep, creep.room.storage);
-                }
+                App.common.transferToTargetStructure(creep, creep.room.storage);
             }
         }
     }

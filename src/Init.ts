@@ -291,24 +291,30 @@ export default class Init extends Singleton {
         } else {
           global.cc[roomName].builder = 0;
           global.cc[roomName].upgrader = 0;
-          if (room.controller.ticksToDowngrade < 100000 || room.controller.level < 8) global.cc[roomName].upgrader = 1;
+          if (room.controller.level < 8) {
+            global.cc[roomName].upgrader = 3;
+          } else if (room.controller.ticksToDowngrade < 100000) {
+            global.cc[roomName].upgrader = 1;
+          }
         }
+        // TODO 处理逻辑待优化
+        let transE2SFlag = Game.flags[`${roomName}_transE2S`];
+        if (transE2SFlag) {
+          if (room.controller.level >= 6 && room.terminal) {
+            global.cc[roomName].transfer2Container = 4;
+          } else {
+            global.cc[roomName].transfer2Container = 2;
+          }
+        } else if (!upgradePlusFlag) {
+          global.cc[roomName].transfer2Container = 0;
+        }
+
       } else {
         if (global.cc[roomName]) {
           global.cc[roomName].builder = RoleNum[room.controller.level][Role.Builder];
           global.cc[roomName].upgrader = RoleNum[room.controller.level][Role.Upgrader];
         } else {
           this._globalMount();
-        }
-      }
-
-      // TODO 处理逻辑待优化
-      let transE2SFlag = Game.flags[`${roomName}_transE2S`];
-      if (transE2SFlag) {
-        if (room.controller.level >= 6 && room.terminal) {
-          global.cc[roomName].transfer2Container = 4;
-        } else {
-          global.cc[roomName].transfer2Container = 2;
         }
       }
 
@@ -470,7 +476,7 @@ export default class Init extends Singleton {
           let nuker = room.find(FIND_STRUCTURES, {
             filter: (s) => s.structureType === STRUCTURE_NUKER
           })[0] as StructureNuker;
-          
+
           if (nuker) {
             let targetRoom = sendNukerFlag.pos.roomName;
             let x = sendNukerFlag.pos.x;

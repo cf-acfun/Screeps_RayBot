@@ -413,7 +413,7 @@ export default class Withdraw extends Singleton {
 
                 // 检查背包是否已满
                 if (freeCapacity == 0) {
-                    const nextState = isMineralContainer ? State.TransferToStorage : State.TransferToSpawn;
+                    const nextState = isMineralContainer ? State.TransferToStorage : State.TransferToControllerContainer;
                     App.fsm.changeState(creep, nextState);
                     return;
                 }
@@ -421,7 +421,7 @@ export default class Withdraw extends Singleton {
                 // 处理低生命值情况
                 if (creep.ticksToLive < 50) {
                     if (usedCapacity > 0) {
-                        App.fsm.changeState(creep, State.TransferToStorage);
+                        App.fsm.changeState(creep, State.TransferToControllerContainer);
                     } else {
                         creep.suicide();
                     }

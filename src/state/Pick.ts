@@ -43,7 +43,7 @@ export default class Pick extends Singleton {
                         App.common.getResourceFromTargetStructure(creep, ruin, res);
                     } else creep.memory.ruinId = null;
                 }
-                if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToSpawn);
+                if (creep.store.getFreeCapacity() == 0) App.fsm.changeState(creep, State.TransferToControllerContainer);
                 break
             }
             case Role.HelpBuilder: {
