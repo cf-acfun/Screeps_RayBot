@@ -230,17 +230,18 @@ export default class Transfer extends Singleton {
                 if (container.store.getFreeCapacity(RESOURCE_ENERGY) >= 500) {
                     target = container;
                     break;
+                    
                 }
             }
             if (creep.ticksToLive <= 10) {
                 if (creep.store.getUsedCapacity() == 0) {
                     creep.suicide();
                     return;
-                } else if (creep.room.terminal) {
-                    App.common.transferToTargetStructure(creep, creep.room.storage);
+                } else if (target) {
+                    App.common.transferToTargetStructure(creep, target);
                     return;
                 } else {
-                    App.common.transferToTargetStructure(creep, target);
+                    App.common.transferToTargetStructure(creep, creep.room.storage);
                     return;
                 }
             }
@@ -250,12 +251,6 @@ export default class Transfer extends Singleton {
             }
             if (target) {
                 App.common.transferToTargetStructure(creep, target);
-            } else {
-                // 当controller附近有terminal时目标不存在转为向storage中转运能量
-                if (creep.room.terminal?.store.getFreeCapacity() <= 50000) {
-                    App.common.transferToTargetStructure(creep, creep.room.terminal);
-                }
-                App.common.transferToTargetStructure(creep, creep.room.storage);
             }
         }
     }
