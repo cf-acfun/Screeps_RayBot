@@ -249,6 +249,10 @@ export default class Transfer extends Singleton {
                 App.fsm.changeState(creep, State.Withdraw);
                 return;
             }
+            if (creep.store.getUsedCapacity() !== creep.store.getUsedCapacity(RESOURCE_ENERGY)) {
+                App.fsm.changeState(creep, State.TransferToStorage);
+                return;
+            }
             if (target) {
                 App.common.transferToTargetStructure(creep, target);
             }
