@@ -140,6 +140,39 @@ export default class Observer extends Singleton {
                             global.createRoomTask(`${Role.PB_Attacker}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Attacker as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 1, CreepBind);
                         }
                     }
+
+                    // 检测已有 PB 任务但 powerBank 已消失的情况
+                    if (Memory.roomTask && Memory.roomTask[roomName]) {
+                        for (let taskId in Memory.roomTask[roomName]) {
+                            let task = Memory.roomTask[roomName][taskId];
+                            if (task.targetRoom == targetRoom && task.role == Role.PB_Attacker) {
+                                let powerBanks = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
+                                    filter: (s) => s.structureType == STRUCTURE_POWER_BANK
+                                });
+                                if (powerBanks.length == 0) {
+                                    console.log(`[Observer] 房间 ${targetRoom} 的 PowerBank 已消失，清理相关任务`);
+                                    if (!global.cc[roomName]) global.cc[roomName] = {};
+                                    global.cc[roomName].pb_attacker = 0;
+                                    global.cc[roomName].pb_healer = 0;
+                                    if (Game.flags[PowerBank]) {
+                                        Game.flags[PowerBank].remove();
+                                    }
+                                    // 删除该 targetRoom 的所有 PB 相关任务
+                                    for (let tid in Memory.roomTask[roomName]) {
+                                        let t = Memory.roomTask[roomName][tid];
+                                        if (t.targetRoom == targetRoom && (
+                                            t.role == Role.PB_Attacker ||
+                                            t.role == Role.PB_Healer ||
+                                            t.role == Role.PB_Carryer
+                                        )) {
+                                            delete Memory.roomTask[roomName][tid];
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 if (room.memory.observer.index == num - 1) room.memory.observer.index = 0;

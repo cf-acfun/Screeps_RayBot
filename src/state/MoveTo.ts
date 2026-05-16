@@ -298,7 +298,18 @@ export default class MoveTo extends Singleton {
                 let powerBankFlag = `PB_${creep.memory.roomFrom}_${task.targetRoom}`;
                 // 移动到powerBank
                 if (creep.room.name != task.targetRoom) {
-                    creep.customMove(Game.flags[powerBankFlag].pos);
+                    let flag = Game.flags[powerBankFlag];
+                    if (flag) {
+                        creep.customMove(flag.pos);
+                    } else {
+                        // 旗子不存在，powerBank可能已被摧毁
+                        global.cc[creep.memory.roomFrom].pb_attacker = 0;
+                        global.cc[creep.memory.roomFrom].pb_healer = 0;
+                        if (Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId]) {
+                            delete Memory.roomTask[creep.memory.roomFrom][creep.memory.taskId];
+                        }
+                        creep.memory.state = State.Back;
+                    }
                     return;
                 }
                 // 血量低于4000则等待治疗
