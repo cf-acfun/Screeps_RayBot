@@ -116,7 +116,7 @@ export default class Observer extends Singleton {
                     if (!Game.flags[PowerBank]) {
                         var pb = Game.rooms[targetRoom].find(FIND_STRUCTURES, {
                             filter: (stru) => {
-                                return stru.structureType == 'powerBank' && stru.ticksToDecay >= 3000 && stru.power > 2000
+                                return stru.structureType == 'powerBank' && stru.ticksToDecay >= 1500 && stru.power > 2000
                             }
                         }) as StructurePowerBank[];
 
