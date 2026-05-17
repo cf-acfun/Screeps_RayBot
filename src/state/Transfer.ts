@@ -253,8 +253,12 @@ export default class Transfer extends Singleton {
                 App.fsm.changeState(creep, State.TransferToStorage);
                 return;
             }
+            let upgradePlusFlag = Game.flags[`${creep.memory.roomFrom}_upgradePlus`];
+            let transE2SFlag = Game.flags[`${creep.memory.roomFrom}_transE2S`];
             if (target) {
                 App.common.transferToTargetStructure(creep, target);
+            } else if (!upgradePlusFlag && !transE2SFlag) {
+                App.fsm.changeState(creep, State.TransferToStorage);
             }
         }
     }
