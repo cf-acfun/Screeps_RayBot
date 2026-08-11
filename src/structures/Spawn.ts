@@ -111,19 +111,19 @@ export default class Spawn extends Singleton {
         }
         if (creep.memory.role == Role.PB_Attacker) {
           Boost.SetBoostType(creep.name, [{
-            type: global.allRes["XUH2O"] > 1000 ? "XUH2O" : "UH2O",
+            type: "UH",
             num: creep.getActiveBodyparts(ATTACK) - 5
           }])
         }
         if (creep.memory.role == Role.PB_Healer) {
           Boost.SetBoostType(creep.name, [{
-            type: global.allRes["XLHO2"] > 1000 ? "XLHO2" : "LHO2",
+            type: "LH",
             num: creep.getActiveBodyparts(HEAL)
           }])
         }
         if (creep.memory.role == Role.PB_Carryer) {
           Boost.SetBoostType(creep.name, [{
-            type: global.allRes["XKH2O"] > 1000 ? "XKH2O" : "KH2O",
+            type: "KH",
             num: creep.getActiveBodyparts(CARRY)
           }])
         }

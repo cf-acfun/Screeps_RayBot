@@ -353,7 +353,8 @@ export default class MoveTo extends Singleton {
                         }
                         // console.log(`当前搬运task为[${carryTask}]`);
                         if (!carryTask) {
-                            let carrierNum = global.allRes["XKH2O"] > 1000 ? Math.ceil(powerBank.power / 5000) : Math.ceil(powerBank.power / 3750);
+                            // T1 KH强化后单个pb_carryer容量为 25 CARRY * (50+50) = 2500
+                            let carrierNum = Math.ceil(powerBank.power / 2500);
                             console.log(`当前房间[${creep.room.name}]需要孵化[${carrierNum}]个搬运工`);
                             let CreepBind = { 'pb_carryer': { num: carrierNum, bind: [] } };
                             global.createRoomTask(`${Role.PB_Carryer}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Carryer as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, powerBank.id, carrierNum, CreepBind);
