@@ -98,6 +98,10 @@ export default class Terminal extends Singleton {
                     global.autoDeal(terminal.room.name, 'O', 40, 6000);
                     return;
                 }
+                if (terminal.room.storage.store.H + terminal.store.H < 6000) {
+                    global.autoDeal(terminal.room.name, 'H', 130, 6000);
+                    return;
+                }
                 if (terminal.room.storage.store.ops + terminal.store.ops < 1000) {
                     global.autoDeal(terminal.room.name, 'ops', 200, 500);
                     return;

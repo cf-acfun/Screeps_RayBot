@@ -319,7 +319,7 @@ export default class MoveTo extends Singleton {
                 // 攻击powerBank
                 let powerBank = Game.getObjectById(task.targetStructureId) as StructurePowerBank;
                 if (creep.attack(powerBank) == ERR_NOT_IN_RANGE) {
-                    creep.customMove(powerBank.pos);
+                    creep.customMove(powerBank.pos,1,false);
                 }
                 if (powerBank) {
                     if (powerBank.hits < 10000) {
@@ -462,7 +462,7 @@ export default class MoveTo extends Singleton {
                         if (creep.pos.inRangeTo(attacker, 3)) {
                             creep.rangedHeal(attacker);
                         }
-                        creep.customMove(attacker.pos, 1);
+                        creep.customMove(attacker.pos, 1, false);
                     }
                 } else {
                     if (!task) {
