@@ -117,7 +117,7 @@ export default class Spawn extends Singleton {
         }
         if (creep.memory.role == Role.PB_Healer) {
           Boost.SetBoostType(creep.name, [{
-            type: "LH",
+            type: "LO",
             num: creep.getActiveBodyparts(HEAL)
           }])
         }
