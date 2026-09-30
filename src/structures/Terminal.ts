@@ -84,10 +84,10 @@ export default class Terminal extends Singleton {
                     global.autoDeal(terminal.room.name, 'H', 200, 6000);
                     return;
                 }
-                // if (terminal.room.storage.store.L + terminal.store.L < 6000) {
-                //     global.autoDeal(terminal.room.name, 'L', 200, 6000);
-                //     return;
-                // }
+                if (terminal.room.storage.store.L + terminal.store.L < 6000) {
+                    global.autoDeal(terminal.room.name, 'L', 200, 6000);
+                    return;
+                }
             }
             if (Memory.username == 'Spon-Singer') {
                 if (terminal.room.storage.store.Z + + terminal.store.Z < 6000) {
@@ -100,6 +100,14 @@ export default class Terminal extends Singleton {
                 }
                 if (terminal.room.storage.store.H + terminal.store.H < 6000) {
                     global.autoDeal(terminal.room.name, 'H', 130, 6000);
+                    return;
+                }
+                if (terminal.room.storage.store.K + terminal.store.K < 6000) {
+                    global.autoDeal(terminal.room.name, 'K', 20, 6000);
+                    return;
+                }
+                if (terminal.room.storage.store.L + terminal.store.L < 6000) {
+                    global.autoDeal(terminal.room.name, 'L', 170, 6000);
                     return;
                 }
                 if (terminal.room.storage.store.ops + terminal.store.ops < 1000) {

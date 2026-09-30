@@ -136,8 +136,12 @@ export default class Observer extends Singleton {
                         if (pb.length > 0 && !hasHarvestTask) {
                             Game.rooms[targetRoom].createFlag(pb[0].pos, PowerBank);
                             // 创建roomTask
-                            let CreepBind = { 'pb_healer': { num: 2, bind: [] } };
-                            global.createRoomTask(`${Role.PB_Attacker}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Attacker as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, 2, CreepBind);
+                            let groupNum = 1;
+                            if (this.countAvailableDepositPos(pb[0].pos) >= 2) {
+                                groupNum = 2;
+                            }
+                            let CreepBind = { 'pb_healer': { num: groupNum, bind: [] } };
+                            global.createRoomTask(`${Role.PB_Attacker}_${GenNonDuplicateID()}`, roomName, targetRoom, Role.PB_Attacker as Role, Operate.Harveste_power, STRUCTURE_POWER_BANK, pb[0].id, groupNum, CreepBind);
                         }
                     }
 
@@ -200,6 +204,25 @@ export default class Observer extends Singleton {
             }
         }
         return false;
+    }
+
+    // 统计 deposit 周围可供我方采集的空位数量
+    private countAvailableDepositPos(pos: RoomPosition): number {
+        let room = Game.rooms[pos.roomName];
+        if (!room) return 1; // 房间不可见时不做取消处理，保守返回 1
+        let terrain = Game.map.getRoomTerrain(pos.roomName);
+        let count = 0;
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                if (dx == 0 && dy == 0) continue;
+                let x = pos.x + dx;
+                let y = pos.y + dy;
+                if (x < 0 || x > 49 || y < 0 || y > 49) continue;
+                if (terrain.get(x, y) == TERRAIN_MASK_WALL) continue;
+                count++;
+            }
+        }
+        return count;
     }
 
     /**

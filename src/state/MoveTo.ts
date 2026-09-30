@@ -335,7 +335,7 @@ export default class MoveTo extends Singleton {
                     // console.log(`当前creep[${creep.name}]`);
                     let roomName = creep.memory.roomFrom;
                     // 检测powerBank的血量并发布Carry任务
-                    if (powerBank.hits < 1500000) {
+                    if (powerBank.hits < 1000000) {
                         // 是否已经发布了任务
                         let task = Memory.roomTask[roomName];
                         let targetRoom = creep.room.name;
