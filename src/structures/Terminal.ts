@@ -81,7 +81,7 @@ export default class Terminal extends Singleton {
                 //     return;
                 // }
                 if (terminal.room.storage.store.H + terminal.store.H < 6000) {
-                    global.autoDeal(terminal.room.name, 'H', 200, 6000);
+                    global.autoDeal(terminal.room.name, 'H', 210, 6000);
                     return;
                 }
                 if (terminal.room.storage.store.L + terminal.store.L < 6000) {
@@ -99,7 +99,7 @@ export default class Terminal extends Singleton {
                     return;
                 }
                 if (terminal.room.storage.store.H + terminal.store.H < 6000) {
-                    global.autoDeal(terminal.room.name, 'H', 130, 6000);
+                    global.autoDeal(terminal.room.name, 'H', 210, 6000);
                     return;
                 }
                 if (terminal.room.storage.store.K + terminal.store.K < 6000) {
